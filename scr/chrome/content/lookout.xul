@@ -41,6 +41,7 @@
   <script type="application/x-javascript" src="chrome://lookout/content/mapi_props.js"/>
   <script type="application/x-javascript" src="chrome://lookout/content/tnef.js"/>
   <script type="application/x-javascript" src="chrome://lookout/content/lookout.js"/>
+  <script type="application/x-javascript" src="chrome://lookout/content/header.js"/>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="lookout-strings" src="chrome://lookout/locale/lookout.properties"/>

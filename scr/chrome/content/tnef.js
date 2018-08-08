@@ -496,10 +496,14 @@ function tnef_file_munge_fname( fname, files, code_page ) {
     tnef_log_msg( "Lookout: convert file name from charset: " + charset, 7 );
     if( charset != null ) {
       try {
-        var converter = Components.classes['@mozilla.org/intl/scriptableunicodeconverter']
-                        .getService(Components.interfaces.nsIScriptableUnicodeConverter);
+        var converter = Components.classes['@mozilla.org/intl/scriptableunicodeconverter'].getService(Components.interfaces.nsIScriptableUnicodeConverter);
 	converter.charset = charset;
-	fname = converter.ConvertToUnicode( fname );
+	var fname2 = converter.ConvertToUnicode( fname );
+	try {
+		decodeURIComponent( escape( fname2 ) );
+	} catch (e) {
+		fname = fname2;
+	}
       } catch( e ) {
         tnef_log_msg( "Lookout: failed to convert file name from charset: " + charset, 4 );
       }

@@ -261,6 +261,7 @@ LookoutStreamListener.prototype = {
   mMsgHdr: null,
   action_type: LOOKOUT_ACTION_SCAN,
   req_part_id: 0,
+  save_dir: null,
   
   stream_started: false,
   cur_outstrm_listener: null,
@@ -411,20 +412,45 @@ LookoutStreamListener.prototype = {
         } catch (ex) {
           alert("LookOut:     error creating file : " + this.cur_url.path + " : " + ex);
         }
-        var nsIFilePicker = Components.interfaces.nsIFilePicker;
-        var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-        fp.init(window, "Select a File", nsIFilePicker.modeSave);
-        fp.appendFilters(nsIFilePicker.filterAll);
-        fp.defaultString = this.cur_filename;
-        var res = fp.show();
-        if (res != nsIFilePicker.returnCancel){
-          try {
-            file.moveTo(fp.displayDirectory, fp.file.leafName);
-          } catch(ex) {
-            alert( "LookOut:     error moving file : " + fp.displayDirectory.path
-                 + " : " + fp.file.leafName + " : " + ex);
-          }
-        }
+
+	//-------------------------------------------------------------------------------------
+	var file_dir = null;
+	var file_name = null;
+	//-------------------------------------------------------------------------------------
+	if (this.save_dir) {
+		var file_check = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		try {
+			file_check.initWithPath(this.save_dir.path);
+			file_check.appendRelativePath(this.cur_filename);
+		} catch(e) {
+			file_check = false;
+		}
+		if (file_check && (! file_check.exists())) {
+			file_dir = this.save_dir;
+			file_name = this.cur_filename;
+		}
+	}
+	//-------------------------------------------------------------------------------------
+	if (file_dir == null) {
+	        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+	        var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+	        fp.init(window, "Select a File", nsIFilePicker.modeSave);
+	        fp.appendFilters(nsIFilePicker.filterAll);
+	        fp.defaultString = this.cur_filename;
+	        var res = fp.show();
+	        if (res != nsIFilePicker.returnCancel){
+			file_dir = fp.displayDirectory;
+			file_name = fp.file.leafName;
+		}
+	}
+	//-------------------------------------------------------------------------------------
+	if ((file_dir != null) && file_name) {
+		try {
+			file.moveTo(file_dir, file_name);
+		} catch(ex) {
+			alert( "LookOut:     error moving file : " + file_dir.path + " : " + file_name + " : " + ex);
+		}
+	}
       break;
 
       case LOOKOUT_ACTION_OPEN:
@@ -648,15 +674,15 @@ var lookout_lib = {
     if( attachment.save ) {
       // New naming -- used since Thunderbird 7.*
       attachment.lo_orig_save = attachment.save;
-      attachment.save = function () {
-        lookout_lib.save_attachment( this );
+      attachment.save = function (save_dir) {
+        lookout_lib.save_attachment( this, save_dir );
       };
       lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
     } else {
       // Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
       attachment.lo_orig_save = attachment.saveAttachment;
-      attachment.saveAttachment = function () {
-        lookout_lib.save_attachment( this );
+      attachment.saveAttachment = function (save_dir) {
+        lookout_lib.save_attachment( this, save_dir );
       };
       lookout.log_msg( "LookOut:    registered own function for attachment.saveAttachment", 6 );
     }
@@ -736,7 +762,7 @@ var lookout_lib = {
                       , null );                        // in nsIUrlListener aUrlListener
   },
 
-  save_attachment: function ( attachment ) {
+  save_attachment: function ( attachment, save_dir ) {
     lookout.log_msg( "LookOut: Entering save_attachment()", 6 ); //MKA
     lookout.log_msg( "LookOut:    got attachment = " + attachment.toSource(), 10 );
 
@@ -756,6 +782,7 @@ var lookout_lib = {
     var stream_listener = new LookoutStreamListener(); 
     stream_listener.req_part_id = attachment.part_id;
     stream_listener.mAttUrl = attachment.parent.url;
+    stream_listener.save_dir = save_dir;
     if( attachment.uri )
       stream_listener.mMsgUri = attachment.uri;
     else
@@ -830,6 +857,40 @@ function LookoutLoad () {
     }
     LookoutInitWait = 0;
     lookout_lib.startup();
+
+	//---------------------------------------------------------------------------------
+	// fix for saveAll
+	//---------------------------------------------------------------------------------
+	if( typeof HandleMultipleAttachments != 'undefined' ) {
+		lookout_lib.HandleMultipleAttachments = HandleMultipleAttachments;
+		HandleMultipleAttachments = function(attachments, action) {
+			if (action != 'save') {
+				lookout_lib.HandleMultipleAttachments(attachments, action);
+				return;
+			}
+			var run_origin = true;
+			for (var i = 0; i < attachments.length; i++) {
+				if (attachments[i].parent) {
+					run_origin = false;
+					break;
+				}
+			}
+			if (run_origin) {
+				lookout_lib.HandleMultipleAttachments(attachments, action);
+				return;
+			} else {
+				var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
+				fp.init(window, 'Select a Dir', Components.interfaces.nsIFilePicker.modeGetFolder);
+				var result = fp.show();
+				if (result == fp.returnOK) {
+					for (var i = 0; i < attachments.length; i++) {
+						attachments[i].save(fp.file);
+					}
+				}
+			}
+		}
+	}
+	//---------------------------------------------------------------------------------
 }
 
 //MKA  Adding callback to the mail window for starting addon.

@@ -1,0 +1,2 @@
+fixed: minor bug fixes
+fixed: Save All function

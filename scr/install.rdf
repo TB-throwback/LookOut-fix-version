@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>lookout@s3_fix_version</em:id>	
-    <em:version>1.2.17</em:version>
+    <em:version>1.2.18</em:version>
     <em:type>2</em:type>
     <em:localized>
       <Description>
@@ -10,6 +10,7 @@
         <em:name>MutasdMeg! (LookOut)</em:name>
         <em:description>A LookOut megnyitja és letölthetővé teszi a levelek TNEF kódolással csatolt mellékleteit (általában winmail.dat).</em:description>
         <em:creator>Rubin, Aron</em:creator>
+        <em:contributor>Oleksandr Popov (fix version)</em:contributor>
         <em:translator>Mergl K. Attila</em:translator>
       </Description>
     </em:localized>
@@ -19,6 +20,7 @@
         <em:name>Zeig'sMir! (LookOut)</em:name>
         <em:description>LookOut öffnet die TNEF kodierten Anhänge der Mails (meistens winmail.dat) und ladet die dekodierten Teile herunter.</em:description>
         <em:creator>Aron Rubin</em:creator>
+        <em:contributor>Oleksandr Popov (fix version)</em:contributor>
         <em:translator>Attila K. Mergl</em:translator>
       </Description> 
     </em:localized>
@@ -37,7 +39,7 @@
       <Description>
         <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
         <em:minVersion>38.0</em:minVersion>
-        <em:maxVersion>53.*</em:maxVersion>
+        <em:maxVersion>54.*</em:maxVersion>
       </Description>
     </em:targetApplication>
 
@@ -46,7 +48,7 @@
       <Description>
 	<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
 	<em:minVersion>2.20</em:minVersion>
-	<em:maxVersion>2.51</em:maxVersion>
+	<em:maxVersion>2.52</em:maxVersion>
       </Description>
     </em:targetApplication>
 
