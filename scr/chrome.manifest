@@ -1,0 +1,7 @@
+content lookout                 chrome/content/
+locale  lookout en-US           chrome/locale/en-US/
+locale  lookout hu              chrome/locale/hu/
+locale  lookout de              chrome/locale/de/
+skin    lookout classic/1.0     chrome/skin/
+overlay chrome://messenger/content/mailWindowOverlay.xul chrome://lookout/content/lookout.xul
+

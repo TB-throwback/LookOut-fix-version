@@ -1,0 +1,9 @@
+<!ENTITY prefwindow.title "LookOut preferences">
+<!ENTITY pane1.title "LookOut preferences">
+<!ENTITY attach_raw_mapi_check.label "Attach MAPI Properties">
+<!ENTITY attach_raw_mapi_check.accesskey "M">
+<!ENTITY direct_to_calendar_check.label "Open Calendaring Data Directly">
+<!ENTITY direct_to_calendar_check.accesskey "C">
+<!ENTITY disable_filename_character_set_check.label "Disable Filename Character Set Conversion">
+<!ENTITY disable_filename_character_set_check.accesskey "F">
+

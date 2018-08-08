@@ -1,0 +1,8 @@
+﻿<!ENTITY prefwindow.title "LookOut beállítások">
+<!ENTITY pane1.title "LookOut preferences">
+<!ENTITY attach_raw_mapi_check.label "MAPI tulajdonságok tárolása">
+<!ENTITY attach_raw_mapi_check.accesskey "M">
+<!ENTITY direct_to_calendar_check.label "Naptáradatok közvetlen megnyitása">
+<!ENTITY direct_to_calendar_check.accesskey "N">
+<!ENTITY disable_filename_character_set_check.label "Fájlnév karaktertábla-konverziójának bénítása">
+<!ENTITY disable_filename_character_set_check.accesskey "F">
