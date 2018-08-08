@@ -1,2 +1,2 @@
 fixed: minor bug fixes
-fixed: Save All function
+fixed: Save All function for SeaMonkey

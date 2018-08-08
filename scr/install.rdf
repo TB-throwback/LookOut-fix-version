@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>lookout@s3_fix_version</em:id>	
-    <em:version>1.2.18</em:version>
+    <em:version>1.2.19</em:version>
     <em:type>2</em:type>
     <em:localized>
       <Description>
@@ -10,7 +10,6 @@
         <em:name>MutasdMeg! (LookOut)</em:name>
         <em:description>A LookOut megnyitja és letölthetővé teszi a levelek TNEF kódolással csatolt mellékleteit (általában winmail.dat).</em:description>
         <em:creator>Rubin, Aron</em:creator>
-        <em:contributor>Oleksandr Popov (fix version)</em:contributor>
         <em:translator>Mergl K. Attila</em:translator>
       </Description>
     </em:localized>
@@ -20,7 +19,6 @@
         <em:name>Zeig'sMir! (LookOut)</em:name>
         <em:description>LookOut öffnet die TNEF kodierten Anhänge der Mails (meistens winmail.dat) und ladet die dekodierten Teile herunter.</em:description>
         <em:creator>Aron Rubin</em:creator>
-        <em:contributor>Oleksandr Popov (fix version)</em:contributor>
         <em:translator>Attila K. Mergl</em:translator>
       </Description> 
     </em:localized>

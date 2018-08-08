@@ -863,9 +863,18 @@ function LookoutLoad () {
 	//---------------------------------------------------------------------------------
 	if( typeof HandleMultipleAttachments != 'undefined' ) {
 		lookout_lib.HandleMultipleAttachments = HandleMultipleAttachments;
-		HandleMultipleAttachments = function(attachments, action) {
-			if (action != 'save') {
-				lookout_lib.HandleMultipleAttachments(attachments, action);
+//		HandleMultipleAttachments(commandPrefix, selectedAttachments) -- for SeaMonkey !!!!
+//		HandleMultipleAttachments(attachments, action) -- for Thunderbird !!!!!
+		HandleMultipleAttachments = function(var1, var2) {
+			var attachments = var1;
+			var action = var2;
+			if (Array.isArray(var2)) {
+				attachments = var2;
+				action = var1;
+			}
+
+			if ((action != 'save') && (action != 'saveAttachment')) {
+				lookout_lib.HandleMultipleAttachments(var1, var2);
 				return;
 			}
 			var run_origin = true;
@@ -876,7 +885,7 @@ function LookoutLoad () {
 				}
 			}
 			if (run_origin) {
-				lookout_lib.HandleMultipleAttachments(attachments, action);
+				lookout_lib.HandleMultipleAttachments(var1, var2);
 				return;
 			} else {
 				var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
@@ -884,7 +893,11 @@ function LookoutLoad () {
 				var result = fp.show();
 				if (result == fp.returnOK) {
 					for (var i = 0; i < attachments.length; i++) {
-						attachments[i].save(fp.file);
+						try {
+							attachments[i].save(fp.file);  // for Thunderbird
+						} catch(e) {
+							attachments[i].saveAttachment(fp.file); // for SeaMonkey
+						}
 					}
 				}
 			}
