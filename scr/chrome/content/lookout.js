@@ -87,12 +87,7 @@ var lookout = {
   },
   
   basename: function lo_basename( path ) {
-    //MKA  Mozilla suggests to replace nsILocalFile with nsIFile *if older versions*
-    //     *are not supported*. But we still want to!
-    //     'Local' was merged back into its parent class in Gecko 14 (Thunderbird 14 /
-    //     SeaMonkey 2.11), but it is not intended to remove the 'Loclal' interface.
-    //     https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Versions/14#Interfaces
-    var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+    var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsIFile);
     
     try {
       file.initWithPath( path );
@@ -418,7 +413,7 @@ LookoutStreamListener.prototype = {
 	var file_name = null;
 	//-------------------------------------------------------------------------------------
 	if (this.save_dir) {
-		var file_check = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		var file_check = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsIFile);
 		try {
 			file_check.initWithPath(this.save_dir.path);
 			file_check.appendRelativePath(this.cur_filename);
@@ -437,11 +432,12 @@ LookoutStreamListener.prototype = {
 	        fp.init(window, "Select a File", nsIFilePicker.modeSave);
 	        fp.appendFilters(nsIFilePicker.filterAll);
 	        fp.defaultString = this.cur_filename;
-	        var res = fp.show();
-	        if (res != nsIFilePicker.returnCancel){
-			file_dir = fp.displayDirectory;
-			file_name = fp.file.leafName;
-		}
+	        fp.open(res => {
+	          if (res != nsIFilePicker.returnCancel){
+              file_dir = fp.displayDirectory;
+              file_name = fp.file.leafName;
+            }
+          });
 	}
 	//-------------------------------------------------------------------------------------
 	if ((file_dir != null) && file_name) {
@@ -890,16 +886,17 @@ function LookoutLoad () {
 			} else {
 				var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
 				fp.init(window, 'Select a Dir', Components.interfaces.nsIFilePicker.modeGetFolder);
-				var result = fp.show();
-				if (result == fp.returnOK) {
-					for (var i = 0; i < attachments.length; i++) {
-						try {
-							attachments[i].save(fp.file);  // for Thunderbird
-						} catch(e) {
-							attachments[i].saveAttachment(fp.file); // for SeaMonkey
-						}
-					}
-				}
+				fp.show(result => {
+          if (result == fp.returnOK) {
+            for (var i = 0; i < attachments.length; i++) {
+              try {
+                attachments[i].save(fp.file);  // for Thunderbird
+              } catch(e) {
+                attachments[i].saveAttachment(fp.file); // for SeaMonkey
+              }
+            }
+          }
+        });
 			}
 		}
 	}

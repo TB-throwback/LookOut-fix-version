@@ -387,12 +387,7 @@ function concat_fname( fname1, fname2 ) {
 }
 
 function fs_file_exists( fname ) {
-  //MKA  Mozilla suggests to replace nsILocalFile with nsIFile *if older versions*
-  //     *are not supported*. But we still want to!
-  //     'Local' was merged back into its parent class in Gecko 14 (Thunderbird 14 /
-  //     SeaMonkey 2.11), but it is not intended to remove the 'Loclal' interface.
-  //     https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Versions/14#Interfaces
-  var lf = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+  var lf = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsIFile);
   lf.initWithPath( fname );
   return( lf.exists() );
 }

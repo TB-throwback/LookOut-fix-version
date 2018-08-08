@@ -1,2 +1,1 @@
-fixed: minor bug fixes
-fixed: Save All function for SeaMonkey
+﻿fixed: minor bug fixes for Thunderbird 58+ (Big Thank you for Jörg Knobloch)
