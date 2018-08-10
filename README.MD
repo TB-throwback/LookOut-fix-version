@@ -1,4 +1,4 @@
-# Lookout-Redux
+# Lookout (Fix Version)
 
 [This is a fork of the addon by Oleksandr](https://addons.thunderbird.net/nn-NO/thunderbird/addon/lookout-fix-version/) and currently has only experimental changes
 
