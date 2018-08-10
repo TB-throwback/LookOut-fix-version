@@ -886,7 +886,7 @@ function LookoutLoad () {
 			} else {
 				var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
 				fp.init(window, 'Select a Dir', Components.interfaces.nsIFilePicker.modeGetFolder);
-				fp.show(result => {
+				fp.open(result => {
           if (result == fp.returnOK) {
             for (var i = 0; i < attachments.length; i++) {
               try {
