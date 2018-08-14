@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
-    <em:id>lookout@s3_fix_version</em:id>	
-    <em:version>1.2.20</em:version>
+    <em:id>lookout@s3_fix_version</em:id>
+    <em:version>1.2.21</em:version>
     <em:type>2</em:type>
     <em:localized>
       <Description>
@@ -20,9 +20,9 @@
         <em:description>LookOut öffnet die TNEF kodierten Anhänge der Mails (meistens winmail.dat) und ladet die dekodierten Teile herunter.</em:description>
         <em:creator>Aron Rubin</em:creator>
         <em:translator>Attila K. Mergl</em:translator>
-      </Description> 
+      </Description>
     </em:localized>
-    <em:name>LookOut (fix version)</em:name>	
+    <em:name>LookOut (fix version)</em:name>
     <em:description>LookOut reads and integrates TNEF encoded parts in emails.</em:description>
     <em:creator>Aron Rubin</em:creator>
     <em:contributor>Oleksandr Popov (fix version)</em:contributor>
