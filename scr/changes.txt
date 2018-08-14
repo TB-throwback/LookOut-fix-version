@@ -1,1 +1,2 @@
-﻿fixed: minor bug fixes for Thunderbird 58+ (Big Thank you for Jörg Knobloch)
+TB 60 Support
+fixed: Transparent settings dialogue and save all functionality caused by a method deprecation in Gecko 57.0
