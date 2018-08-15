@@ -617,30 +617,36 @@ var lookout_lib = {
 		for( index in currentAttachments ) {
 			var attachment = currentAttachments[index];
 			lookout.log_msg( attachment.toSource(), 8 );
-			// we only decode tnef files
-//      if( (/^application\/ms-tnef/i).test( attachment.contentType ) ) {
-{
+			var scanfile = true;
+
+			// Use strict content type matching to improve performance as a togglable option
+      if( lookout.get_bool_pref( "strict_contenttype" ) ){
+				var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
+				lookout.log_msg( "LookOut:    Content Type: '" + attachment.contentType + "'", 7 );
+			}
+			if(scanfile){
+
 				lookout.log_msg( "LookOut:    found tnef", 7 );
 
-	// open the attachment and look inside
-	var stream_listener = new LookoutStreamListener();
-	stream_listener.attachment = attachment;
-	stream_listener.mAttUrl = attachment.url;
-	if( attachment.uri )
-		stream_listener.mMsgUri = attachment.uri;
-	else
-		stream_listener.mMsgUri = attachment.messageUri;
-	stream_listener.mMsgHdr = lookout_lib.msg_hdr_for_current_msg( stream_listener.mMsgUri );
-	if( ! stream_listener.mMsgHdr )
-		lookout.log_msg( "LookOut:    no message header for this service", 5 );
-	stream_listener.action_type = LOOKOUT_ACTION_SCAN;
+				// open the attachment and look inside
+				var stream_listener = new LookoutStreamListener();
+				stream_listener.attachment = attachment;
+				stream_listener.mAttUrl = attachment.url;
+				if( attachment.uri )
+					stream_listener.mMsgUri = attachment.uri;
+				else
+					stream_listener.mMsgUri = attachment.messageUri;
+				stream_listener.mMsgHdr = lookout_lib.msg_hdr_for_current_msg( stream_listener.mMsgUri );
+				if( ! stream_listener.mMsgHdr )
+					lookout.log_msg( "LookOut:    no message header for this service", 5 );
+				stream_listener.action_type = LOOKOUT_ACTION_SCAN;
 
-	var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
-									 .QueryInterface( Components.interfaces.nsIMsgMessageService );
-	var attname = attachment.name ? attachment.name : attachment.displayName;
-	mms.openAttachment( attachment.contentType, attname,
-					attachment.url, stream_listener.mMsgUri, stream_listener,
-					null, null );
+				var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
+												 .QueryInterface( Components.interfaces.nsIMsgMessageService );
+				var attname = attachment.name ? attachment.name : attachment.displayName;
+				mms.openAttachment( attachment.contentType, attname,
+								attachment.url, stream_listener.mMsgUri, stream_listener,
+								null, null );
 			}
 		}
 	},
