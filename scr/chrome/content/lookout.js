@@ -390,6 +390,17 @@ LookoutStreamListener.prototype = {
 									 + "\n            mimeurl: " + (mimeurl ? mimeurl : ""), 7 );
 	},
 
+  // Move temporary files to destination folder/file
+  moveTMPFile: function ( file, file_dir, file_name ) {
+		lookout.log_msg( "LookOut:     saving attachment to '" + file_dir.path + "'", 7 );
+		lookout.log_msg( "LookOut:     saving attachment as '" + file_name + "'", 7 );
+		try {
+			file.moveTo(file_dir, file_name);
+		} catch(ex) {
+			alert( "LookOut:     error moving file : " + file_dir.path + " : " + file_name + " : " + ex);
+		}
+	},
+
 	onTnefEnd: function ( ) {
 		lookout.log_msg( "LookOut: Entering onTnefEnd()", 6 );
 		if( this.cur_outstrm )
@@ -444,18 +455,15 @@ LookoutStreamListener.prototype = {
 							if (res != nsIFilePicker.returnCancel){
 								file_dir = fp.displayDirectory;
 								file_name = fp.file.leafName;
+								// Move Temporary file to destination folder after dialogue closed
+								this.moveTMPFile( file, file_dir, file_name );
 							}
 						});
 					}
-	}
-	//-------------------------------------------------------------------------------------
-	if ((file_dir != null) && file_name) {
-		try {
-			file.moveTo(file_dir, file_name);
-		} catch(ex) {
-			alert( "LookOut:     error moving file : " + file_dir.path + " : " + file_name + " : " + ex);
-		}
-	}
+	} else if (file_name) {
+			// Move Temporary file to destination folder
+			this.moveTMPFile( file, file_dir, file_name );
+  }
 			break;
 
 			case LOOKOUT_ACTION_OPEN:
