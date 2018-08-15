@@ -6,4 +6,6 @@
 <!ENTITY direct_to_calendar_check.accesskey "C">
 <!ENTITY disable_filename_character_set_check.label "Disable Filename Character Set Conversion">
 <!ENTITY disable_filename_character_set_check.accesskey "F">
+<!ENTITY strict_contenttype_set_check.label "Strict Content Type Matching">
+<!ENTITY strict_contenttype_set_check.accesskey "S">
 
