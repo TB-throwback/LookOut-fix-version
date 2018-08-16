@@ -6,3 +6,7 @@
 <!ENTITY direct_to_calendar_check.accesskey "K">
 <!ENTITY disable_filename_character_set_check.label "Konversion der Karaktertabelle für Dateiname verbieten">
 <!ENTITY disable_filename_character_set_check.accesskey "D">
+<!ENTITY strict_contenttype_set_check.label "Strict Content-Typ-Übereinstimmung">
+<!ENTITY strict_contenttype_set_check.accesskey "S">
+<!ENTITY enable_debug.label "Aktivieren Sie das Debuggen">
+<!ENTITY enable_debug.accesskey "A">
