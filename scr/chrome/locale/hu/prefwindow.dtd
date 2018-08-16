@@ -6,3 +6,7 @@
 <!ENTITY direct_to_calendar_check.accesskey "N">
 <!ENTITY disable_filename_character_set_check.label "Fájlnév karaktertábla-konverziójának bénítása">
 <!ENTITY disable_filename_character_set_check.accesskey "F">
+<!ENTITY strict_contenttype_set_check.label "Szigorú tartalomtípus-egyezés">
+<!ENTITY strict_contenttype_set_check.accesskey "t">
+<!ENTITY enable_debug.label "Engedélyezze a hibakeresést">
+<!ENTITY enable_debug.accesskey "E">

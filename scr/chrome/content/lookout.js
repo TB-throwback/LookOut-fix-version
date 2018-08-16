@@ -54,6 +54,9 @@ const LOOKOUT_WAIT_TIME = 100;
 
 const LOOKOUT_PREF_PREFIX = "extensions.lookout.";
 
+// Declare Debug level Globaly
+var debugLevel = 10;
+
 var lookout = {
 	log_msg: function lo_log_msg( msg, level ) {
 		if( (level == null ? 9 : level) <= debugLevel ) {
@@ -84,6 +87,16 @@ var lookout = {
 	},
 	get_int_pref: function lo_get_int_pref( name, default_val ) {
 		return this.get_pref( name, "getIntPref", default_val );
+	},
+
+	debug_check: function lo_debug_check() {
+		// set debug level based on user preference
+		if(!this.get_bool_pref("debug_enabled")){
+		  debugLevel = 5;
+		} else {
+			debugLevel = 10;
+			this.log_msg( "LookOut: debug enabled ", 5 );
+		}
 	},
 
 	basename: function lo_basename( path ) {
@@ -832,6 +845,7 @@ var lookout_lib = {
 	},
 
 	on_end_all_attachments: function () {
+		lookout.debug_check();
 		lookout.log_msg( "LookOut: Entering on_end_all_attachments()", 6 ); //MKA
 		//attachment parsing has finished
 		lookout_lib.scan_for_tnef();
@@ -856,6 +870,7 @@ var lookout_lib = {
 var  LookoutInitWait = 0;
 
 function LookoutLoad () {
+		lookout.debug_check();
 		lookout.log_msg( "LookOut: Entering LookoutLoad()", 6 ); //MKA
 		// Make sure other global init has finished
 		// e.g. messageHeaderSink has been defined

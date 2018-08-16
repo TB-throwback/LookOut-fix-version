@@ -8,4 +8,5 @@
 <!ENTITY disable_filename_character_set_check.accesskey "F">
 <!ENTITY strict_contenttype_set_check.label "Strict Content Type Matching">
 <!ENTITY strict_contenttype_set_check.accesskey "S">
-
+<!ENTITY enable_debug.label "Enable Debugging">
+<!ENTITY enable_debug.accesskey "E">

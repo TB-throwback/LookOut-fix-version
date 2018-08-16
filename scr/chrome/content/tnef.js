@@ -11,7 +11,6 @@
  *   Calendaring and contact data is transcoded to standards formats.
  */
 
-const debugLevel = 5; //MKA Set 5 to switch off;
 
 
 const LVL_MESSAGE    = 0x1;
@@ -115,7 +114,7 @@ function tnef_attr_name_to_string( attr_name ) {
   case TNEF_ATTR_TNEF_VERSION: return "TNEF_VERSION";
   case TNEF_ATTR_OEM_CODEPAGE: return "OEM_CODEPAGE";
   case TNEF_ATTR_ORIGNINAL_MESSAGE_CLASS: return "ORIGNINAL_MESSAGE_CLASS";
-  
+
   default: return( "0x" + to_hex( attr_name, 2 ) );
   }
 }
@@ -153,7 +152,7 @@ function tnef_get_pref( name, get_type_func, default_val ) {
   }
   if( pref_val === void(0) )
     pref_val = default_val;
-  
+
   return pref_val;
 }
 function tnef_get_bool_pref( name, default_val ) {
@@ -172,9 +171,9 @@ function tnef_get_int_pref( name, default_val ) {
 function GETINT64( p, i ) {
   if( arguments.length < 2 )
     i = 0;
-  
+
   var val = 0;
-  
+
   if( typeof(p) == "string" ) {
     for( var j = 7; j >= 0; j-- )
       val = val*256 + p.charCodeAt( i + j );
@@ -205,7 +204,7 @@ function GETINT16( p, i ) {
 
 function GETUTF16( p, i, num_chars ) {
   var utf16_str = "";
-  
+
   if( arguments.length < 2 )
     i = 0;
   if( arguments.length < 3 || num_chars < 1 )
@@ -221,7 +220,7 @@ function GETUTF16( p, i, num_chars ) {
       i += 2;
     }
   }
-  
+
   return( utf16_str );
 }
 
@@ -233,7 +232,7 @@ function ntoa_pad( x, len, pad ) {
     pad = "0";
   if( pad.length > 1 )
     pad = pad[0];
-  
+
   while( str.length < len )
     str = pad + str;
   return( str );
@@ -262,13 +261,13 @@ function GETFLT32( p, i ) {
   // struct IEEE754FloatMPN { uint mantissa : 23; uint biased_exponent : 8; guint sign : 1; };
   if( arguments.length < 2 )
     i = 0;
-  
+
   var bin = typeof(p) == "string" ? [ p.charCodeAt(i), p.charCodeAt(i + 1),
 				      p.charCodeAt(i + 2), p.charCodeAt(i + 3) ] : p.slice( i, i + 4 );
   var precision_bits = 23, bias = 127; // IEEE754 Float
   var signal = 0x80 & bin[3], exponent = ((0xEF & bin[3]) << 1) + ((0x80 & bin[2]) >> 7);
   var significand = 0, divisor = 0.5, byte_idx = 2, start_bit, mask;
-  
+
   do {
     start_bit = precision_bits % 8 || 8;
     mask = 1 << start_bit;
@@ -280,7 +279,7 @@ function GETFLT32( p, i ) {
     precision_bits -= start_bit;
     byte_idx--;
   } while( precision_bits );
-  
+
   if( exponent == 255 ) // IEEE754 Float ((bias << 1) + 1)
     return( significand ? NaN : signal ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY );
   else if( exponent && significand )
@@ -296,7 +295,7 @@ function GETDBL64( p, i ) {
   // strut IEEE754DoubleMPN { uint mantissa_low : 32; uint mantissa_high : 20; uint biased_exponent : 11; uint sign : 1; };
   if( arguments.length < 2 )
     i = 0;
-  
+
   var bin = typeof(p) == "string" ? [ p.charCodeAt(i), p.charCodeAt(i + 1),
 				      p.charCodeAt(i + 2), p.charCodeAt(i + 3),
 				      p.charCodeAt(i + 4), p.charCodeAt(i + 5),
@@ -304,7 +303,7 @@ function GETDBL64( p, i ) {
   var precision_bits = 52, bias = 1023; // IEEE754 Double
   var signal = 0x80 & bin[7], exponent = ((0xEF & bin[7]) << 4) + ((0xF0 & bin[6]) >> 4);
   var significand = 0, divisor = 0.5, byte_idx = 6, start_bit, mask;
-  
+
   do {
     start_bit = precision_bits % 8 || 8;
     mask = 1 << start_bit;
@@ -316,7 +315,7 @@ function GETDBL64( p, i ) {
     precision_bits -= start_bit;
     byte_idx--;
   } while( precision_bits );
-  
+
   if( exponent == 2047 ) // IEEE754 Double ((bias << 1) + 1)
     return( significand ? NaN : signal ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY );
   else if( exponent && significand )
@@ -331,7 +330,7 @@ function GETDBL64( p, i ) {
 function unicode_to_utf8( buf ) {
   var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
                     .getService(Components.interfaces.nsIScriptableUnicodeConverter);
-  
+
   converter.charset = "UTF-16";
   converter.ConvertFromUnicode( buf );
   return( converter.ConvertFromUnicode( buf ) );
@@ -340,7 +339,7 @@ function unicode_to_utf8( buf ) {
 function tnef_base64_encode( str ) {
   var data="", chr1, chr2, chr3, enc1, enc2, enc3, enc4, i = 0;
   const key_str="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-  
+
   do {
     chr1 = str.charCodeAt( i++ );
     chr2 = str.charCodeAt( i++ );
@@ -356,7 +355,7 @@ function tnef_base64_encode( str ) {
     }
     data += key_str.charAt( enc1 ) + key_str.charAt( enc2 ) + key_str.charAt( enc3 ) + key_str.charAt( enc4 );
   } while( i < str.length );
-  
+
   return data;
 }
 
@@ -571,33 +570,33 @@ function tnef_file_add_attr( file, files, attr, pkg, listener ) {
   assert( file && attr );
   if( !(file && attr) )
     return;
-  
+
   // we only care about some things... we will skip most attributes
   switch( attr.name ) {
   case TNEF_ATTR_ATTACH_MODIFY_DATE:
     file.dt = tnef_attr_parse_date( attr );
     break;
-    
+
   case TNEF_ATTR_ATTACHMENT:
     var mapi_attrs = mapi_attr_read( attr.buf, attr.len );
     if( mapi_attrs ) {
       if( tnef_get_bool_pref( "attach_raw_mapi" ) )
 	tnef_pack_handle_mapi_attrs( pkg, mapi_attrs, listener );
-      
+
       tnef_file_add_mapi_attrs( file, files, pkg, mapi_attrs );
       mapi_attrs = null;
     }
     break;
-    
+
   case TNEF_ATTR_ATTACH_TITLE:
     file.name = tnef_file_munge_fname( attr.buf, files, pkg.code_page );
     break;
-    
+
   case TNEF_ATTR_ATTACH_DATA:
     file.len = attr.len;
     file.data = attr.buf;
     break;
-    
+
   default:
     break;
   }
@@ -774,7 +773,7 @@ function tnef_attr_check_checksum( attr, checksum ) {
     sum += attr.buf.charCodeAt(i);
 
   sum &= 0xFFFF;
-  
+
   tnef_log_msg( "checksum = " + checksum + "  sum = " + sum, sum != checksum ? 3 : 8 );
 
   return( sum == checksum );
@@ -790,21 +789,21 @@ function tnef_attr_incomplete( attr ) {
 
 function tnef_attr_read( instrm, prev_attr ) {
   var attr = null;
-  
+
   if( prev_attr ) {
     attr = prev_attr;
   } else {
     attr = new TnefAttr();
-    
+
     attr.lvl_type = instrm.read8();
     assert( attr.lvl_type == LVL_MESSAGE || attr.lvl_type == LVL_ATTACHMENT );
-    
+
     attr.name = GETINT16( instrm.readByteArray( 2 ) );
     attr.type = GETINT16( instrm.readByteArray( 2 ) );
     attr.len = GETINT32( instrm.readByteArray( 4 ) );
     tnef_byte_pos += 9;
   }
-  
+
   tnef_log_msg( "TNEF: reading attr\n"
                 + "  lvl_type: 0x" + to_hex( attr.lvl_type, 1 )
                 + ",  name: " + tnef_attr_name_to_string( attr.name )
@@ -813,7 +812,7 @@ function tnef_attr_read( instrm, prev_attr ) {
                 + ",  togo: " + (attr.len - (attr.buf ? attr.buf.length : 0))  // attr.buf might be NULL!
                 + ",  pos in TNEF: " + (tnef_byte_pos - 9)
                 , 15 );  //MKA 6
-  
+
   var available = instrm.available();
   if( available > 0 ) {
     var togo = 0;
@@ -825,10 +824,10 @@ function tnef_attr_read( instrm, prev_attr ) {
     }
     if( togo > available )
       togo = available;
-    
+
     attr.buf += instrm.readBytes( togo );
     tnef_byte_pos += togo;
-    
+
     if( attr.buf.length == attr.len ) {
       var checksum = GETINT16( instrm.readByteArray( 2 ) );
       tnef_byte_pos += 2;
@@ -842,7 +841,7 @@ function tnef_attr_read( instrm, prev_attr ) {
       tnef_log_msg( "TNEF: waiting for " + (attr.len - attr.buf.length) + " more bytes", 20 ); //MKA 8
     }
   }
-  
+
   return( attr );
 }
 
@@ -945,7 +944,7 @@ function mapi_attr_read( buf, len ) {
 	idx += 4;
       }
     }
-    
+
     switch( mattrs[i].type ) {
     case MAPI_NULL:
       mattrs[i].num_values = 0;
@@ -1035,13 +1034,13 @@ function mapi_attr_read( buf, len ) {
 
 function mapi_attr_find( mattrs, name_id ) {
   var i;
-  
+
   if( !mattrs )
     return( null );
-  
+
   for( i = 0; mattrs[i] && mattrs[i].name != name_id; i++ );
   if( mattrs[i] ) {
-    
+
     return( mattrs[i] );
   } else
     return( null );
@@ -1081,7 +1080,7 @@ function decompress_rtf_data( src, len ) {
   var dest = new String( "" ); // size is rtf_prebuf_len + len;
 
   dest += rtf_prebuf;
-  
+
   numout = rtf_prebuf_len;
   while( numout < len + rtf_prebuf_len ) {
     // each flag byte flags 8 literals/references, 1 per bit
@@ -1101,11 +1100,11 @@ function decompress_rtf_data( src, len ) {
        * the beginning when the end is reached.  we save the
        * need for this by pointing straight into the data
        * buffer, and simulating this behaviour by modifying the
-       * pointers appropriately */ 
+       * pointers appropriately */
       offset = (numout&0xfffff000) + offset;
       if( offset >= numout )
 	offset -= 4096; // from previous block
-      
+
       var end = offset + length;
       while( offset < end ) {
 	dest += dest.charAt( offset );
@@ -1119,7 +1118,7 @@ function decompress_rtf_data( src, len ) {
     }
     numout = dest.length;
   }
-    
+
   return( dest.slice( rtf_prebuf_len ) );
 }
 
@@ -1154,7 +1153,7 @@ function rtf_data_parse( data, len ) {
     out_data = data.slice( 4, 4 + uncompr_size - 1 );
   else if( magic == rtf_compressed_magic ) // compressed rtf stream
     out_data = decompress_rtf_data( data.slice( idx, idx + compr_size - 1 ), uncompr_size );
-  
+
   return( out_data );
 }
 
@@ -1164,7 +1163,7 @@ function rtf_to_escaped_text( rtf_data ) {
   var index, cur_char, in_escape = false, in_par = false, target;
   var block_depth = 0;
   var text = "";
-  
+
   target = rtf_data.indexOf( "When" );
   index = rtf_data.indexOf( "\\pard\\plain" );
   if( index < 0 )
@@ -1174,7 +1173,7 @@ function rtf_to_escaped_text( rtf_data ) {
       cur_char = rtf_data.charAt( index );
     else
       cur_char = rtf_data[index];
-    
+
     if( cur_char == '}' ) {
       block_depth--;
       in_escape = false;
@@ -1185,13 +1184,13 @@ function rtf_to_escaped_text( rtf_data ) {
 	in_escape = true;
       else if( in_escape && " \t\n\r".indexOf( cur_char ) >= 0 )
 	in_escape = false;
-      
+
       if( index == target )
 	tnef_log_msg( "found target block_depth = " + block_depth + ", in_escape = " + in_escape, 7 );
       if( block_depth == 1 && !in_escape ) {
 	if( cur_char == '\n' ) {
-	  text += "\\n"; 
-	} else if( cur_char == '\r' ) { 
+	  text += "\\n";
+	} else if( cur_char == '\r' ) {
 	  // intentionally empty
 	} else if( cur_char == ';' ) {
 	  text += "\\;";
@@ -1199,15 +1198,15 @@ function rtf_to_escaped_text( rtf_data ) {
 	  text += "\\,";
 	} else if( cur_char == '\\') {
 	  text += "\\";
-	} else { 
+	} else {
 	  text += cur_char;
-	} 
+	}
       }
     }
   }
-  
+
   text += "\n";
-  
+
   return( text );
 }
 
@@ -1223,7 +1222,7 @@ const TNEF_SIGNATURE = 0x223e9f78;
 
 function TnefListenerInterface() {
 }
-TnefListenerInterface.prototype = {  
+TnefListenerInterface.prototype = {
   onTnefStart: function ( filename, content_type, length, date ) { },
   onTnefData: function ( position, data ) { },
   onTnefEnd: function ( ) { }
@@ -1272,7 +1271,7 @@ function decompose_rfc822_address( address ) {
     parts = [ address, "" ];
   if( parts ) // if we have something work it over
     parts[0] = strtrim( parts[0] ); // trim up the phrase
-  
+
   return( parts );
 }
 
@@ -1280,21 +1279,21 @@ var ownHeaderParser = Components.classes["@mozilla.org/messenger/headerparser;1"
 
 function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
   var orig_addr_parts = decompose_rfc822_address( orig_name_addr );
-  
+
   // if email address not in the name_addr then hunt through the message header
   if( pkg.msg_header && (!orig_addr_parts[1] || orig_addr_parts[1] == "") ) {
     var all_addrs = [], all_names = [];
     var addrs = {}, names = {}, full_names = {};
     var i, num_addrs;
-    
+
     function rm_quotes( element, idx, array ) {
       var matches = array[idx].match( /\042([^\042]*)\042|\047([^\047]*)\047/ );
       if( matches && matches.length > 0 )
 	array[idx] = matches.length < 2 || (matches[1] && matches[1] != "") ? matches[1] : matches[2];
     }
-    
+
     orig_addr_parts[1] = "";
-    
+
     num_addrs = ownHeaderParser.parseHeadersWithArray( pkg.msg_header.author, addrs, names, full_names );
     all_addrs = addrs.value;
     all_names = names.value;
@@ -1304,14 +1303,14 @@ function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
     num_addrs += ownHeaderParser.parseHeadersWithArray( pkg.msg_header.ccList, addrs, names, full_names );
     all_addrs = all_addrs.concat( addrs.value );
     all_names = all_names.concat( names.value );
-    
+
     all_names.forEach( rm_quotes );
 
     for( i = 0; i < all_names.length && orig_addr_parts[1] == ""; i++ )
       if( all_names[i] == orig_addr_parts[0] )
 	orig_addr_parts[1] = all_addrs[i];
   }
-  
+
   return( orig_addr_parts );
 }
 
@@ -1330,16 +1329,16 @@ function tnef_pack_data_left( instrm ) {
 // Reads and decodes a object from the stream
 function tnef_pack_read_object( pkg, instrm ) {
   var togo = 0;
-  
+
   if( pkg.cur_attr )
     togo = pkg.cur_attr.len - pkg.cur_attr.buf.length;
   else
     togo = MINIMUM_ATTR_LENGTH;
-  
+
   // peek to see if there is more to read from this stream
   if( !pkg.cur_attr && instrm.available() < togo )
     return( null );
-  
+
   return( tnef_attr_read( instrm, pkg.cur_attr ) );
 }
 
@@ -1347,16 +1346,16 @@ function tnef_pack_read_object( pkg, instrm ) {
 function tnef_pack_handle_body_part( pkg, data, len, content_type, listener ) {
   if( !data )
     return;
-  
+
   var body_part_prefix = tnef_get_string_pref( "body_part_prefix", "body_part_" );
-  
+
   var file = new TnefFile( pkg );
-  
+
   if( typeof( data ) == "Array" )
     file.data = String.fromCharCode.apply( null, data );
   else
     file.data = data;
-  
+
   file.name = body_part_prefix + pkg.num_body_parts;
   switch( content_type ) {
   case "text/plain": file.name += ".txt"; break;
@@ -1368,7 +1367,7 @@ function tnef_pack_handle_body_part( pkg, data, len, content_type, listener ) {
   file.len = len;
   file.mime_type = content_type;
   tnef_file_notify( file, listener, true );
-  
+
   pkg.num_body_parts++;
 }
 
@@ -1396,10 +1395,10 @@ function tnef_pack_handle_rtf_data( pkg, mattr, listener ) {
 function tnef_pack_handle_mapi_attrs( pkg, mattrs, listener ) {
   var data = "";
   var i = 0;
-  
+
   if( !mattrs )
     return( null );
-  
+
   for( i = 0; i < mattrs.length && mattrs[i]; i++ ) {
     data += mattr_name_to_string( mattrs[i].name, pkg.msg_class ) +
             ": type=" + mattr_type_to_string( mattrs[i].type ) + ";";
@@ -1431,32 +1430,32 @@ function tnef_pack_handle_mapi_attrs( pkg, mattrs, listener ) {
       data += " void";
     }
     data += "\n";
-    
+
     //if (DEBUG_ON) mapi_attr_dump (a);
   }
-  
+
   tnef_pack_handle_body_part( pkg, data, data.length, "text/plain", listener );
 }
 
 function mescape( str ) {
   var i = 0;
   var newstr;
-  
+
   newstr = str.replace( "\n", "\\n" );
   newstr = newstr.replace( "\t", "\\t" );
   newstr = newstr.replace( ",", "\\," );
   newstr = newstr.replace( "\"", "\\\"" );
-  
+
   return( newstr );
 }
-    
+
 function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
   var vcal_str = "BEGIN:VCARD\n";
   var mattr = null;
-  
+
   vcal_str += "PRODID:-//Mozilla//Mozilla Mail//EN\n";
   vcal_str += "VERSION:2.1\n";
-  
+
   mattr = mapi_attr_find( mattrs, MAPI_SENDER_SEARCH_KEY );
   if( !mattr )
     mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_ORGANIZER_ALIAS );
@@ -1477,7 +1476,7 @@ function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
   if( mattr && mattr.num_values > 0 ) {
     vcal_str += "TITLE:" + mattr.values[0] + "\n";
   }
-  
+
   mattr = mapi_attr_find( mattrs, MAPI_CONTACT_BUSINESS_PHONE );
   if( mattr && mattr.num_values > 0 )
     vcal_str += "TEL;TYPE=work,voice:" + mattr.values[0] + "\n";
@@ -1502,7 +1501,7 @@ function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
 
   // Wrap it up
   vcal_str += "END:VCARD\n";
-  
+
   if( vcal_str )
     tnef_pack_handle_body_part( pkg, vcal_str, vcal_str.length, "text/x-vcard", listener );
 }
@@ -1544,12 +1543,12 @@ function tnef_pack_appt_attendees_ics( pkg, liststr, role ) {
   var vcal_str = "";
   var atnd = 0;
   var attendees;
-  
+
   if( liststr == "" )
     return( "" );
-  
+
   attendees = liststr.split( ";" );
-  
+
   for( atnd = 0; atnd < attendees.length; atnd++ ) {
     var parts = tnef_pack_get_name_addr( pkg, attendees[atnd] );
     vcal_str += "ATTENDEE;PARTSTAT=NEEDS-ACTION;ROLE="+role+";RSVP=TRUE";
@@ -1558,7 +1557,7 @@ function tnef_pack_appt_attendees_ics( pkg, liststr, role ) {
     else
       vcal_str += ":" + parts[0] + "\n";
   }
-  
+
   return( vcal_str );
 }
 
@@ -1567,17 +1566,17 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
   var vcal_str = "BEGIN:VCALENDAR\n";
   var mattr = null;
   var is_meeting = pkg.msg_class.indexOf( ".Meeting." ) >= 0;
-  
+
   if( pkg.msg_class && (pkg.msg_class.indexOf( ".MtgCncl" ) >= 0 ||
 			pkg.msg_class.indexOf( ".Meeting.Canceled" ) >=0) )
     vcal_str += "METHOD:CANCEL\n";
   else
     vcal_str += "METHOD:REQUEST\n";
-  
+
   vcal_str += "PRODID:-//Mozilla//Mozilla Mail//EN\n";
   vcal_str += "VERSION:2.0\n";
   vcal_str += "BEGIN:VEVENT\n";
-  
+
   mattr = mapi_attr_find( mattrs, MAPI_MEETING_CLEAN_GLOBAL_OBJECT_ID );
   if( !mattr )
     mattr = mapi_attr_find( mattrs, MAPI_MEETING_GLOBAL_OBJECT_ID );
@@ -1585,18 +1584,18 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
     mattr = mapi_attr_find( mattrs, MAPI_MAPPING_SIGNATURE );
   if( mattr && mattr.num_values > 0 ) {
     var i = 0;
-    
+
     vcal_str += "UID:";
     for( i = 0; i < mattr.values[0].length; i++ )
       vcal_str += to_hex( mattr.values[0].charCodeAt( i ), 1 );
     vcal_str += "\n";
   }
-  
+
   // Sequence
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_SEQUENCE );
   if( mattr && mattr.num_values > 0 )
     vcal_str += "SEQUENCE:" + mattr.values[0] + "\n";
-  
+
   mattr = mapi_attr_find( mattrs, MAPI_PRIMARY_SEND_ACCOUNT );
   if( mattr && mattr.num_values > 0 ) {
     var parts = mattr.values[0].split( "\001" );
@@ -1627,14 +1626,14 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
 	vcal_str += ":" + parts[0] + "\n";
     }
   }
-  
+
   // Required Attendees
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_REQUIRED_ATTENDEES );
   if( !mattr )
     mattr = mapi_attr_find( mattrs, MAPI_MEETING_REQUIRED_ATTENDEES );
   if( mattr && mattr.num_values > 0 )
     vcal_str += tnef_pack_appt_attendees_ics( pkg, mattr.values[0], "REQ-PARTICIPANT" );
-  
+
   // Optional attendees
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_OPTIONAL_ATTENDEES );
   if( !mattr )
@@ -1642,23 +1641,23 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
   if( mattr && mattr.num_values > 0 ) {
     vcal_str += tnef_pack_appt_attendees_ics( pkg, mattr.values[0], "OPT-PARTICIPANT" );
   }
-  
+
   mattr = mapi_attr_find( mattrs, MAPI_CONVERSATION_TOPIC );
   if( mattr )
     vcal_str += "SUMMARY:" + mattr.values[0] + "\n";
-  
+
   mattr = mapi_attr_find( mattrs, MAPI_RTF_COMPRESSED );
   if( mattr ) {
     var rtf_data = rtf_data_parse( mattr.values[0], mattr.values[0].length );
     vcal_str += "DESCRIPTION:" + rtf_to_escaped_text( rtf_data );
   }
-  
+
   // Location
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_LOCATION );
   if( mattr ) {
     vcal_str += "LOCATION:" + mescape( mattr.values[0] ) + "\n";
   }
-  
+
   // Date Start
   mattr = mapi_attr_find( mattrs, MAPI_START_DATE );
   if( !mattr || !mattr.num_values )
@@ -1669,7 +1668,7 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
     var dt = mattr.values[0];
     vcal_str += "DTSTART:" + ical_date_string( dt ) + "\n";
   }
-  
+
   // Date End
   mattr = mapi_attr_find( mattrs, MAPI_END_DATE );
   if( !mattr || !mattr.num_values )
@@ -1680,20 +1679,20 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
     var dt = mattr.values[0];
     vcal_str += "DTEND:" + ical_date_string( dt ) + "\n";
   }
-  
+
   // Date Stamp
   mattr = mapi_attr_find( mattrs, MAPI_CREATION_TIME );
   if( mattr && mattr.num_values ) {
     var dt = mattr.values[0];
     vcal_str += "CREATED:" + ical_date_string( dt ) + "\n";
   }
-  
+
   // Class
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_SEQUENCE_TIME );
   if( mattr && mattr.num_values ) {
     //vcal_str += "CLASS:" + (mattr.values[0] == 1 ? "PRIVATE" : "PUBLIC") + "\n";
   }
-  
+
   const MAPI_APPT_RECUR_FREQ_DAILY	  = 0x200A;
   const MAPI_APPT_RECUR_FREQ_WEEKLY	  = 0x200B;
   const MAPI_APPT_RECUR_FREQ_MONTHLY	  = 0x200C;
@@ -1710,7 +1709,7 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
   const MAPI_APPT_RECUR_END_AFTER_OCCURS  = 0x00002021;
   const MAPI_APPT_RECUR_END_NEVER	  = 0x00002023;
   const MAPI_APPT_RECUR_END_NEVER_EVER	  = 0xFFFFFFFF;
-  
+
   // Recurrence
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_RECUR );
   if( mattr && mattr.num_values ) {
@@ -1731,7 +1730,7 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
     var mod_inst_start = del_inst_end + 4, mod_inst_end = mod_inst_start + 4*mod_inst_cnt;
     var start_date = date_from_1601_mins( GETINT32( mattr.values[0], mod_inst_end ) );
     var end_date = date_from_1601_mins( GETINT32( mattr.values[0], mod_inst_end + 4 ) );
-    
+
     vcal_str += "RRULE:";
     switch( recur_freq ) {
     case MAPI_APPT_RECUR_FREQ_DAILY:   vcal_str += "FREQ=DAILY"; break;
@@ -1739,15 +1738,15 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
     case MAPI_APPT_RECUR_FREQ_MONTHLY: vcal_str += "FREQ=MONTHLY"; break;
     case MAPI_APPT_RECUR_FREQ_YEARLY:  vcal_str += "FREQ=YEARLY"; break;
     }
-    
+
     vcal_str += ";INTERVAL=" + period*(recur_freq == MAPI_APPT_RECUR_FREQ_DAILY ? 1/1440 : 1);
-    
+
     switch( end_type ) {
     case MAPI_APPT_RECUR_END_AFTER_DATE:   vcal_str += ";UNTIL=" + ical_date_string( end_date ); break;
     case MAPI_APPT_RECUR_END_AFTER_OCCURS: vcal_str += ";COUNT=" + occur_cnt; break;
     case MAPI_APPT_RECUR_END_NEVER: case MAPI_APPT_RECUR_END_NEVER_EVER: break;
     }
-    
+
     switch( patt_type ) {
     case MAPI_APPT_RECUR_PATT_WEEK:
       vcal_str += ";BYDAY=" + ical_day_list_from_bitset( patt_type_spec );
@@ -1760,14 +1759,14 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
       vcal_str += ";BYDAY=" + ical_day_list_from_bitset( patt_type_spec );
       vcal_str += ";BYSETPOS=" + (patt_type_spec2 == 0x05 ? -1 : patt_type_spec2);
     }
-    
+
     vcal_str += "\n";
   }
-  
+
   // Wrap it up
   vcal_str += "END:VEVENT\n";
   vcal_str += "END:VCALENDAR\n";
-  
+
   if( vcal_str )
     tnef_pack_handle_body_part( pkg, vcal_str, vcal_str.length, "text/calendar", listener );
 }
@@ -1780,27 +1779,27 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
   var pkg = null;
 
   tnef_log_msg( "TNEF: Entering tnef_pack_parse_stream()", 6); //MKA
-  
+
   if( prev_pack ) {
     pkg = prev_pack;
   } else {
     pkg = new TnefPackage();
     pkg.msg_header = msg_header;
-    
+
     // check that this is in fact a TNEF file
     sig = GETINT32( instrm.readByteArray( 4 ) );
     if( sig != TNEF_SIGNATURE ) {
       tnef_log_msg( "sig = " + sig + "\nSeems not to be a TNEF file\n", 8 );
       return( null );
     }
-    
+
     // Get the key
     key = GETINT16( instrm.readByteArray( 2 ) );
     tnef_log_msg( "TNEF Key: " + to_hex( key, 2 ), 8 );
-    
+
     tnef_byte_pos = 6;
   }
-  
+
   // The rest of the file is a series of 'messages' and 'attachments'
   pkg.cur_attr = tnef_pack_read_object( pkg, instrm );
   if( pkg.cur_attr && tnef_attr_incomplete( pkg.cur_attr ) )
@@ -1823,17 +1822,17 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
     case LVL_MESSAGE:
       if( pkg.cur_attr.name == TNEF_ATTR_BODY ) {
 	tnef_pack_handle_text_attr( pkg, pkg.cur_attr, listener );
-      } else if( pkg.cur_attr.name == TNEF_ATTR_MESSAGE_CLASS ) { 
+      } else if( pkg.cur_attr.name == TNEF_ATTR_MESSAGE_CLASS ) {
 	pkg.msg_class = pkg.cur_attr.buf;
-      } else if( pkg.cur_attr.name == TNEF_ATTR_MAPI_PROPS ) { 
-	var mapi_attrs = mapi_attr_read( pkg.cur_attr.buf, pkg.cur_attr.len ); 
-	
+      } else if( pkg.cur_attr.name == TNEF_ATTR_MAPI_PROPS ) {
+	var mapi_attrs = mapi_attr_read( pkg.cur_attr.buf, pkg.cur_attr.len );
+
 	if( mapi_attrs ) {
 	  var has_contact_data = false;
-	  
+
 	  if( tnef_get_bool_pref( "attach_raw_mapi" ) )
 	    tnef_pack_handle_mapi_attrs( pkg, mapi_attrs, listener );
-	  
+
 	  for( i = 0; mapi_attrs[i]; i++ ) {
 	    switch( mapi_attrs[i].name ) {
 	    case MAPI_BODY_HTML:
@@ -1847,11 +1846,11 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
 	      // tnef_file_add_mapi_attrs( pkg.cur_file, mapi_attrs );
 	      break;
 	    }
-	    
+
 	    if( mapi_attrs[i].name > 0x3A00 && mapi_attrs[i].name <= 0x3AFF )
 	      has_contact_data = true;
 	  }
-	  
+
 	  // Message			"IPM"  "IPM.Microsoft Mail.Note"  "IPM.Note"
 	  // Meeting Request		"IPM.Microsoft Schedule.MtgReq"	  "IPM.Schedule.Meeting.Request"
 	  // Positive Meeting Response	"IPM.Microsoft Schedule.MtgRespP" "IPM.Schedule.Meeting.Resp.Pos"
@@ -1865,10 +1864,10 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
 	       pkg.msg_class.substring( 0, 12 ) == "IPM.Schedule" ||
 	       pkg.msg_class.substring( 0, 22 ) == "IPM.Microsoft Schedule") )
 	    tnef_pack_handle_appt_data( pkg, mapi_attrs, listener );
-	  
+
 	  if( has_contact_data )
 	    tnef_pack_handle_contact_data( pkg, mapi_attrs, listener );
-	  
+
 	  mapi_attrs = null;
 	}
       }
@@ -1877,7 +1876,7 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
       if( !pkg.cur_file )
 	pkg.cur_file = new TnefFile( pkg );
       tnef_file_add_attr( pkg.cur_file, pkg.files, pkg.cur_attr, pkg, listener );
-      
+
       // remember attachment file name to avoid collisions
       if( pkg.cur_file.name && pkg.cur_file.len > 0 )
 	pkg.files.push( pkg.cur_file.name );
@@ -1899,7 +1898,7 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
   }
   if( pkg.cur_attr )
     pkg.cur_attr = null;
-  
+
   return( null );
 }
 
