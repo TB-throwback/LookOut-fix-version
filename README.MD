@@ -27,9 +27,6 @@ As an option all MAPI properties within a email can be viewed so other types of 
 
 # Debugging
 
-Edit the file `chrome\content\tnef.js`
-```js
+Debugging can be enabled in the settings menu. Output will be presented in the error console.
 
-const debugLevel = 5; //MKA Set 5 to switch off 10 to enable debugging;
-
-```
+Note: Re-opening a message is necessary to see any debug outputs after setting change.
