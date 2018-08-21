@@ -1,2 +1,4 @@
-TB 60 Support
-fixed: Transparent settings dialogue and save all functionality caused by a method deprecation in Gecko 57.0
+Added: Debugging switch with fail to verbose
+Added: Re-Introduces Strict Content Type Matching to improve performance
+Added: Exposed the Strict Content Type Matching as a preference
+Fixed: Individual File Save As command
