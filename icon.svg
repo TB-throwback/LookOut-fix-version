@@ -33,9 +33,9 @@
      inkscape:snap-center="true"
      inkscape:object-paths="true"
      inkscape:object-nodes="true"
-     inkscape:zoom="2.7595579"
-     inkscape:cx="141.12848"
-     inkscape:cy="125.29892"
+     inkscape:zoom="1.9513021"
+     inkscape:cx="52.395092"
+     inkscape:cy="150.59442"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -15973,18 +15973,6 @@
      d="m 13.614861,22.432827 v 22.40547 c 0,1.21973 0.981876,2.202 2.201607,2.202 H 49.24189 c 1.219731,0 2.201608,-0.98227 2.201608,-2.202 v -21.50485 c 0,-1.21973 -0.981877,-2.20161 -2.201608,-2.20161 H 30.313641 l -2.387981,1.30099 z"
      id="path4775"
      inkscape:connector-curvature="0" />
-  <path
-     style="opacity:0.25;fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 190,80.300781 0.0332,0.0332 -130.449216,39.072266 v 54.76367 l -8.077846,-1.22218 61.355192,61.38234 h 110.35742 c 6.15587,0 11.11133,-4.95546 11.11133,-11.11133 V 105.89453 Z"
-     transform="scale(0.26458333)"
-     id="path4765"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ccccccsscc" />
-  <path
-     style="fill:#000000;fill-rule:evenodd;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.25"
-     d="m 43.769311,19.023243 h 1.315434 l 2.735649,1.579427 h -8.315692 l 1.533035,-1.533037 z"
-     id="path4754"
-     inkscape:connector-curvature="0" />
   <g
      transform="matrix(0.00572406,0,0,0.00582728,31.009146,50.23228)"
      id="g8323"
@@ -16230,6 +16218,11 @@
      id="rect821"
      d="m 15.287276,17.48888 h 7.845162 l 6.651869,3.11364 h 18.928417 c 1.219731,0 2.201681,0.98195 2.201681,2.20168 v 21.50509 c 0,1.21973 -0.98195,2.20169 -2.201681,2.20169 H 15.287276 c -1.219731,0 -2.201681,-0.98196 -2.201681,-2.20169 V 19.69056 c 0,-1.21973 0.98195,-2.20168 2.201681,-2.20168 z"
      style="opacity:1;fill:#ffdd55;fill-opacity:1;stroke:none;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+  <path
+     style="opacity:0.25;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:3.77952766;stroke-miterlimit:4;stroke-dasharray:none"
+     d="M 190 80.300781 L 154.94922 115.35156 L 133.42383 93.824219 L 52.976562 174.27344 L 113.0332 234.33008 L 223.21875 234.33008 C 229.37462 234.33008 234.33008 229.37462 234.33008 223.21875 L 234.33008 124.63086 L 190 80.300781 z "
+     transform="scale(0.26458333)"
+     id="rect4667" />
   <path
      inkscape:connector-curvature="0"
      id="path875"
