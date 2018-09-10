@@ -352,46 +352,26 @@ LookoutStreamListener.prototype = {
 
 
 		if( this.action_type == LOOKOUT_ACTION_SCAN ) {
-			lookout.log_msg( "LookOut:    adding attachment: " + mimeurl, 7 );
-			lookout_lib.add_sub_attachment_to_list( this.attachment, content_type, filename,
-																							this.mPartId, mimeurl, this.mMsgUri, length );
-		} else {
-			lookout.log_msg( "LookOut:    open or save: " + this.mAttUrl + "." + this.mPartId, 7 );
+
 			if( !this.req_part_id || this.mPartId == this.req_part_id ) {
-	// ensure these are null for the following case evaluation
-	this.cur_outstrm = null;
-	this.cur_outstrm_listener = null;
-	// fill in all known info
-				this.cur_filename = filename;
-				this.cur_content_type = content_type;
-				this.cur_length = length;
-				this.cur_date = date;
-				this.cur_url = mimeurl;
+				lookout.log_msg( "LookOut:    adding attachment: " + mimeurl, 7 );
+				this.cur_outstrm = null;
+				var outfile = lookout.make_temp_file( filename );
+				var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+				this.cur_url = ios.newFileURI( outfile );
+				this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
+																	 .createInstance(Components.interfaces.nsIFileOutputStream);
+				this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
 
-	if( lookout.get_bool_pref( "direct_to_calendar" ) &&
-			content_type == "text/calendar" ) {
-		try {
-			this.cur_outstrm_listener = Components.classes["@mozilla.org/calendar/import;1?type=ics"]
-																		.getService(Components.interfaces.calIImporter);
-		} catch (ex) { }
-		if( this.cur_outstrm_listener ) {
-			// we are using the default interface of Output Stream to be consistent
-			this.cur_outstrm = Components.classes["@mozilla.org/storagestream;1"].createInstance(Components.interfaces.nsIOutputStream);
-			this.cur_outstrm.QueryInterface(Components.interfaces.nsIStorageStream).init( 4096, 0xFFFFFFFF, null );
-		}
-	}
+				var fileuri = this.cur_url.spec
 
-	if( !this.cur_outstrm ) {
-		var outfile = lookout.make_temp_file( filename );
-		var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-		this.cur_url = ios.newFileURI( outfile );
+				lookout.log_msg( "LookOut:    adding attachment: " + fileuri, 7 );
 
-		this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
-															 .createInstance(Components.interfaces.nsIFileOutputStream);
-		this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
-	}
+				lookout_lib.add_sub_attachment_to_list( this.attachment, content_type, filename,
+																								this.req_part_id, fileuri, this.mMsgUri, length );
 			}
 		}
+
 		lookout.log_msg( "LookOut:    Parent: " + this.attachment
 									 + "\n            mMsgUri: " + this.mMsgUri
 									 + "\n            requested Part_ID: " + this.req_part_id
@@ -677,7 +657,7 @@ var lookout_lib = {
 		if( typeof AttachmentInfo != 'undefined' ) {
 			// New naming -- used since Thunderbird 7.*
 			// http://mxr.mozilla.org/comm-central/source/mail/base/content/msgHdrViewOverlay.js#1642
-			var attachment = new AttachmentInfo( content_type, atturl, display_name, msguri, true, length );
+			var attachment = new AttachmentInfo( content_type, atturl, display_name, msguri, true, length);
 			lookout.log_msg( "LookOut:    found new type object: AttachmentInfo ~ Thunderbird 7", 6 );  //MKA
 		}
 		else {
@@ -687,39 +667,40 @@ var lookout_lib = {
 			lookout.log_msg( "LookOut:    found old type object: createNewAttachmentInfo ~ Seamonkey", 6 );  //MKA
 		}
 
-		if( attachment.open ) {
-			// New naming -- used since Thunderbird 7.*
-			attachment.lo_orig_open = attachment.open;
-			attachment.open = function () {
-				lookout_lib.open_attachment( this );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.open", 6 );  //MKA
-		} else {
-			// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
-			attachment.lo_orig_open = attachment.openAttachment;
-			attachment.openAttachment = function () {
-				lookout_lib.open_attachment( this );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.openAttachment", 6 );
-		}
-
-		if( attachment.save ) {
-			// New naming -- used since Thunderbird 7.*
-			attachment.lo_orig_save = attachment.save;
-			attachment.save = function (save_dir) {
-				lookout_lib.save_attachment( this, save_dir );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
-		} else {
-			// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
-			attachment.lo_orig_save = attachment.saveAttachment;
-			attachment.saveAttachment = function (save_dir) {
-				lookout_lib.save_attachment( this, save_dir );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.saveAttachment", 6 );
-		}
+		// if( attachment.open ) {
+		// 	// New naming -- used since Thunderbird 7.*
+		// 	attachment.lo_orig_open = attachment.open;
+		// 	attachment.open = function () {
+		// 		lookout_lib.open_attachment( this );
+		// 	};
+		// 	lookout.log_msg( "LookOut:    registered own function for attachment.open", 6 );  //MKA
+		// } else {
+		// 	// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
+		// 	attachment.lo_orig_open = attachment.openAttachment;
+		// 	attachment.openAttachment = function () {
+		// 		lookout_lib.open_attachment( this );
+		// 	};
+		// 	lookout.log_msg( "LookOut:    registered own function for attachment.openAttachment", 6 );
+		// }
+		//
+		// if( attachment.save ) {
+		// 	// New naming -- used since Thunderbird 7.*
+		// 	attachment.lo_orig_save = attachment.save;
+		// 	attachment.save = function (save_dir) {
+		// 		lookout_lib.save_attachment( this, save_dir );
+		// 	};
+		// 	lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
+		// } else {
+		// 	// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
+		// 	attachment.lo_orig_save = attachment.saveAttachment;
+		// 	attachment.saveAttachment = function (save_dir) {
+		// 		lookout_lib.save_attachment( this, save_dir );
+		// 	};
+		// 	lookout.log_msg( "LookOut:    registered own function for attachment.saveAttachment", 6 );
+		// }
 
 		attachment.parent = parent;
+		attachment.partID = display_name;
 		attachment.part_id = part_id;
 		currentAttachments.push( attachment );
 		lookout.log_msg( attachment.toSource(), 8 );
