@@ -1,5 +1,5 @@
-﻿<!ENTITY prefwindow.title "LookOut beállítások">
-<!ENTITY pane1.title "LookOut preferences">
+﻿<!ENTITY prefwindow.title "MutasdMeg! beállítások">
+<!ENTITY pane1.title "MutasdMeg! beállítások">
 <!ENTITY attach_raw_mapi_check.label "MAPI tulajdonságok tárolása">
 <!ENTITY attach_raw_mapi_check.accesskey "M">
 <!ENTITY direct_to_calendar_check.label "Naptáradatok közvetlen megnyitása">
