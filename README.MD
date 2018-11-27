@@ -22,7 +22,7 @@ Please before use, remove or disable the original LookOut and LookOut+ !
 ## What is LookOut?
 
 LookOut is a plugin which allows Thunderbird (and SeaMonkey) to interface with Microsoft’s mail tools by decoding metadata and attachments encapsulated/embedded in a TNEF encoded attachment (aka winmail.dat).
-The TNEF decoding engine was inspired (with permission) by the TNEF project. LookOut has a full MAPI decoder and the ability to transcode some of those properties to [iCalendar (ics)](https://en.wikipedia.org/wiki/ICalendar) and [vCard (vcf)](https://en.wikipedia.org/wiki/VCard) formats.
+The TNEF decoding engine was inspired (with permission) by the [TNEF project](https://github.com/verdammelt/tnef). LookOut has a full MAPI decoder and the ability to transcode some of those properties to [iCalendar (ics)](https://en.wikipedia.org/wiki/ICalendar) and [vCard (vcf)](https://en.wikipedia.org/wiki/VCard) formats.
 As an option all [MAPI](https://en.wikipedia.org/wiki/MAPI) properties within a email can be viewed so other types of information can be deciphered.
 
 # Debugging
