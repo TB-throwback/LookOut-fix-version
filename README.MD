@@ -17,7 +17,7 @@ Now it is called LookOut (fix version) and works with all new Thunderbird versio
 LookOut (fix version) is based on the last version of LookOut+ 1.2.15 by Attila K. Mergl (Last Updated: October 15, 2013)
 https://addons.thunderbird.net/addon/lookout-1/
 
-Please before use, remove or disable the original LookOut and LookOut+ !
+Before use, please remove or disable the original LookOut and LookOut+ !
 
 ## What is LookOut?
 
