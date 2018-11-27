@@ -2,9 +2,9 @@
 
 [This is a copy of the source code for the addon by Oleksandr](https://addons.thunderbird.net/nn-NO/thunderbird/addon/lookout-fix-version/)
 
-LookOut is a plugin which allows Thunderbird to interface with Microsoft’s mail tools by decoding metadata and attachments encapsulated/embedded in a [TNEF (Transport Neutral Encapsulation Format)](https://en.wikipedia.org/wiki/Transport_Neutral_Encapsulation_Format) encoded attachment (aka winmail.dat).
+LookOut is a plugin which allows [Thunderbird](https://www.thunderbird.net/) to interface with Microsoft’s mail tools by decoding metadata and attachments encapsulated/embedded in a [TNEF (Transport Neutral Encapsulation Format)](https://en.wikipedia.org/wiki/Transport_Neutral_Encapsulation_Format) encoded attachment (aka winmail.dat).
 
-Support: Thunderbird and SeaMonkey
+Support: [Thunderbird](https://www.thunderbird.net/) and [SeaMonkey](http://www.seamonkey-project.org/)
 
 
 ## About this Add-on
