@@ -1,4 +1,4 @@
-# LookOut (Fix Version)<img src="icon.svg" width="80" align="left">
+# LookOut (Fix Version)<img src="src/chrome/skin/LOicon-64.png" width="80" align="left">
 
 [This is a copy of the source code for the addon by Oleksandr](https://addons.thunderbird.net/nn-NO/thunderbird/addon/lookout-fix-version/)
 
