@@ -1,2 +1,1 @@
-Added: Snazzy new logo
-Removed: Redundant code
+Fix the saving of individual files on unix like systems
