@@ -6,6 +6,9 @@ LookOut is a plugin which allows [Thunderbird](https://www.thunderbird.net/) to 
 
 Support: [Thunderbird](https://www.thunderbird.net/) and [SeaMonkey](http://www.seamonkey-project.org/)
 
+## New Contributors are Welcome
+
+LookOut is now over 7 years old and is in need of a lot of work. If you feel you have anything to contribute please feel welcome to open a pull request or an issue.
 
 ## About this Add-on
 Original LookOut add-on by Aron Rubin for Mozilla Thunderbird was abandoned September 30, 2011:
