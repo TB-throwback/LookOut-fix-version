@@ -1559,8 +1559,6 @@ function tnef_pack_appt_attendees_ics( pkg, liststr, role ) {
       } else{
         vcal_str += ":" + parts[0] + "\n";
       }
-    } else {
-      vcal_str += "\n";
     }
   }
 
