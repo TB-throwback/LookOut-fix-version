@@ -1551,11 +1551,17 @@ function tnef_pack_appt_attendees_ics( pkg, liststr, role ) {
 
   for( atnd = 0; atnd < attendees.length; atnd++ ) {
     var parts = tnef_pack_get_name_addr( pkg, attendees[atnd] );
-    vcal_str += "ATTENDEE;PARTSTAT=NEEDS-ACTION;ROLE="+role+";RSVP=TRUE";
-    if( parts.length > 1 && parts[1] && parts[1] != "" )
-      vcal_str += ";CN=\"" + parts[0] + "\":mailto:\"" + parts[1] + "\"\n";
-    else
-      vcal_str += ":" + parts[0] + "\n";
+    parts_test = parts[0].replace(/[^\x20-\x7E]+/g, '');
+    if( parts_test ){
+      vcal_str += "ATTENDEE;PARTSTAT=NEEDS-ACTION;ROLE="+role+";RSVP=TRUE";
+      if( parts.length > 1 && parts[1] && parts[1] != "" ){
+        vcal_str += ";CN=\"" + parts[0] + "\":mailto:\"" + parts[1] + "\"\n";
+      } else{
+        vcal_str += ":" + parts[0] + "\n";
+      }
+    } else {
+      vcal_str += "\n";
+    }
   }
 
   return( vcal_str );
@@ -1578,9 +1584,9 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
   vcal_str += "BEGIN:VEVENT\n";
 
   mattr = mapi_attr_find( mattrs, MAPI_MEETING_CLEAN_GLOBAL_OBJECT_ID );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_MEETING_GLOBAL_OBJECT_ID );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_MAPPING_SIGNATURE );
   if( mattr && mattr.num_values > 0 ) {
     var i = 0;
