@@ -1,0 +1,21 @@
+{
+  "applications": {
+    "gecko": {
+      "id": "lookout@s3_fix_version",
+      "strict_min_version": "67.0a1",
+      "strict_max_version": "69.0"
+    }
+  },
+  "version": "1.3",
+  "manifest_version": 2,
+  "name": "LookOut (fix version)",
+  "description": "LookOut reads and integrates TNEF encoded parts in emails.",
+  "author": "Dugite-Code",
+  "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
+  "legacy": {
+    "options": {
+      "page": "chrome://lookout/content/options.xul",
+      "open_in_tab": false
+    }
+  }
+}
