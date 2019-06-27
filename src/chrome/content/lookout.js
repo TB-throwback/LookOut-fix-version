@@ -260,11 +260,11 @@ LookoutStreamListener.prototype = {
 		return( 0 );
 	},
 
-	onStartRequest: function ( aRequest, aContext ) {
+	onStartRequest: function ( aRequest ) {
 		this.mStream = Components.classes['@mozilla.org/binaryinputstream;1'].createInstance(Components.interfaces.nsIBinaryInputStream);
 	},
 
-	onStopRequest: function ( aRequest, aContext, aStatusCode ) {
+	onStopRequest: function ( aRequest, aStatusCode ) {
 		lookout.log_msg( "LookOut: Entering onStopRequest()", 6 ); //MKA
 		var channel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
 		var fsm;
@@ -287,7 +287,7 @@ LookoutStreamListener.prototype = {
 		this.mPackage = null;
 	},
 
-	onDataAvailable: function ( aRequest, aContext, aInputStream, aOffset, aCount ) {
+	onDataAvailable: function ( aRequest, aInputStream, aOffset, aCount ) {
 		lookout.log_msg( "LookOut: Entering onDataAvailable()", 6 ); //MKA
 		var fsm;
 
