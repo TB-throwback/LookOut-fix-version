@@ -1261,14 +1261,18 @@ function strtrim( str ) {
 // This is needed because nsIMsgHeaderParser cannot handle the commas MS allows
 // in the phrase and hangs if the email is invalid
 function decompose_rfc822_address( address ) {
-  // allowing comma in phrase for MS
-  var parts = address.match( /^\s*((?:[^\x28\x29\x3c\x3e\x40\x3a\x3b\x5b\x5c\x5d]+|\x22[^\x22]*\x22)*)[\x3c\x28]([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\x29\x3e]\s*$/i );
-  if( !parts ) // just an address
-    parts = address.match( /^\s*()([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})$/i );
-  if( parts ) // if either of the regex matches grab off the full match element
-    parts.shift();
-  else // neither of the address regex's matches so this is just a phrase
+  var re = new RegExp("@");
+  if ( !re.test(address) ) { // no email address so this is just a phrase
+    tnef_log_msg( "TNEF: Not an address: " + address, 6);
     parts = [ address, "" ];
+  } else {
+    // allowing comma in phrase for MS
+    var parts = address.match( /^\s*((?:[^\x28\x29\x3c\x3e\x40\x3a\x3b\x5b\x5c\x5d]+|\x22[^\x22]*\x22)*)[\x3c\x28]([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})[\x29\x3e]\s*$/i );
+    if( !parts ) // just an address
+      parts = address.match( /^\s*()([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,6})$/i );
+    if( parts ) // if either of the regex matches grab off the full match element
+      parts.shift();
+  }
   if( parts ) // if we have something work it over
     parts[0] = strtrim( parts[0] ); // trim up the phrase
 
@@ -1278,6 +1282,7 @@ function decompose_rfc822_address( address ) {
 var ownHeaderParser = Components.classes["@mozilla.org/messenger/headerparser;1"].getService(Components.interfaces.nsIMsgHeaderParser);
 
 function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
+  tnef_log_msg( "TNEF: Parsing original address line: " + orig_name_addr, 6);
   var orig_addr_parts = decompose_rfc822_address( orig_name_addr );
 
   // if email address not in the name_addr then hunt through the message header
@@ -1457,7 +1462,7 @@ function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
   vcal_str += "VERSION:2.1\n";
 
   mattr = mapi_attr_find( mattrs, MAPI_SENDER_SEARCH_KEY );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_ORGANIZER_ALIAS );
   if( mattr && mattr.num_values > 0 ) {
     var i = mattr.values[0].indexOf( ":" );
@@ -1548,8 +1553,12 @@ function tnef_pack_appt_attendees_ics( pkg, liststr, role ) {
     return( "" );
 
   attendees = liststr.split( ";" );
+  attendees = attendees.filter(function(e){return e});
 
   for( atnd = 0; atnd < attendees.length; atnd++ ) {
+    if( !attendees[atnd].replace(/[^\x20-\x7E]+/g, '') ){
+      continue;
+    }
     var parts = tnef_pack_get_name_addr( pkg, attendees[atnd] );
     vcal_str += "ATTENDEE;PARTSTAT=NEEDS-ACTION;ROLE="+role+";RSVP=TRUE";
     if( parts.length > 1 && parts[1] && parts[1] != "" )
@@ -1578,9 +1587,9 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
   vcal_str += "BEGIN:VEVENT\n";
 
   mattr = mapi_attr_find( mattrs, MAPI_MEETING_CLEAN_GLOBAL_OBJECT_ID );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_MEETING_GLOBAL_OBJECT_ID );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_MAPPING_SIGNATURE );
   if( mattr && mattr.num_values > 0 ) {
     var i = 0;
@@ -1602,18 +1611,18 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
     if( parts.length )
       vcal_str += "ORGANIZER;CN=\"" + parts[2] + "\":mailto:" + parts[1] + "\n";
   }
-  if( !mattr ) {
+  if( !mattr || mattr.values[0] == 0 ) {
     var parts;
     mattr = mapi_attr_find( mattrs, MAPI_SENDER_NAME );
     var mattr2 = mapi_attr_find( mattrs, MAPI_SENDER_EMAIL_ADDRESS );
     if( mattr && mattr.num_values > 0 && mattr2 && mattr2.num_values > 0 ) {
       parts = [ mattr.values[0], mattr2.values[0] ];
     } else {
-      if( !mattr )
+      if( !mattr || mattr.values[0] == 0 )
 	mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_ORGANIZER_ALIAS );
-      if( !mattr )
+      if( !mattr || mattr.values[0] == 0 )
 	mattr = mapi_attr_find( mattrs, MAPI_CREATOR_NAME );
-      if( !mattr )
+      if( !mattr || mattr.values[0] == 0 )
 	mattr = mapi_attr_find( mattrs, MAPI_TASK_F_CREATOR );
       if( mattr && mattr.num_values > 0 )
 	parts = tnef_pack_get_name_addr( pkg, mattr.values[0] );
@@ -1629,14 +1638,14 @@ function tnef_pack_handle_appt_data( pkg, mattrs, listener ) {
 
   // Required Attendees
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_REQUIRED_ATTENDEES );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_MEETING_REQUIRED_ATTENDEES );
   if( mattr && mattr.num_values > 0 )
     vcal_str += tnef_pack_appt_attendees_ics( pkg, mattr.values[0], "REQ-PARTICIPANT" );
 
   // Optional attendees
   mattr = mapi_attr_find( mattrs, MAPI_APPOINTMENT_OPTIONAL_ATTENDEES );
-  if( !mattr )
+  if( !mattr || mattr.values[0] == 0 )
     mattr = mapi_attr_find( mattrs, MAPI_MEETING_OPTIONAL_ATTENDEES );
   if( mattr && mattr.num_values > 0 ) {
     vcal_str += tnef_pack_appt_attendees_ics( pkg, mattr.values[0], "OPT-PARTICIPANT" );
