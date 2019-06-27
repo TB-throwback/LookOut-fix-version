@@ -1292,9 +1292,11 @@ function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
     var i, num_addrs;
 
     function rm_quotes( element, idx, array ) {
-      var matches = array[idx].match( /\042([^\042]*)\042|\047([^\047]*)\047/ );
-      if( matches && matches.length > 0 )
-	array[idx] = matches.length < 2 || (matches[1] && matches[1] != "") ? matches[1] : matches[2];
+      if( array[idx] ) {
+        var matches = array[idx].match( /\042([^\042]*)\042|\047([^\047]*)\047/ );
+        if( matches && matches.length > 0 )
+	       array[idx] = matches.length < 2 || (matches[1] && matches[1] != "") ? matches[1] : matches[2];
+      }
     }
 
     orig_addr_parts[1] = "";
@@ -1313,7 +1315,7 @@ function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
 
     for( i = 0; i < all_names.length && orig_addr_parts[1] == ""; i++ )
       if( all_names[i] == orig_addr_parts[0] )
-	orig_addr_parts[1] = all_addrs[i];
+	     orig_addr_parts[1] = all_addrs[i];
   }
 
   return( orig_addr_parts );
