@@ -1,1 +1,4 @@
-Fix the saving of individual files on unix like systems
+Fixes for ics parsing:
+Added quick decompose_rfc822_address sanity check
+Added special character skip for ICS attendee data
+Added zero( 0 ) UID check
