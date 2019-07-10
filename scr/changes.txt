@@ -1,4 +1,0 @@
-Added: Debugging switch with fail to verbose
-Added: Re-Introduces Strict Content Type Matching to improve performance
-Added: Exposed the Strict Content Type Matching as a preference
-Fixed: Individual File Save As command

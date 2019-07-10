@@ -2,13 +2,13 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>lookout@s3_fix_version</em:id>
-    <em:version>1.2.23b1</em:version>
+    <em:version>1.2.25</em:version>
     <em:type>2</em:type>
     <em:localized>
       <Description>
         <em:locale>hu</em:locale>
         <em:name>MutasdMeg! (LookOut)</em:name>
-        <em:description>A LookOut megnyitja és letölthetővé teszi a levelek TNEF kódolással csatolt mellékleteit (általában winmail.dat).</em:description>
+        <em:description>A MutasdMeg! megnyitja és letölthetővé teszi a levelek TNEF (Transport Neutral Encapsulation Format – szállítási semleges befoglaló formátum) kódolással csatolt mellékleteit (általában winmail.dat).</em:description>
         <em:creator>Rubin, Aron</em:creator>
         <em:translator>Mergl K. Attila</em:translator>
       </Description>

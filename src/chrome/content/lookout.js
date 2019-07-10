@@ -449,23 +449,20 @@ LookoutStreamListener.prototype = {
 					fp.init(window, "Select a File", nsIFilePicker.modeSave);
 					fp.appendFilters(nsIFilePicker.filterAll);
 					fp.defaultString = this.cur_filename;
-					try {
-						fp.show(res => {
-							if (res != nsIFilePicker.returnCancel){
-								file_dir = fp.displayDirectory;
-								file_name = fp.file.leafName;
-							}
-						});
-					} catch(e) {
-						fp.open(res => {
-							if (res != nsIFilePicker.returnCancel){
-								file_dir = fp.displayDirectory;
-								file_name = fp.file.leafName;
-								// Move Temporary file to destination folder after dialogue closed
-								this.moveTMPFile( file, file_dir, file_name );
-							}
-						});
-					}
+
+					fp.open(res => {
+						if (res != nsIFilePicker.returnCancel) {
+							file_dir = fp.file.parent;
+							file_name = fp.file.leafName;
+
+							lookout.log_msg( "LookOut:     file_path: '" + fp.file.path + "'", 7 );
+							lookout.log_msg( "LookOut:     file_dir:  '" + file_dir.path + "'", 7 );
+							lookout.log_msg( "LookOut:     file_name: '" + file_name + "'", 7 );
+
+							// Move Temporary file to destination folder after dialogue closed
+							this.moveTMPFile(file, file_dir, file_name);
+						}
+					});
 	} else if (file_name) {
 			// Move Temporary file to destination folder
 			this.moveTMPFile( file, file_dir, file_name );
