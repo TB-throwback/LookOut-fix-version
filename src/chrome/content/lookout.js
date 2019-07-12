@@ -309,6 +309,22 @@ LookoutStreamListener.prototype = {
 			return;
 		}
 
+		// Loop through attachments and remove winmail.dat
+		if( lookout.get_bool_pref( "remove_winmail_dat" ) ){
+			for( index in currentAttachments ) {
+				var scanfile = false;
+				var attachment = currentAttachments[index];
+				if(attachment != null){
+					var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
+				}
+				if(scanfile){
+					lookout.log_msg( "LookOut: Removing winmail.dat", 6 );
+					currentAttachments.splice(index, 1);
+					lookout_lib.redraw_attachment_view( false );
+				}
+			}
+		}
+
 		this.mPartId++;
 		this.mStream = null;
 		this.stream_started = false;
@@ -736,7 +752,7 @@ var lookout_lib = {
 		displayAttachmentsForExpandedView();
 
 		// try to call "Attachment Sizes", extension {90ceaf60-169c-40fb-b224-7204488f061d}
-		if( typeof ABglobals != 'undefined' ) {
+		if( typeof ABglobals != 'undefined' && atturl ) {
 			try {
 				ABglobals.setAttSizeTextFor( atturl, length, false );
 			} catch(ex) {}
