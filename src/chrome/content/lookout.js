@@ -751,6 +751,11 @@ var lookout_lib = {
 		gBuildAttachmentPopupForCurrentMsg = true;
 		displayAttachmentsForExpandedView();
 
+		var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+		if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+			toggleAttachmentList(true);
+		}
+
 		// try to call "Attachment Sizes", extension {90ceaf60-169c-40fb-b224-7204488f061d}
 		if( typeof ABglobals != 'undefined' && atturl ) {
 			try {
