@@ -6,7 +6,9 @@
 <!ENTITY direct_to_calendar_check.accesskey "K">
 <!ENTITY disable_filename_character_set_check.label "Konversion der Karaktertabelle für Dateiname verbieten">
 <!ENTITY disable_filename_character_set_check.accesskey "D">
-<!ENTITY strict_contenttype_set_check.label "Strict Content-Typ-Übereinstimmung">
-<!ENTITY strict_contenttype_set_check.accesskey "S">
+<!ENTITY remove_winmail_dat_check.label "Entfernen Sie Winmail.dat">
+<!ENTITY remove_winmail_dat_check.accesskey "E">
+<!ENTITY strict_contenttype_check.label "Strict Content-Typ-Übereinstimmung">
+<!ENTITY strict_contenttype_check.accesskey "S">
 <!ENTITY enable_debug.label "Aktivieren Sie das Debuggen">
 <!ENTITY enable_debug.accesskey "A">
