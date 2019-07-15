@@ -297,6 +297,14 @@ LookoutStreamListener.prototype = {
 			}
 		}
 
+		//open attachments pane based on preferences
+		var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+		if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+			lookout.log_msg( "LookOut: Opening attachment pane", 7 );
+			toggleAttachmentList(false);
+			toggleAttachmentList(true);
+		}
+
 		this.mPartId++;
 		this.mStream = null;
 		this.stream_started = false;
@@ -647,6 +655,13 @@ var lookout_lib = {
 
 				lookout.log_msg( "LookOut:    found tnef", 7 );
 
+		    //close attachments pane
+				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+				if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+					lookout.log_msg( "LookOut: Closing attachment pane", 7 );
+					toggleAttachmentList(false);
+				}
+
 				// open the attachment and look inside
 				var stream_listener = new LookoutStreamListener();
 				stream_listener.attachment = attachment;
@@ -747,11 +762,6 @@ var lookout_lib = {
 		// TODO - make sure attachment popup menu is not broken
 		gBuildAttachmentPopupForCurrentMsg = true;
 		displayAttachmentsForExpandedView();
-
-		var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-		if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
-			toggleAttachmentList(true);
-		}
 
 		// try to call "Attachment Sizes", extension {90ceaf60-169c-40fb-b224-7204488f061d}
 		if( typeof ABglobals != 'undefined' && atturl ) {
