@@ -1457,11 +1457,8 @@ function mescape( str ) {
 }
 
 function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
-  var vcal_str = "BEGIN:VCARD\n";
+  var vcal_str = "";
   var mattr = null;
-
-  vcal_str += "PRODID:-//Mozilla//Mozilla Mail//EN\n";
-  vcal_str += "VERSION:2.1\n";
 
   mattr = mapi_attr_find( mattrs, MAPI_SENDER_SEARCH_KEY );
   if( !mattr || mattr.values[0] == 0 )
@@ -1472,8 +1469,8 @@ function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
       i = 0;
     else
       i++;
-
-    vcal_str += "FN:" + mescape( mattr.values[0] ) + "\n";
+    if ( mescape( mattr.values[0] ).length > 1 )
+      vcal_str += "FN:" + mescape( mattr.values[0] ) + "\n";
   }
   mattr = mapi_attr_find( mattrs, MAPI_COMPANY_NAME );
   if( mattr && mattr.num_values > 0 ) {
@@ -1506,11 +1503,17 @@ function tnef_pack_handle_contact_data( pkg, mattrs, listener ) {
   if( mattr && mattr.num_values > 0 )
     vcal_str += "TEL;TYPE=work,fax:" + mattr.values[0] + "\n";
 
-  // Wrap it up
-  vcal_str += "END:VCARD\n";
+  if ( vcal_str ) {
+    vcal_str = "VERSION:2.1\n" + vcal_str;
+    vcal_str = "PRODID:-//Mozilla//Mozilla Mail//EN\n" + vcal_str;
+    vcal_str = "BEGIN:VCARD\n" + vcal_str;
+    // Wrap it up
+    vcal_str += "END:VCARD\n";
 
-  if( vcal_str )
     tnef_pack_handle_body_part( pkg, vcal_str, vcal_str.length, "text/x-vcard", listener );
+  } else {
+    tnef_log_msg( "TNEF: VCF file is empty, Skipping", 6 );
+  }
 }
 
 
