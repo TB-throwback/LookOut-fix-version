@@ -1,10 +1,11 @@
-# Prerequisites
+# BEFORE YOU SUBMIT
 
-Please answer the following questions for yourself before submitting an issue. **YOU MAY DELETE THE PREREQUISITES SECTION.**
+Please answer the following questions for yourself before submitting an issue. **YOU MAY DELETE THIS SECTION.**
 
-- [ ] I am running the latest version
-- [ ] I checked the documentation and found no answer
-- [ ] I checked to make sure that this issue has not already been filed
+- I am running the latest version
+- I checked the documentation and found no answer
+- I checked to make sure that this issue has not already been filed
+- I have read the FAQ (https://github.com/TB-throwback/LookOut-fix-version/wiki/F.A.Q.)
 
 ## Context
 
