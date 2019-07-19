@@ -363,6 +363,14 @@ LookoutStreamListener.prototype = {
 				this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
 																	 .createInstance(Components.interfaces.nsIFileOutputStream);
 				this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
+				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+
+				if( prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" ) &&
+				 content_type == "text/calendar" ) {
+	        //let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
+          //             .createInstance(Components.interfaces.calIItipItem);
+					document.getElementById("imip-bar").setAttribute("collapsed", "false");
+				}
 
 				var fileuri = this.cur_url.spec
 
