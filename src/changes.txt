@@ -1,4 +1,5 @@
-Fixes for ics parsing:
-Added quick decompose_rfc822_address sanity check
-Added special character skip for ICS attendee data
-Added zero( 0 ) UID check
+Attachment drag and drop support
+Optionally remove winmail.dat file when finished processing. This is in options and defaults to true
+Fix attachment pane opening and closing, respects inbuilt Thunderbird preferences
+Ignore blank VCF files to minimize clutter
+Highlight event invitations - To be expanded to full lightning integration
