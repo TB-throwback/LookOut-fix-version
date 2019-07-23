@@ -66,6 +66,12 @@
       accesskey="&disable_filename_character_set_check.accesskey;"/>
 
     <checkbox
+      id="remove_winmail_dat_pref"
+      preference="extensions.lookout.remove_winmail_dat"
+      label="&remove_winmail_dat_check.label;"
+      accesskey="&remove_winmail_dat_check.accesskey;"/>
+
+    <checkbox
       id="strict_contenttype_set_check"
       preference="extensions.lookout.strict_contenttype"
       label="&strict_contenttype_set_check.label;"
@@ -74,7 +80,7 @@
     <checkbox
       id="enable_debug_set_check"
       preference="extensions.lookout.debug_enable"
-      label="&enable_debug.label;"
+      label="&remove_winmail_dat_check.label;"
       accesskey="&enable_debug.accesskey;"/>
   </vbox>
 
