@@ -6,6 +6,8 @@
 <!ENTITY direct_to_calendar_check.accesskey "N">
 <!ENTITY disable_filename_character_set_check.label "Fájlnév karaktertábla-konverziójának bénítása">
 <!ENTITY disable_filename_character_set_check.accesskey "F">
+<!ENTITY remove_winmail_dat_check.label "Winmail.dat eltávolítása">
+<!ENTITY remove_winmail_dat_check.accesskey "W">
 <!ENTITY strict_contenttype_set_check.label "Szigorú tartalomtípus-egyezés">
 <!ENTITY strict_contenttype_set_check.accesskey "t">
 <!ENTITY enable_debug.label "Engedélyezze a hibakeresést">

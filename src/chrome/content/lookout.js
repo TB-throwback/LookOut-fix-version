@@ -281,6 +281,30 @@ LookoutStreamListener.prototype = {
 			return;
 		}
 
+		// Loop through attachments and remove winmail.dat
+		if( lookout.get_bool_pref( "remove_winmail_dat" ) ){
+			for( index in currentAttachments ) {
+				var scanfile = false;
+				var attachment = currentAttachments[index];
+				if(attachment != null){
+					var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
+				}
+				if(scanfile){
+					lookout.log_msg( "LookOut: Removing winmail.dat", 6 );
+					currentAttachments.splice(index, 1);
+					lookout_lib.redraw_attachment_view( false );
+				}
+			}
+		}
+
+		//open attachments pane based on preferences
+		var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+		if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+			lookout.log_msg( "LookOut: Opening attachment pane", 7 );
+			toggleAttachmentList(false);
+			toggleAttachmentList(true);
+		}
+
 		this.mPartId++;
 		this.mStream = null;
 		this.stream_started = false;
@@ -339,6 +363,14 @@ LookoutStreamListener.prototype = {
 				this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
 																	 .createInstance(Components.interfaces.nsIFileOutputStream);
 				this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
+				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+
+				if( prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" ) &&
+				 content_type == "text/calendar" ) {
+	        //let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
+          //             .createInstance(Components.interfaces.calIItipItem);
+					document.getElementById("imip-bar").setAttribute("collapsed", "false");
+				}
 
 				var fileuri = this.cur_url.spec
 
@@ -631,6 +663,13 @@ var lookout_lib = {
 
 				lookout.log_msg( "LookOut:    found tnef", 7 );
 
+		    //close attachments pane
+				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+				if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+					lookout.log_msg( "LookOut: Closing attachment pane", 7 );
+					toggleAttachmentList(false);
+				}
+
 				// open the attachment and look inside
 				var stream_listener = new LookoutStreamListener();
 				stream_listener.attachment = attachment;
@@ -733,7 +772,7 @@ var lookout_lib = {
 		displayAttachmentsForExpandedView();
 
 		// try to call "Attachment Sizes", extension {90ceaf60-169c-40fb-b224-7204488f061d}
-		if( typeof ABglobals != 'undefined' ) {
+		if( typeof ABglobals != 'undefined' && atturl ) {
 			try {
 				ABglobals.setAttSizeTextFor( atturl, length, false );
 			} catch(ex) {}
