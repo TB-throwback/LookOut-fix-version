@@ -353,10 +353,12 @@ LookoutStreamListener.prototype = {
 				this.cur_outstrm = null;
 				var outfile = lookout.get_temp_file( filename );
 
+				outfile.initWithFile( outfile );
 				// Delete Temporary file if it already exists
-				try{
+				if (outfile.exists())
 					outfile.remove(false)
-				} catch (ex) { }
+				// Explicitly Create Temporary file for older TB versions
+				outfile.create(outfile.NORMAL_FILE_TYPE, 0666);
 
 				var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
 				this.cur_url = ios.newFileURI( outfile );
