@@ -650,50 +650,57 @@ var lookout_lib = {
 		var messenger2 = Components.classes["@mozilla.org/messenger;1"]
 										.getService(Components.interfaces.nsIMessenger);
 
-		// for each attachment of the current message
-		for( index in currentAttachments ) {
-			var attachment = currentAttachments[index];
-			lookout.log_msg( attachment.toSource(), 8 );
-			var scanfile = true;
+		// Stop if messgae is marked as Junk
+		if( !gMessageNotificationBar.isShowingJunkNotification() ) {
+			// for each attachment of the current message
+			for( index in currentAttachments ) {
+				var attachment = currentAttachments[index];
+				lookout.log_msg( attachment.toSource(), 8 );
+				var scanfile = true;
 
-			// Use strict content type matching to improve performance as a togglable option
-      if( lookout.get_bool_pref( "strict_contenttype" ) ){
-				var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
-				lookout.log_msg( "LookOut:    Content Type: '" + attachment.contentType + "'", 7 );
-			}
-			if(scanfile){
-
-				lookout.log_msg( "LookOut:    found tnef", 7 );
-
-		    //close attachments pane
-				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-				if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
-					lookout.log_msg( "LookOut: Closing attachment pane", 7 );
-					toggleAttachmentList(false);
+				// Use strict content type matching to improve performance as a togglable option
+	      if( lookout.get_bool_pref( "strict_contenttype" ) ){
+					var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
+					lookout.log_msg( "LookOut:    Content Type: '" + attachment.contentType + "'", 7 );
 				}
+				if(scanfile){
 
-				// open the attachment and look inside
-				var stream_listener = new LookoutStreamListener();
-				stream_listener.attachment = attachment;
-				stream_listener.mAttUrl = attachment.url;
-				if( attachment.uri )
-					stream_listener.mMsgUri = attachment.uri;
-				else
-					stream_listener.mMsgUri = attachment.messageUri;
-					stream_listener.mMsgHdr = lookout_lib.msg_hdr_for_current_msg( stream_listener.mMsgUri );
-				if( ! stream_listener.mMsgHdr )
-					lookout.log_msg( "LookOut:    no message header for this service", 5 );
-				stream_listener.action_type = LOOKOUT_ACTION_SCAN;
+					lookout.log_msg( "LookOut:    found tnef", 7 );
 
-				var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
-												 .QueryInterface( Components.interfaces.nsIMsgMessageService );
-				var attname = attachment.name ? attachment.name : attachment.displayName;
-				mms.openAttachment( attachment.contentType, attname,
-								attachment.url, stream_listener.mMsgUri, stream_listener,
-								null, null );
-			} else {
-				lookout.log_msg( "LookOut:    Strict Content check failed", 7 );
+			    //close attachments pane
+					var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+					if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+						lookout.log_msg( "LookOut: Closing attachment pane", 7 );
+						toggleAttachmentList(false);
+					}
+
+					// open the attachment and look inside
+					var stream_listener = new LookoutStreamListener();
+					stream_listener.attachment = attachment;
+					stream_listener.mAttUrl = attachment.url;
+					if( attachment.uri )
+						stream_listener.mMsgUri = attachment.uri;
+					else
+						stream_listener.mMsgUri = attachment.messageUri;
+						stream_listener.mMsgHdr = lookout_lib.msg_hdr_for_current_msg( stream_listener.mMsgUri );
+					if( ! stream_listener.mMsgHdr )
+						lookout.log_msg( "LookOut:    no message header for this service", 5 );
+					stream_listener.action_type = LOOKOUT_ACTION_SCAN;
+
+					var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
+													 .QueryInterface( Components.interfaces.nsIMsgMessageService );
+					var attname = attachment.name ? attachment.name : attachment.displayName;
+					mms.openAttachment( attachment.contentType, attname,
+									attachment.url, stream_listener.mMsgUri, stream_listener,
+									null, null );
+				} else {
+					lookout.log_msg( "LookOut:    Strict Content check failed", 7 );
+				}
 			}
+		} else {
+			lookout.log_msg( "LookOut:    Message is marked as Junk. Will not process until it is marked Not Junk", 7 );
+			msgNotificationBar = document.querySelector('[label="Thunderbird thinks this message is Junk mail."]');
+			msgNotificationBar.setAttribute("label", "Thunderbird thinks this message is Junk mail. To protect your system winmail.dat was not decoded");
 		}
 	},
 
