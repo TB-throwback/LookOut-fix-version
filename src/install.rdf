@@ -2,7 +2,7 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
     <em:id>lookout@s3_fix_version</em:id>
-    <em:version>1.3.02</em:version>
+    <em:version>1.3.03b1</em:version>
     <em:type>2</em:type>
     <em:localized>
       <Description>

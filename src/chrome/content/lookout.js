@@ -59,6 +59,13 @@ var debugLevel = 10;
 
 var uid
 
+try {
+	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+	lightning = prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" );
+} catch (e) {
+	lightning = false;
+}
+
 var lookout = {
 	log_msg: function lo_log_msg( msg, level ) {
 		if( (level == null ? 9 : level) <= debugLevel ) {
@@ -365,9 +372,8 @@ LookoutStreamListener.prototype = {
 				this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
 																	 .createInstance(Components.interfaces.nsIFileOutputStream);
 				this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
-				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 
-				if( prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" ) &&
+				if( lightning &&
 				 content_type == "text/calendar" ) {
 	        //let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
           //             .createInstance(Components.interfaces.calIItipItem);
@@ -650,8 +656,6 @@ var lookout_lib = {
 		var messenger2 = Components.classes["@mozilla.org/messenger;1"]
 										.getService(Components.interfaces.nsIMessenger);
 
-		// Stop if messgae is marked as Junk
-		if( !gMessageNotificationBar.isShowingJunkNotification() ) {
 			// for each attachment of the current message
 			for( index in currentAttachments ) {
 				var attachment = currentAttachments[index];
@@ -663,7 +667,8 @@ var lookout_lib = {
 					var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
 					lookout.log_msg( "LookOut:    Content Type: '" + attachment.contentType + "'", 7 );
 				}
-				if(scanfile){
+				// Stop if messgae is marked as Junk
+				if(scanfile && !gMessageNotificationBar.isShowingJunkNotification()){
 
 					lookout.log_msg( "LookOut:    found tnef", 7 );
 
@@ -693,15 +698,14 @@ var lookout_lib = {
 					mms.openAttachment( attachment.contentType, attname,
 									attachment.url, stream_listener.mMsgUri, stream_listener,
 									null, null );
+				} else if(scanfile && gMessageNotificationBar.isShowingJunkNotification()) {
+					lookout.log_msg( "LookOut:    Message is marked as Junk. Will not process until it is marked Not Junk", 7 );
+					msgNotificationBar = document.querySelector('[label="Thunderbird thinks this message is Junk mail."]');
+					msgNotificationBar.setAttribute("label", "Thunderbird thinks this message is Junk mail. To protect your system winmail.dat was not decoded");
 				} else {
 					lookout.log_msg( "LookOut:    Strict Content check failed", 7 );
 				}
 			}
-		} else {
-			lookout.log_msg( "LookOut:    Message is marked as Junk. Will not process until it is marked Not Junk", 7 );
-			msgNotificationBar = document.querySelector('[label="Thunderbird thinks this message is Junk mail."]');
-			msgNotificationBar.setAttribute("label", "Thunderbird thinks this message is Junk mail. To protect your system winmail.dat was not decoded");
-		}
 	},
 
 	add_sub_attachment_to_list: function ( parent, content_type, display_name, part_id, atturl, msguri, length ) {
