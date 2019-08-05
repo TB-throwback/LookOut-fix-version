@@ -1,3 +1,5 @@
+1.3.03 ---
+Bugfix: Crashed on TB38 when checking for Lightning calendar
 1.3.02 ---
 Security update: Don't attempt to decode winmail.dat if mail marked as junk
 1.3.01 ---
