@@ -441,7 +441,7 @@ LookoutStreamListener.prototype = {
 		lookout.log_msg( "LookOut:     saving attachment to '" + file_dir.path + "'", 7 );
 		lookout.log_msg( "LookOut:     saving attachment as '" + file_name + "'", 7 );
 		try {
-			file.moveTo(file_dir, file_name);
+			file.copyTo(file_dir, file_name);
 		} catch(ex) {
 			alert( "LookOut:     error moving file : " + file_dir.path + " : " + file_name + " : " + ex);
 		}
@@ -849,8 +849,9 @@ var lookout_lib = {
 		//     function for TNEF attachments only (after version 1.2.12)
 //    if( !attachment.parent || !(/^application\/ms-tnef/i).test( attachment.parent.contentType ) ) {
 		if( !attachment.parent) {
-			if( attachment.lo_orig_save )    // this is the original save() function
-		attachment.lo_orig_save();
+			if( attachment.lo_orig_save ){    // this is the original save() function
+				attachment.lo_orig_save();
+			}
 			return;
 		}
 
@@ -952,8 +953,8 @@ function LookoutLoad () {
 				attachments = var2;
 				action = var1;
 			}
-
-			if ((action != 'save') && (action != 'saveAttachment')) {
+			lookout.log_msg( "LookOut:    Handeling Multiple Attachments: " + action, 6 );
+			if ((action != 'save') && (action != 'saveAttachment') && (action != 'detach') && (action != 'detachAttachment')) {
 				lookout_lib.HandleMultipleAttachments(var1, var2);
 				return;
 			}
@@ -974,10 +975,18 @@ function LookoutLoad () {
 					if (result == fp.returnOK) {
 						for (var i = 0; i < attachments.length; i++) {
 							try {
+								lookout.log_msg( "LookOut:    Handeling Multiple Attachments: " + attachments[i].contentType, 6 );
+								if ( (action == 'detach') && (/^application\/ms-tnef/i).test( attachments[i].contentType ) )
+									continue;
 								attachments[i].save(fp.file);  // for Thunderbird
 							} catch(e) {
+								if ( (action == 'detach') && (/^application\/ms-tnef/i).test( attachments[i].contentType ) )
+									continue;
 								attachments[i].saveAttachment(fp.file); // for SeaMonkey
 							}
+						}
+						if ( (action == 'detach') ) {
+							attachments[0].detach(true);
 						}
 					}
 				});
