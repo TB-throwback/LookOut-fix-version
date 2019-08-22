@@ -59,6 +59,13 @@ var debugLevel = 10;
 
 var uid
 
+try {
+	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+	lightning = prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" );
+} catch (e) {
+	lightning = false;
+}
+
 var lookout = {
 	log_msg: function lo_log_msg( msg, level ) {
 		if( (level == null ? 9 : level) <= debugLevel ) {
@@ -353,19 +360,20 @@ LookoutStreamListener.prototype = {
 				this.cur_outstrm = null;
 				var outfile = lookout.get_temp_file( filename );
 
+				outfile.initWithFile( outfile );
 				// Delete Temporary file if it already exists
-				try{
+				if (outfile.exists())
 					outfile.remove(false)
-				} catch (ex) { }
+				// Explicitly Create Temporary file for older TB versions
+				outfile.create(outfile.NORMAL_FILE_TYPE, 0666);
 
 				var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
 				this.cur_url = ios.newFileURI( outfile );
 				this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
 																	 .createInstance(Components.interfaces.nsIFileOutputStream);
 				this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
-				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 
-				if( prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" ) &&
+				if( lightning &&
 				 content_type == "text/calendar" ) {
 	        //let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
           //             .createInstance(Components.interfaces.calIItipItem);
@@ -433,7 +441,7 @@ LookoutStreamListener.prototype = {
 		lookout.log_msg( "LookOut:     saving attachment to '" + file_dir.path + "'", 7 );
 		lookout.log_msg( "LookOut:     saving attachment as '" + file_name + "'", 7 );
 		try {
-			file.moveTo(file_dir, file_name);
+			file.copyTo(file_dir, file_name);
 		} catch(ex) {
 			alert( "LookOut:     error moving file : " + file_dir.path + " : " + file_name + " : " + ex);
 		}
@@ -648,51 +656,56 @@ var lookout_lib = {
 		var messenger2 = Components.classes["@mozilla.org/messenger;1"]
 										.getService(Components.interfaces.nsIMessenger);
 
-		// for each attachment of the current message
-		for( index in currentAttachments ) {
-			var attachment = currentAttachments[index];
-			lookout.log_msg( attachment.toSource(), 8 );
-			var scanfile = true;
+			// for each attachment of the current message
+			for( index in currentAttachments ) {
+				var attachment = currentAttachments[index];
+				lookout.log_msg( attachment.toSource(), 8 );
+				var scanfile = true;
 
-			// Use strict content type matching to improve performance as a togglable option
-      if( lookout.get_bool_pref( "strict_contenttype" ) ){
-				var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
-				lookout.log_msg( "LookOut:    Content Type: '" + attachment.contentType + "'", 7 );
-			}
-			if(scanfile){
-
-				lookout.log_msg( "LookOut:    found tnef", 7 );
-
-		    //close attachments pane
-				var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-				if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
-					lookout.log_msg( "LookOut: Closing attachment pane", 7 );
-					toggleAttachmentList(false);
+				// Use strict content type matching to improve performance as a togglable option
+	      if( lookout.get_bool_pref( "strict_contenttype" ) ){
+					var scanfile = (/^application\/ms-tnef/i).test( attachment.contentType )
+					lookout.log_msg( "LookOut:    Content Type: '" + attachment.contentType + "'", 7 );
 				}
+				// Stop if messgae is marked as Junk
+				if(scanfile && !gMessageNotificationBar.isShowingJunkNotification()){
 
-				// open the attachment and look inside
-				var stream_listener = new LookoutStreamListener();
-				stream_listener.attachment = attachment;
-				stream_listener.mAttUrl = attachment.url;
-				if( attachment.uri )
-					stream_listener.mMsgUri = attachment.uri;
-				else
-					stream_listener.mMsgUri = attachment.messageUri;
-					stream_listener.mMsgHdr = lookout_lib.msg_hdr_for_current_msg( stream_listener.mMsgUri );
-				if( ! stream_listener.mMsgHdr )
-					lookout.log_msg( "LookOut:    no message header for this service", 5 );
-				stream_listener.action_type = LOOKOUT_ACTION_SCAN;
+					lookout.log_msg( "LookOut:    found tnef", 7 );
 
-				var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
-												 .QueryInterface( Components.interfaces.nsIMsgMessageService );
-				var attname = attachment.name ? attachment.name : attachment.displayName;
-				mms.openAttachment( attachment.contentType, attname,
-								attachment.url, stream_listener.mMsgUri, stream_listener,
-								null, null );
-			} else {
-				lookout.log_msg( "LookOut:    Strict Content check failed", 7 );
+			    //close attachments pane
+					var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+					if ( prefs.getBoolPref( "mailnews.attachments.display.start_expanded" ) ) {
+						lookout.log_msg( "LookOut: Closing attachment pane", 7 );
+						toggleAttachmentList(false);
+					}
+
+					// open the attachment and look inside
+					var stream_listener = new LookoutStreamListener();
+					stream_listener.attachment = attachment;
+					stream_listener.mAttUrl = attachment.url;
+					if( attachment.uri )
+						stream_listener.mMsgUri = attachment.uri;
+					else
+						stream_listener.mMsgUri = attachment.messageUri;
+						stream_listener.mMsgHdr = lookout_lib.msg_hdr_for_current_msg( stream_listener.mMsgUri );
+					if( ! stream_listener.mMsgHdr )
+						lookout.log_msg( "LookOut:    no message header for this service", 5 );
+					stream_listener.action_type = LOOKOUT_ACTION_SCAN;
+
+					var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
+													 .QueryInterface( Components.interfaces.nsIMsgMessageService );
+					var attname = attachment.name ? attachment.name : attachment.displayName;
+					mms.openAttachment( attachment.contentType, attname,
+									attachment.url, stream_listener.mMsgUri, stream_listener,
+									null, null );
+				} else if(scanfile && gMessageNotificationBar.isShowingJunkNotification()) {
+					lookout.log_msg( "LookOut:    Message is marked as Junk. Will not process until it is marked Not Junk", 7 );
+					msgNotificationBar = document.querySelector('[label="Thunderbird thinks this message is Junk mail."]');
+					msgNotificationBar.setAttribute("label", "Thunderbird thinks this message is Junk mail. To protect your system winmail.dat was not decoded");
+				} else {
+					lookout.log_msg( "LookOut:    Strict Content check failed", 7 );
+				}
 			}
-		}
 	},
 
 	add_sub_attachment_to_list: function ( parent, content_type, display_name, part_id, atturl, msguri, length ) {
@@ -836,8 +849,9 @@ var lookout_lib = {
 		//     function for TNEF attachments only (after version 1.2.12)
 //    if( !attachment.parent || !(/^application\/ms-tnef/i).test( attachment.parent.contentType ) ) {
 		if( !attachment.parent) {
-			if( attachment.lo_orig_save )    // this is the original save() function
-		attachment.lo_orig_save();
+			if( attachment.lo_orig_save ){    // this is the original save() function
+				attachment.lo_orig_save();
+			}
 			return;
 		}
 
@@ -939,8 +953,8 @@ function LookoutLoad () {
 				attachments = var2;
 				action = var1;
 			}
-
-			if ((action != 'save') && (action != 'saveAttachment')) {
+			lookout.log_msg( "LookOut:    Handeling Multiple Attachments: " + action, 6 );
+			if ((action != 'save') && (action != 'saveAttachment') && (action != 'detach') && (action != 'detachAttachment')) {
 				lookout_lib.HandleMultipleAttachments(var1, var2);
 				return;
 			}
@@ -961,10 +975,18 @@ function LookoutLoad () {
 					if (result == fp.returnOK) {
 						for (var i = 0; i < attachments.length; i++) {
 							try {
+								lookout.log_msg( "LookOut:    Handeling Multiple Attachments: " + attachments[i].contentType, 6 );
+								if ( (action == 'detach') && (/^application\/ms-tnef/i).test( attachments[i].contentType ) )
+									continue;
 								attachments[i].save(fp.file);  // for Thunderbird
 							} catch(e) {
+								if ( (action == 'detach') && (/^application\/ms-tnef/i).test( attachments[i].contentType ) )
+									continue;
 								attachments[i].saveAttachment(fp.file); // for SeaMonkey
 							}
+						}
+						if ( (action == 'detach') ) {
+							attachments[0].detach(true);
 						}
 					}
 				});
