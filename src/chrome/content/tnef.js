@@ -328,12 +328,10 @@ function GETDBL64( p, i ) {
 
 
 function unicode_to_utf8( buf ) {
-  var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
-                    .getService(Components.interfaces.nsIScriptableUnicodeConverter);
 
-  converter.charset = "UTF-16";
-  converter.ConvertFromUnicode( buf );
-  return( converter.ConvertFromUnicode( buf ) );
+  charset = "UTF-16";
+  let decoder = new TextDecoder(charset);
+  return( decoder.decode(new Uint8Array( buf )) );
 }
 
 function tnef_base64_encode( str ) {
@@ -490,14 +488,13 @@ function tnef_file_munge_fname( fname, files, code_page ) {
     tnef_log_msg( "Lookout: convert file name from charset: " + charset, 7 );
     if( charset != null ) {
       try {
-        var converter = Components.classes['@mozilla.org/intl/scriptableunicodeconverter'].getService(Components.interfaces.nsIScriptableUnicodeConverter);
-	converter.charset = charset;
-	var fname2 = converter.ConvertToUnicode( fname );
-	try {
-		decodeURIComponent( escape( fname2 ) );
-	} catch (e) {
-		fname = fname2;
-	}
+        let decoder = new TextDecoder(charset);
+      	var fname2 = decoder.decode(new Uint8Array( fname ));
+      	try {
+      		decodeURIComponent( escape( fname2 ) );
+      	} catch (e) {
+      		fname = fname2;
+      	}
       } catch( e ) {
         tnef_log_msg( "Lookout: failed to convert file name from charset: " + charset, 4 );
       }
@@ -1801,6 +1798,7 @@ function tnef_pack_parse_stream( instrm, msg_header, listener, prev_pack ) {
   if( prev_pack ) {
     pkg = prev_pack;
   } else {
+    tnef_log_msg( "TNEF: new TnefPackage()", 6);
     pkg = new TnefPackage();
     pkg.msg_header = msg_header;
 
