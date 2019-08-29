@@ -5,7 +5,7 @@
       "strict_min_version": "68.0"
     }
   },
-  "version": "2.0.00b2",
+  "version": "2.0.00b3",
   "manifest_version": 2,
   "name": "LookOut (fix version)",
   "description": "LookOut reads and integrates TNEF encoded parts in emails.",
