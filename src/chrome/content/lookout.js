@@ -468,49 +468,49 @@ LookoutStreamListener.prototype = {
 					alert("LookOut:     error creating file : " + this.cur_url.path + " : " + ex);
 				}
 
-	//-------------------------------------------------------------------------------------
-	var file_dir = null;
-	var file_name = null;
-	//-------------------------------------------------------------------------------------
-	if (this.save_dir) {
-		var file_check = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsIFile);
-		try {
-			file_check.initWithPath(this.save_dir.path);
-			file_check.appendRelativePath(this.cur_filename);
-		} catch(e) {
-			file_check = false;
-		}
-		if (file_check && (! file_check.exists())) {
-			file_dir = this.save_dir;
-			file_name = this.cur_filename;
-		}
-	}
-	//-------------------------------------------------------------------------------------
-	if (file_dir == null) {
-					var nsIFilePicker = Components.interfaces.nsIFilePicker;
-					var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-					fp.init(window, "Select a File", nsIFilePicker.modeSave);
-					fp.appendFilters(nsIFilePicker.filterAll);
-					fp.defaultString = this.cur_filename;
+				//-------------------------------------------------------------------------------------
+				var file_dir = null;
+				var file_name = null;
+				//-------------------------------------------------------------------------------------
+				if (this.save_dir) {
+					var file_check = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsIFile);
+					try {
+						file_check.initWithPath(this.save_dir.path);
+						file_check.appendRelativePath(this.cur_filename);
+					} catch(e) {
+						file_check = false;
+					}
+					if (file_check && (! file_check.exists())) {
+						file_dir = this.save_dir;
+						file_name = this.cur_filename;
+					}
+				}
+				//-------------------------------------------------------------------------------------
+				if (file_dir == null) {
+								var nsIFilePicker = Components.interfaces.nsIFilePicker;
+								var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+								fp.init(window, "Select a File", nsIFilePicker.modeSave);
+								fp.appendFilters(nsIFilePicker.filterAll);
+								fp.defaultString = this.cur_filename;
 
-					fp.open(res => {
-						if (res != nsIFilePicker.returnCancel) {
-							file_dir = fp.file.parent;
-							file_name = fp.file.leafName;
+								fp.open(res => {
+									if (res != nsIFilePicker.returnCancel) {
+										file_dir = fp.file.parent;
+										file_name = fp.file.leafName;
 
-							lookout.log_msg( "LookOut:     file_path: '" + fp.file.path + "'", 7 );
-							lookout.log_msg( "LookOut:     file_dir:  '" + file_dir.path + "'", 7 );
-							lookout.log_msg( "LookOut:     file_name: '" + file_name + "'", 7 );
+										lookout.log_msg( "LookOut:     file_path: '" + fp.file.path + "'", 7 );
+										lookout.log_msg( "LookOut:     file_dir:  '" + file_dir.path + "'", 7 );
+										lookout.log_msg( "LookOut:     file_name: '" + file_name + "'", 7 );
 
-							// Move Temporary file to destination folder after dialogue closed
-							this.moveTMPFile(file, file_dir, file_name);
-						}
-					});
-	} else if (file_name) {
-			// Move Temporary file to destination folder
-			this.moveTMPFile( file, file_dir, file_name );
-  }
-			break;
+										// Move Temporary file to destination folder after dialogue closed
+										this.moveTMPFile(file, file_dir, file_name);
+									}
+								});
+				} else if (file_name) {
+						// Move Temporary file to destination folder
+						this.moveTMPFile( file, file_dir, file_name );
+			  }
+				break;
 
 			case LOOKOUT_ACTION_OPEN:
 				lookout.log_msg( "LookOut:     opening attachment '"+ this.cur_url.spec+"'", 7 );
@@ -549,7 +549,7 @@ LookoutStreamListener.prototype = {
 					messenger.openAttachment( this.cur_content_type, this.cur_url.spec,
 																		this.cur_filename, this.mMsgUri, true );
 				}
-			break;
+				break;
 
 			}
 		}
@@ -723,7 +723,7 @@ var lookout_lib = {
 
 		var attachment = null;
 
-		var attachment = new AttachmentInfo( content_type, atturl, display_name, msguri, true, length);
+		var attachment = new AttachmentInfo( content_type, atturl, display_name, msguri, true);
 
 		lookout.log_msg( "LookOut:    found new type object: AttachmentInfo", 6 );  //MKA
 
@@ -739,25 +739,27 @@ var lookout_lib = {
 		};
 		lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
 
+		attachment.sizeResolved = true;
+		attachment.size = length;
+
 		attachment.parent = parent;
 		attachment.partID = part_id;
-		attachment.ALWAYSFETCHSIZE = false;
+
 		currentAttachments.push( attachment );
-		lookout_lib.redraw_attachment_view( );
+		lookout_lib.redraw_attachment_view();
 	},
 
 	// we need to explicitly call display functions because we process tnef
 	// attachment asynchronously and TB attachment processing has already finished
 	// e.g. messageHeaderSink.OnEndAllAttachments
 	// (see mail/base/content/msgHdrViewOverlay.js)
-	redraw_attachment_view: function ( atturl ) {
+	redraw_attachment_view: function () {
 		lookout.log_msg( "Lookout: Entering redraw_attachment_view()", 6 );
 		ClearAttachmentList();
 		gBuildAttachmentsForCurrentMsg = false;
 		// TODO - make sure attachment popup menu is not broken
 		gBuildAttachmentPopupForCurrentMsg = true;
 		displayAttachmentsForExpandedView();
-
 	},
 
 	open_attachment: function ( attachment ) {
