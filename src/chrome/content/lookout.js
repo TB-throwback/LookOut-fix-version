@@ -197,8 +197,8 @@ var lookout = {
 	// See if it is time to end the calendar's batch.
 	if (count == aItems.length) {
 		destCal.endBatch();
-		var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-		var cal_strbundle = sbs.createBundle("chrome://calendar/locale/calendar.properties");
+		//var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+		var cal_strbundle = Services.strings.createBundle("chrome://calendar/locale/calendar.properties");
 		if (!failedCount && duplicateCount ) {
 			this.log_msg( "LookOut: " + cal_strbundle.GetStringFromName( "duplicateError" ) + " " +
 			duplicateCount + " " + aFilePath, 3 );
@@ -221,7 +221,7 @@ var lookout = {
 	// counter and not miss failed items. Otherwise, endBatch might
 	// never be called.
 	listener.onOperationComplete( null, null, null, null, null );
-	Components.utils.reportError( "Import error: " + ex );
+	ChromeUtils.reportError( "Import error: " + ex );
 			}
 		}
 
@@ -267,11 +267,11 @@ LookoutStreamListener.prototype = {
 		return( 0 );
 	},
 
-	onStartRequest: function ( aRequest, aContext ) {
+	onStartRequest: function ( aRequest ) {
 		this.mStream = Components.classes['@mozilla.org/binaryinputstream;1'].createInstance(Components.interfaces.nsIBinaryInputStream);
 	},
 
-	onStopRequest: function ( aRequest, aContext, aStatusCode ) {
+	onStopRequest: function ( aRequest, aStatusCode ) {
 		lookout.log_msg( "LookOut: Entering onStopRequest()", 6 ); //MKA
 		var channel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
 		var fsm;
@@ -318,9 +318,11 @@ LookoutStreamListener.prototype = {
 		this.mPackage = null;
 	},
 
-	onDataAvailable: function ( aRequest, aContext, aInputStream, aOffset, aCount ) {
+	onDataAvailable: function ( aRequest, aInputStream, aOffset, aCount ) {
 		lookout.log_msg( "LookOut: Entering onDataAvailable()", 6 ); //MKA
 		var fsm;
+
+
 
 		try {
 			fsm = GetDBView().URIForFirstSelectedMessage;
@@ -344,6 +346,7 @@ LookoutStreamListener.prototype = {
 
 	onTnefStart: function ( filename, content_type, length, date ) {
 		lookout.log_msg( "LookOut: Entering onTnefStart()", 6 ); //MKA
+		lookout.log_msg( "LookOut: " + filename + " - " + length, 6 );
 		var mimeurl = this.mAttUrl + "." + this.mPartId;
 		var basename = lookout.basename( filename );
 
@@ -532,8 +535,8 @@ LookoutStreamListener.prototype = {
 						// the user wants to import into.
 						lookout.cal_add_items( calendars[0], cal_items, this.cur_filename );
 					} else {
-						var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-						var cal_strbundle = sbs.createBundle("chrome://calendar/locale/calendar.properties");
+						//var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+						var cal_strbundle = Services.strings.createBundle("chrome://calendar/locale/calendar.properties");
 
 						// Ask what calendar to import into
 						var args = new Object();
@@ -552,7 +555,7 @@ LookoutStreamListener.prototype = {
 		}
 
 		// redraw attachment pane one last time to get correct size
-		lookout_lib.redraw_attachment_view( this.cur_url );
+		lookout_lib.redraw_attachment_view( );
 
 		this.cur_outstrm_listener = null;
 		this.cur_outstrm = null;
@@ -719,57 +722,28 @@ var lookout_lib = {
 									 + "\n         msguri:" + msguri, 8 );
 
 		var attachment = null;
-		if( typeof AttachmentInfo != 'undefined' ) {
-			// New naming -- used since Thunderbird 7.*
-			// http://mxr.mozilla.org/comm-central/source/mail/base/content/msgHdrViewOverlay.js#1642
-			var attachment = new AttachmentInfo( content_type, atturl, display_name, msguri, true, length);
-			lookout.log_msg( "LookOut:    found new type object: AttachmentInfo ~ Thunderbird 7", 6 );  //MKA
-		}
-		else {
-			// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
-			// http://mxr.mozilla.org/comm-central/source/suite/mailnews/msgHdrViewOverlay.js#1201
-			var attachment = new createNewAttachmentInfo( content_type, atturl, display_name, msguri, true );
-			lookout.log_msg( "LookOut:    found old type object: createNewAttachmentInfo ~ Seamonkey", 6 );  //MKA
-		}
 
-		if( attachment.open ) {
-			// New naming -- used since Thunderbird 7.*
-			attachment.lo_orig_open = attachment.open;
-			attachment.open = function () {
-				lookout_lib.open_attachment( this );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.open", 6 );  //MKA
-		} else {
-			// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
-			attachment.lo_orig_open = attachment.openAttachment;
-			attachment.openAttachment = function () {
-				lookout_lib.open_attachment( this );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.openAttachment", 6 );
-		}
+		var attachment = new AttachmentInfo( content_type, atturl, display_name, msguri, true, length);
 
-		if( attachment.save ) {
-			// New naming -- used since Thunderbird 7.*
-			attachment.lo_orig_save = attachment.save;
-			attachment.save = function (save_dir) {
-				lookout_lib.save_attachment( this, save_dir );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
-		} else {
-			// Old naming -- used in Seamonkey 2.* (until Thunderbird 3.*)
-			attachment.lo_orig_save = attachment.saveAttachment;
-			attachment.saveAttachment = function (save_dir) {
-				lookout_lib.save_attachment( this, save_dir );
-			};
-			lookout.log_msg( "LookOut:    registered own function for attachment.saveAttachment", 6 );
-		}
+		lookout.log_msg( "LookOut:    found new type object: AttachmentInfo", 6 );  //MKA
+
+		attachment.lo_orig_open = attachment.open;
+		attachment.open = function () {
+			lookout_lib.open_attachment( this );
+		};
+		lookout.log_msg( "LookOut:    registered own function for attachment.open", 6 );  //MKA
+
+		attachment.lo_orig_save = attachment.save;
+		attachment.save = function (save_dir) {
+			lookout_lib.save_attachment( this, save_dir );
+		};
+		lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
 
 		attachment.parent = parent;
 		attachment.partID = part_id;
-		attachment.part_id = part_id;
+		attachment.ALWAYSFETCHSIZE = false;
 		currentAttachments.push( attachment );
-		lookout.log_msg( attachment.toSource(), 8 );
-		lookout_lib.redraw_attachment_view( atturl );
+		lookout_lib.redraw_attachment_view( );
 	},
 
 	// we need to explicitly call display functions because we process tnef
@@ -784,12 +758,6 @@ var lookout_lib = {
 		gBuildAttachmentPopupForCurrentMsg = true;
 		displayAttachmentsForExpandedView();
 
-		// try to call "Attachment Sizes", extension {90ceaf60-169c-40fb-b224-7204488f061d}
-		if( typeof ABglobals != 'undefined' && atturl ) {
-			try {
-				ABglobals.setAttSizeTextFor( atturl, length, false );
-			} catch(ex) {}
-		}
 	},
 
 	open_attachment: function ( attachment ) {
@@ -809,7 +777,7 @@ var lookout_lib = {
 		var messenger2 = Components.classes["@mozilla.org/messenger;1"]
 										.getService(Components.interfaces.nsIMessenger);
 		var stream_listener = new LookoutStreamListener();
-		stream_listener.req_part_id = attachment.part_id;
+		stream_listener.req_part_id = attachment.partID;
 		stream_listener.mAttUrl = attachment.parent.url;
 		if( attachment.uri )
 			stream_listener.mMsgUri = attachment.uri;
@@ -823,7 +791,7 @@ var lookout_lib = {
 		lookout.log_msg( "LookOut:   Parent: " + (attachment.parent == null ? "-" : attachment.parent.url)
 									 + "\n         Content-Type: " + attachment.contentType.split("\0")[0]
 									 + "\n         Displayname: " + attname.split("\0")[0]
-									 + "\n         Part_ID: " + attachment.part_id
+									 + "\n         Part_ID: " + attachment.partID
 									 + "\n         isExternal: " + attachment.isExternalAttachment
 									 + "\n         URL: " + attachment.url
 									 + "\n         mMsgUri: " + stream_listener.mMsgUri, 7 );
@@ -859,7 +827,7 @@ var lookout_lib = {
 										.getService(Components.interfaces.nsIMessenger);
 
 		var stream_listener = new LookoutStreamListener();
-		stream_listener.req_part_id = attachment.part_id;
+		stream_listener.req_part_id = attachment.partID;
 		stream_listener.mAttUrl = attachment.parent.url;
 		stream_listener.save_dir = save_dir;
 		if( attachment.uri )
@@ -874,7 +842,7 @@ var lookout_lib = {
 		lookout.log_msg( "LookOut:   Parent: " + (attachment.parent == null ? "-" : attachment.parent.url)
 									 + "\n         Content-Type: " + attachment.contentType.split("\0")[0]
 									 + "\n         Displayname: " + attname.split("\0")[0]
-									 + "\n         Part_ID: " + attachment.part_id
+									 + "\n         Part_ID: " + attachment.partID
 									 + "\n         isExternal: " + attachment.isExternalAttachment
 									 + "\n         URL: " + attachment.url
 									 + "\n         mMsgUri: " + stream_listener.mMsgUri, 7 );

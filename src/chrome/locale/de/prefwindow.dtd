@@ -10,5 +10,5 @@
 <!ENTITY remove_winmail_dat_check.accesskey "E">
 <!ENTITY strict_contenttype_check.label "Strict Content-Typ-Übereinstimmung">
 <!ENTITY strict_contenttype_check.accesskey "S">
-<!ENTITY enable_debug.label "Aktivieren Sie das Debuggen">
-<!ENTITY enable_debug.accesskey "A">
+<!ENTITY enable_debug_check.label "Aktivieren Sie das Debuggen">
+<!ENTITY enable_debug_check.accesskey "A">

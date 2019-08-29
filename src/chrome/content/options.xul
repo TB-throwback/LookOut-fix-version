@@ -38,21 +38,57 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences/preferences.css" type="text/css"?>
 <!DOCTYPE prefwindow SYSTEM "chrome://lookout/locale/prefwindow.dtd">
-<prefwindow id="lookoutPreferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&prefwindow.title;">
-  <prefpane id="pane1" label="&pane1.title;">
-    <preferences>
-      <preference id="attach_raw_mapi_pref" name="extensions.lookout.attach_raw_mapi" type="bool"/>
-      <preference id="direct_to_calendar_pref" name="extensions.lookout.direct_to_calendar" type="bool"/>
-      <preference id="disable_filename_character_set_pref" name="extensions.lookout.disable_filename_character_set" type="bool"/>
-      <preference id="remove_winmail_dat_pref" name="extensions.lookout.remove_winmail_dat" type="bool"/>
-      <preference id="strict_contenttype_pref" name="extensions.lookout.strict_contenttype" type="bool"/>
-      <preference id="enable_debug_set_pref" name="extensions.lookout.debug_enabled" type="bool"/>
-    </preferences>
-    <checkbox id="attach_raw_mapi_check" preference="attach_raw_mapi_pref" label="&attach_raw_mapi_check.label;" accesskey="&attach_raw_mapi_check.accesskey;"/>
-    <checkbox id="direct_to_calendar_check" preference="direct_to_calendar_pref" label="&direct_to_calendar_check.label;" accesskey="&direct_to_calendar_check.accesskey;"/>
-    <checkbox id="disable_filename_character_set_check" preference="disable_filename_character_set_pref" label="&disable_filename_character_set_check.label;" accesskey="&disable_filename_character_set_check.accesskey;"/>
-    <checkbox id="remove_winmail_dat_check" preference="remove_winmail_dat_pref" label="&remove_winmail_dat_check.label;" accesskey="&remove_winmail_dat_check.accesskey;"/>
-    <checkbox id="strict_contenttype_check" preference="strict_contenttype_pref" label="&strict_contenttype_check.label;" accesskey="&strict_contenttype_check.accesskey;"/>
-    <checkbox id="enable_debug_set_check" preference="enable_debug_set_pref" label="&enable_debug.label;" accesskey="&enable_debug.accesskey;"/>
-  </prefpane>
-</prefwindow>
+
+<dialog
+  id="lookoutPreferences"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  title="&prefwindow.title;">
+
+  <vbox
+    id="pane1"
+    label="&pane1.title;">
+    <checkbox
+      id="attach_raw_mapi_check"
+      preference="extensions.lookout.attach_raw_mapi"
+      label="&attach_raw_mapi_check.label;"
+      accesskey="&attach_raw_mapi_check.accesskey;"/>
+
+    <checkbox
+      id="direct_to_calendar_check"
+      preference="extensions.lookout.direct_to_calendar"
+      label="&direct_to_calendar_check.label;"
+      accesskey="&direct_to_calendar_check.accesskey;"/>
+
+    <checkbox
+      id="disable_filename_character_set_check"
+      preference="extensions.lookout.disable_filename_character_set"
+      label="&disable_filename_character_set_check.label;"
+      accesskey="&disable_filename_character_set_check.accesskey;"/>
+
+    <checkbox
+      id="remove_winmail_dat_check"
+      preference="extensions.lookout.remove_winmail_dat"
+      label="&remove_winmail_dat_check.label;"
+      accesskey="&remove_winmail_dat_check.accesskey;"/>
+
+    <checkbox
+      id="strict_contenttype_check"
+      preference="extensions.lookout.strict_contenttype"
+      label="&strict_contenttype_check.label;"
+      accesskey="&strict_contenttype_check.accesskey;"/>
+
+    <checkbox
+      id="enable_debug_check"
+      preference="extensions.lookout.debug_enable"
+      label="&enable_debug_check.label;"
+      accesskey="&enable_debug_check.accesskey;"/>
+  </vbox>
+
+  <script
+     src="chrome://global/content/preferencesBindings.js"
+     type="application/javascript"/>
+  <script
+     src="chrome://lookout/content/preferences.js"
+     type="application/javascript"/>
+
+</dialog>
