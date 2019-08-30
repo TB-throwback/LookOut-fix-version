@@ -1,12 +1,12 @@
 {
+  "manifest_version": 2,
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
       "strict_min_version": "68.0"
     }
   },
-  "version": "2.0.00",
-  "manifest_version": 2,
+  "version": "2.0.0",
   "name": "LookOut (fix version)",
   "description": "LookOut reads and integrates TNEF encoded parts in emails.",
   "author": "Dugite-Code",
