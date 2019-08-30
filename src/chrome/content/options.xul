@@ -79,7 +79,7 @@
 
     <checkbox
       id="enable_debug_check"
-      preference="extensions.lookout.debug_enable"
+      preference="extensions.lookout.debug_enabled"
       label="&enable_debug_check.label;"
       accesskey="&enable_debug_check.accesskey;"/>
   </vbox>
