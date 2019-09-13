@@ -81,7 +81,7 @@ var lookout = {
 			var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
 			pref_val = prefs[get_type_func]( pref_name );
 		} catch (ex) {
-			this.log_msg( "LO: warning: could not retrieve setting '" + pref_name + "': " + ex, 5 );
+			lookout.log_msg( "LO: warning: could not retrieve setting '" + pref_name + "': " + ex, 5 );
 		}
 		if( pref_val === void(0) )
 			pref_val = default_val;
@@ -104,7 +104,7 @@ var lookout = {
 		  debugLevel = 5;
 		} else {
 			debugLevel = 10;
-			this.log_msg( "LookOut: debug enabled ", 5 );
+			lookout.log_msg( "LookOut: debug enabled ", 5 );
 		}
 	},
 
@@ -200,10 +200,10 @@ var lookout = {
 		//var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
 		var cal_strbundle = Services.strings.createBundle("chrome://calendar/locale/calendar.properties");
 		if (!failedCount && duplicateCount ) {
-			this.log_msg( "LookOut: " + cal_strbundle.GetStringFromName( "duplicateError" ) + " " +
+			lookout.log_msg( "LookOut: " + cal_strbundle.GetStringFromName( "duplicateError" ) + " " +
 			duplicateCount + " " + aFilePath, 3 );
 		} else if (failedCount) {
-			this.log_msg( "LookOut: " + cal_strbundle.GetStringFromName( "importItemsFailed" ) + " " +
+			lookout.log_msg( "LookOut: " + cal_strbundle.GetStringFromName( "importItemsFailed" ) + " " +
 			failedCount + " " + lastError.toString(), 3 );
 		}
 	}
