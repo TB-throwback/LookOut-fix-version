@@ -1,0 +1,10 @@
+{
+
+  "extensionName": {
+    "message": "MutasdMeg! (LookOut)"
+  },
+  "extensionDescription": {
+    "message": "A MutasdMeg! megnyitja és letölthetővé teszi a levelek TNEF (Transport Neutral Encapsulation Format – szállítási semleges befoglaló formátum) kódolással csatolt mellékleteit (általában winmail.dat)."
+  }
+
+}

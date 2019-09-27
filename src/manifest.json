@@ -1,5 +1,7 @@
 {
   "manifest_version": 2,
+  "name": "__MSG_extensionName__",
+	"description": "__MSG_extensionDescription__",
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
@@ -7,8 +9,7 @@
     }
   },
   "version": "2.0.0",
-  "name": "LookOut (fix version)",
-  "description": "LookOut reads and integrates TNEF encoded parts in emails.",
+  "default_locale": "en",
   "author": "Dugite-Code",
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
   "legacy": {

@@ -1,0 +1,10 @@
+{
+
+  "extensionName": {
+    "message": "Zeig'sMir! (LookOut)"
+  },
+  "extensionDescription": {
+    "message": "LookOut öffnet die TNEF kodierten Anhänge der Mails (meistens winmail.dat) und ladet die dekodierten Teile herunter."
+  }
+
+}
