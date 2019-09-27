@@ -1,0 +1,10 @@
+{
+
+  "extensionName": {
+    "message": "LookOut (fix version)"
+  },
+  "extensionDescription": {
+    "message": "LookOut reads and integrates TNEF encoded parts in emails."
+  }
+
+}
