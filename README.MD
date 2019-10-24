@@ -1,3 +1,5 @@
+# NOTICE: New maintainer wanted
+
 # LookOut (Fix Version)<img src="src/chrome/skin/LOicon-64.png" width="80" align="left">
 
 **[Please Read the F.A.Q.](https://github.com/TB-throwback/LookOut-fix-version/wiki/F.A.Q.)**
