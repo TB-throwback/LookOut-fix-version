@@ -1,0 +1,14 @@
+<!ENTITY prefwindow.title "Voorkeuren voor LookOut">
+<!ENTITY pane1.title "Voorkeuren voor LookOut">
+<!ENTITY attach_raw_mapi_check.label "MAPI-eigenschappen bijsluiten">
+<!ENTITY attach_raw_mapi_check.accesskey "M">
+<!ENTITY direct_to_calendar_check.label "Agendagegevens direct openen">
+<!ENTITY direct_to_calendar_check.accesskey "A">
+<!ENTITY disable_filename_character_set_check.label "Tekenset van de bestandsnamen niet omzetten">
+<!ENTITY disable_filename_character_set_check.accesskey "T">
+<!ENTITY remove_winmail_dat_check.label "winmail.dat verwijderen">
+<!ENTITY remove_winmail_dat_check.accesskey "W">
+<!ENTITY strict_contenttype_check.label "Bestandstype strenger controleren">
+<!ENTITY strict_contenttype_check.accesskey "B">
+<!ENTITY enable_debug_check.label "Debugging inschakelen">
+<!ENTITY enable_debug_check.accesskey "D">
