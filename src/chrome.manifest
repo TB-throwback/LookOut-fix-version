@@ -7,4 +7,4 @@ locale  lookout hu              chrome/locale/hu/
 skin    lookout classic/1.0     chrome/skin/
 
 overlay chrome://messenger/content/messenger.xul chrome://lookout/content/lookout.xul
-
+overlay chrome://messenger/content/mailWindowOverlay.xul chrome://lookout/content/lookout.xul
