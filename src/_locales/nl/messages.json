@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "LookOut (fix version)"
+  },
+  "extensionDescription": {
+    "message": "LookOut zet TNEF-bijlagen (zoals die in winmail.dat) om in leesbare vorm en plaatst deze in het bijlagenvak."
+  }
+}
