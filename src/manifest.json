@@ -14,7 +14,7 @@
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
   "icons": {
     "32": "chrome/skin/LOicon-32.png",
-    "48": "chrome/skin/LOicon-32.png",
+    "48": "chrome/skin/LOicon-48.png",
     "64": "chrome/skin/LOicon-64.png"
   },
   "legacy": {
