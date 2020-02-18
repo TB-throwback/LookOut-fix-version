@@ -119,15 +119,48 @@ var lookout = {
 		}
 	},
 
-	get_temp_file: function lo_get_temp_file( filename ) {
+
+	// Since we're automatically downloading, we don't get the file picker's
+	// logic to check for existing files, so we need to do that here.
+	//
+	// Note - this code is identical to that in contentAreaUtils.js.
+	// If you are updating this code, update that code too! We can't share code
+	// here since this is called in a js component.
+	find_unique_filename: function lo_find_unique_filename( aLocalFile ) {
+		var uniqifier_re = /(-\d+)?(\.[^.]+)?$/;
+		var parts = uniqifier_re.exec( aLocalFile.leafName );
+		var prefix = "";
+		var uniqifier = 0;
+		var postfix = "";
+
+		if( parts && parts.index >= 0 ) {
+			this.log_msg( aLocalFile.path + " -> " + parts.toSource(), 7 );
+			prefix = aLocalFile.leafName.slice( 0, parts.index - 1 );
+			if( parts[1] != undefined )
+	uniqifier = parseInt( parts[1].substr( 1 ) ); // chop '-'
+			if( parts[2] != undefined )
+	postfix = parts[2];
+		} else {
+			prefix = aLocalFile.leafName;
+		}
+
+		while( aLocalFile.exists() ) {
+			uniqifier++;
+			aLocalFile.leafName = prefix + "-" + uniqifier + postfix;
+		}
+		return( aLocalFile );
+	},
+
+	make_temp_file: function lo_make_temp_file( filename ) {
+
 		var file_locator = Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties);
 		var temp_dir = file_locator.get( "TmpD", Components.interfaces.nsIFile );
 
 		var local_target = temp_dir.clone();
-		local_target.append( "lookout" );
+
 		local_target.append( filename );
 
-		return( local_target );
+		return( this.find_unique_filename( local_target ) );
 	},
 
 	cal_trans_mgr: null,
@@ -358,50 +391,13 @@ LookoutStreamListener.prototype = {
 
 
 		if( this.action_type == LOOKOUT_ACTION_SCAN ) {
-
-				lookout.log_msg( "LookOut:    adding attachment: " + mimeurl, 7 );
-				this.cur_outstrm = null;
-				var outfile = lookout.get_temp_file( filename );
-
-				outfile.initWithFile( outfile );
-				// Delete Temporary file if it already exists
-				if (outfile.exists())
-					outfile.remove(false)
-				// Explicitly Create Temporary file for older TB versions
-				outfile.create(outfile.NORMAL_FILE_TYPE, 0666);
-
-				var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-				this.cur_url = ios.newFileURI( outfile );
-				this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
-																	 .createInstance(Components.interfaces.nsIFileOutputStream);
-				this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
-
-				if( lightning &&
-				 content_type == "text/calendar" ) {
-	        //let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
-          //             .createInstance(Components.interfaces.calIItipItem);
-					document.getElementById("imip-bar").setAttribute("collapsed", "false");
-				}
-
-				var fileuri = this.cur_url.spec
-
-				lookout.log_msg( "LookOut:    adding attachment: " + fileuri, 7 );
-
-				lookout.log_msg( "LookOut:    Parent: " + this.attachment
-											 + "\n            mMsgUri: " + this.mMsgUri
-											 + "\n            requested Part_ID: " + this.req_part_id
-											 + "\n            Part_ID: " + this.mPartId
-											 + "\n            Displayname: " + filename.split("\0")[0]
-											 + "\n            Content-Type: " + content_type.split("\0")[0]
-											 + "\n            Length: " + length
-											 + "\n            URL: " + (this.cur_url ? this.cur_url.spec : "")
-											 + "\n            mimeurl: " + (mimeurl ? mimeurl : ""), 7 );
-
+			lookout.log_msg( "LookOut:    adding attachment: " + mimeurl, 7 );
 			lookout_lib.add_sub_attachment_to_list( this.attachment, content_type, filename,
-																							this.mPartId.toString(), fileuri, this.mMsgUri, length );
-		} else {
-			if( !this.req_part_id || this.mPartId == this.req_part_id ) {
+				this.mPartId.toString(), mimeurl, this.mMsgUri, length );
+			} else {
+
 				lookout.log_msg( "LookOut:    open or save: " + this.mAttUrl + "." + this.mPartId, 7 );
+
 				if( !this.req_part_id || this.mPartId == this.req_part_id ) {
 					// ensure these are null for the following case evaluation
 					this.cur_outstrm = null;
@@ -411,33 +407,51 @@ LookoutStreamListener.prototype = {
 					this.cur_content_type = content_type;
 					this.cur_length = length;
 					this.cur_date = date;
+					this.cur_url = mimeurl;
 
-					var outfile = lookout.get_temp_file( this.cur_filename );
-					var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-					this.cur_url = ios.newFileURI( outfile );
+					if( lightning &&
+						content_type == "text/calendar" ) {
+							//let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
+							//             .createInstance(Components.interfaces.calIItipItem);
+							document.getElementById("imip-bar").setAttribute("collapsed", "false");
+						}
 
-					if( lookout.get_bool_pref( "direct_to_calendar" ) &&
-					content_type == "text/calendar" ) {
-						try {
-							this.cur_outstrm_listener = Components.classes["@mozilla.org/calendar/import;1?type=ics"]
-																			.getService(Components.interfaces.calIImporter);
-						} catch (ex) { }
-						if( this.cur_outstrm_listener ) {
-							// we are using the default interface of Output Stream to be consistent
-							this.cur_outstrm = Components.classes["@mozilla.org/storagestream;1"].createInstance(Components.interfaces.nsIOutputStream);
-							this.cur_outstrm.QueryInterface(Components.interfaces.nsIStorageStream).init( 4096, 0xFFFFFFFF, null );
+						if( lookout.get_bool_pref( "direct_to_calendar" ) &&
+						content_type == "text/calendar" ) {
+							try {
+								this.cur_outstrm_listener = Components.classes["@mozilla.org/calendar/import;1?type=ics"]
+								.getService(Components.interfaces.calIImporter);
+							} catch (ex) { }
+
+							if( this.cur_outstrm_listener ) {
+								// we are using the default interface of Output Stream to be consistent
+								this.cur_outstrm = Components.classes["@mozilla.org/storagestream;1"]
+								.createInstance(Components.interfaces.nsIOutputStream);
+								this.cur_outstrm.QueryInterface(Components.interfaces.nsIStorageStream).init( 4096, 0xFFFFFFFF, null );
+							}
+						}
+
+						if( !this.cur_outstrm ) {
+							var outfile = lookout.make_temp_file( filename );
+							var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+							this.cur_url = ios.newFileURI( outfile );
+
+							this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
+							.createInstance(Components.interfaces.nsIFileOutputStream);
+							this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
 						}
 					}
-
-					if( !this.cur_outstrm ) {
-						this.cur_outstrm = Components.classes["@mozilla.org/network/file-output-stream;1"]
-																			 .createInstance(Components.interfaces.nsIFileOutputStream);
-						this.cur_outstrm.init( outfile, 0x02 | 0x08, 0666, 0 );
-					}
 				}
-			}
-		}
-	},
+				lookout.log_msg( "LookOut:    Parent: " + this.attachment
+				+ "\n            mMsgUri: " + this.mMsgUri
+				+ "\n            requested Part_ID: " + this.req_part_id
+				+ "\n            Part_ID: " + this.mPartId
+				+ "\n            Displayname: " + filename.split("\0")[0]
+				+ "\n            Content-Type: " + content_type.split("\0")[0]
+				+ "\n            Length: " + length
+				+ "\n            URL: " + (this.cur_url ? this.cur_url.spec : "")
+				+ "\n            mimeurl: " + (mimeurl ? mimeurl : ""), 7 );
+			},
 
   // Move temporary files to destination folder/file
   moveTMPFile: function ( file, file_dir, file_name ) {
