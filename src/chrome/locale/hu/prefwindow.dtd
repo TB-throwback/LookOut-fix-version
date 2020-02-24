@@ -10,5 +10,5 @@
 <!ENTITY remove_winmail_dat_check.accesskey "W">
 <!ENTITY strict_contenttype_check.label "Szigorú tartalomtípus-egyezés">
 <!ENTITY strict_contenttype_check.accesskey "t">
-<!ENTITY enable_debug.label "Engedélyezze a hibakeresést">
+<!ENTITY enable_debug_check.label "Engedélyezze a hibakeresést">
 <!ENTITY enable_debug.accesskey "E">
