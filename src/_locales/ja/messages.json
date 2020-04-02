@@ -1,0 +1,10 @@
+{
+
+  "extensionName": {
+    "message": "LookOut (fix version)"
+  },
+  "extensionDescription": {
+    "message": "LookOutはEメールに含まれるTNEFでエンコードされたデータを変換します。"
+  }
+
+}
