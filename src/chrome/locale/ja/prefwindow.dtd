@@ -1,0 +1,14 @@
+<!ENTITY prefwindow.title "LookOutの設定">
+<!ENTITY pane1.title "LookOut preferences">
+<!ENTITY attach_raw_mapi_check.label "MAPI プロパティを添付する">
+<!ENTITY attach_raw_mapi_check.accesskey "M">
+<!ENTITY direct_to_calendar_check.label "カレンダーデータを直接開く">
+<!ENTITY direct_to_calendar_check.accesskey "C">
+<!ENTITY disable_filename_character_set_check.label "ファイル名の文字コード変換を無効にする">
+<!ENTITY disable_filename_character_set_check.accesskey "F">
+<!ENTITY remove_winmail_dat_check.label "Winmail.datを取り除く">
+<!ENTITY remove_winmail_dat_check.accesskey "R">
+<!ENTITY strict_contenttype_check.label "厳密なメディアタイプ判定を実施する">
+<!ENTITY strict_contenttype_check.accesskey "S">
+<!ENTITY enable_debug_check.label "デバッグを有効化する">
+<!ENTITY enable_debug_check.accesskey "E">
