@@ -1,3 +1,3 @@
-2.0.1
-Reverted Drag and Drop support due to file permissions issues
-Dutch translation added
+2.0.3
+Japanese Translation added - fluoros-jp
+Charaater set conversion changes - fluoros-jp
