@@ -489,7 +489,7 @@ function tnef_file_munge_fname( fname, files, code_page ) {
     if( charset != null ) {
       try {
         let decoder = new TextDecoder(charset);
-      	var fname2 = decoder.decode(new Uint8Array( fname ));
+      	var fname2 = decoder.decode(new Uint8Array( fname.split('').map( function( cur_char ){ return cur_char.charCodeAt(0); } ) ) );
       	try {
       		decodeURIComponent( escape( fname2 ) );
       	} catch (e) {
