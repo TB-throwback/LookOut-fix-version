@@ -1,4 +1,4 @@
-# NOTICE: New maintainer wanted
+# NOTICE: [New maintainers wanted](https://github.com/TB-throwback/LookOut-fix-version/issues/65)
 
 # LookOut (Fix Version)<img src="src/chrome/skin/LOicon-64.png" width="80" align="left">
 
