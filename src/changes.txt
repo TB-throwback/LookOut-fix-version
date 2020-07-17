@@ -1,3 +1,5 @@
+2.0.4
+Set Max version to 6*.*
 2.0.3
 Japanese Translation added - fluoros-jp
 Charaater set conversion changes - fluoros-jp
