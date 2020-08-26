@@ -5,8 +5,7 @@
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
-      "strict_min_version": "68.0",
-      "strict_max_version": "68.*"
+      "strict_min_version": "68.0"
     }
   },
   "version": "2.0.4",
@@ -17,6 +16,21 @@
     "32": "chrome/skin/LOicon-32.png",
     "48": "chrome/skin/LOicon-48.png",
     "64": "chrome/skin/LOicon-64.png"
+  },
+  "experiment_apis": {
+    "WindowListener": {
+      "schema": "api/WindowListener/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["WindowListener"]],
+        "script": "api/WindowListener/implementation.js"
+      }
+    }
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
   },
   "legacy": {
     "options": {
