@@ -31,11 +31,5 @@
     "scripts": [
       "background.js"
     ]
-  },
-  "legacy": {
-    "options": {
-      "page": "chrome://lookout/content/options.xul",
-      "open_in_tab": false
-    }
   }
 }
