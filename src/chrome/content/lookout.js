@@ -980,6 +980,3 @@ function LookoutLoad () {
 	//---------------------------------------------------------------------------------
 }
 
-//MKA  Adding callback to the mail window for starting addon.
-window.addEventListener( 'load', LookoutLoad, false );
-

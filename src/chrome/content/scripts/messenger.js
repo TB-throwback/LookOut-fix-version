@@ -1,3 +1,6 @@
+// Import any needed modules.
+var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
 // Load an additional JavaScript file.
 Services.scriptloader.loadSubScript("chrome://lookout/content/lookout.js", window, "UTF-8");
 
@@ -10,7 +13,7 @@ function onLoad(activatedWhileWindowOpen) {
     </menupopup>`,
   ["chrome://lookout/locale/lookout.dtd"]);
 
-  glookout.loadSettings(false);
+  window.glookout.loadSettings(false);
 }
 
 function onUnload(deactivatedWhileWindowOpen) {
