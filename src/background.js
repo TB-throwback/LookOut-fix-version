@@ -9,10 +9,10 @@ messenger.WindowListener.registerChromeUrl([
   ["locale",  "lookout", "ja",      "chrome/locale/ja/"],
   ["locale",  "lookout", "nl",      "chrome/locale/nl/"]
 ]);
-messenger.WindowListener.registerOptionsPage("chrome://lookout/content/options.xul");
+messenger.WindowListener.registerOptionsPage("chrome://lookout/content/options.xhtml");
 
 messenger.WindowListener.registerWindow(
-    "chrome://messenger/content/messenger.xul",
+    "chrome://messenger/content/messenger.xhtml",
     "chrome://lookout/content/scripts/messenger.js");
 messenger.WindowListener.startListening();
 
