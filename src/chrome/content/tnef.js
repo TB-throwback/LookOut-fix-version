@@ -1276,8 +1276,6 @@ function decompose_rfc822_address( address ) {
   return( parts );
 }
 
-var ownHeaderParser = Components.classes["@mozilla.org/messenger/headerparser;1"].getService(Components.interfaces.nsIMsgHeaderParser);
-
 function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
   tnef_log_msg( "TNEF: Parsing original address line: " + orig_name_addr, 6);
   var orig_addr_parts = decompose_rfc822_address( orig_name_addr );
@@ -1298,15 +1296,23 @@ function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
 
     orig_addr_parts[1] = "";
 
-    num_addrs = ownHeaderParser.parseHeadersWithArray( pkg.msg_header.author, addrs, names, full_names );
-    all_addrs = addrs.value;
-    all_names = names.value;
-    num_addrs += ownHeaderParser.parseHeadersWithArray( pkg.msg_header.recipients, addrs, names, full_names );
-    all_addrs = all_addrs.concat( addrs.value );
-    all_names = all_names.concat( names.value );
-    num_addrs += ownHeaderParser.parseHeadersWithArray( pkg.msg_header.ccList, addrs, names, full_names );
-    all_addrs = all_addrs.concat( addrs.value );
-    all_names = all_names.concat( names.value );
+    let addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.author);
+    for (let addr of addresses) {
+      let all_addrs = all_addrs.concat(addr.email);
+      let all_names = all_names.concat(addr.name);
+    }
+
+    addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.recipients);
+    for (let addr of addresses) {
+      let all_addrs = all_addrs.concat(addr.email);
+      let all_names = all_names.concat(addr.name);
+    }
+
+    addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.ccList);
+    for (let addr of addresses) {
+      let all_addrs = all_addrs.concat(addr.email);
+      let all_names = all_names.concat(addr.name);
+    }
 
     all_names.forEach( rm_quotes );
 
