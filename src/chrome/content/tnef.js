@@ -13,21 +13,21 @@
 
 
 
-const LVL_MESSAGE    = 0x1;
-const LVL_ATTACHMENT = 0x2;
+var LVL_MESSAGE    = 0x1;
+var LVL_ATTACHMENT = 0x2;
 
 // ---------- Tnef Types ----------
 
-const TNEF_TRIPLES = 0x0000; //   triples
-const TNEF_STRING  = 0x0001; //   string
-const TNEF_TEXT    = 0x0002; //   text
-const TNEF_DATE    = 0x0003; //   date
-const TNEF_SHORT   = 0x0004; //   short
-const TNEF_LONG    = 0x0005; //   long
-const TNEF_BYTE    = 0x0006; //   byte
-const TNEF_WORD    = 0x0007; //   word
-const TNEF_DWORD   = 0x0008; //   dword
-const TNEF_TYPE_MAX     = 0x0009; //   max
+var TNEF_TRIPLES = 0x0000; //   triples
+var TNEF_STRING  = 0x0001; //   string
+var TNEF_TEXT    = 0x0002; //   text
+var TNEF_DATE    = 0x0003; //   date
+var TNEF_SHORT   = 0x0004; //   short
+var TNEF_LONG    = 0x0005; //   long
+var TNEF_BYTE    = 0x0006; //   byte
+var TNEF_WORD    = 0x0007; //   word
+var TNEF_DWORD   = 0x0008; //   dword
+var TNEF_TYPE_MAX     = 0x0009; //   max
 
 function tnef_attr_type_to_string( attr_type ) {
   switch( attr_type ) {
@@ -47,38 +47,38 @@ function tnef_attr_type_to_string( attr_type ) {
 // ---------- Tnef Names -----------
 
 // names of all attributes found in TNEF file
-const TNEF_ATTR_OWNER				= 0x0000; //  Owner
-const TNEF_ATTR_SENTFOR				= 0x0001; //  Sent For
-const TNEF_ATTR_DELEGATE			= 0x0002; //  Delegate
-const TNEF_ATTR_DATE_START			= 0x0006; //  Date Start
-const TNEF_ATTR_DATE_END			= 0x0007; //  Date End
-const TNEF_ATTR_APPT_ID_OWNER			= 0x0008; //  Owner Appointment ID
-const TNEF_ATTR_REQUEST_RESP			= 0x0009; //  Response Requested.
-const TNEF_ATTR_FROM				= 0x8000; //  From
-const TNEF_ATTR_SUBJECT				= 0x8004; //  Subject
-const TNEF_ATTR_DATE_SENT			= 0x8005; //  Date Sent
-const TNEF_ATTR_DATE_RECD			= 0x8006; //  Date Received
-const TNEF_ATTR_MESSAGE_STATUS			= 0x8007; //  Message Status
-const TNEF_ATTR_MESSAGE_CLASS			= 0x8008; //  Message Class
-const TNEF_ATTR_MESSAGE_ID			= 0x8009; //  Message ID
-const TNEF_ATTR_PARENT_ID			= 0x800a; //  Parent ID
-const TNEF_ATTR_CONVERSATION_ID			= 0x800b; //  Conversation ID
-const TNEF_ATTR_BODY				= 0x800c; //  Body
-const TNEF_ATTR_PRIORITY			= 0x800d; //  Priority
-const TNEF_ATTR_ATTACH_DATA			= 0x800f; //  Attachment Data
-const TNEF_ATTR_ATTACH_TITLE			= 0x8010; //  Attachment File Name
-const TNEF_ATTR_ATTACH_METAFILE			= 0x8011; //  Attachment Meta File
-const TNEF_ATTR_ATTACH_CREATE_DATE		= 0x8012; //  Attachment Creation Date
-const TNEF_ATTR_ATTACH_MODIFY_DATE		= 0x8013; //  Attachment Modification Date
-const TNEF_ATTR_DATE_MODIFY			= 0x8020; //  Date Modified
-const TNEF_ATTR_ATTACH_TRANSPORT_FILENAME	= 0x9001; //  Attachment Transport Filename
-const TNEF_ATTR_ATTACH_REND_DATA		= 0x9002; //  Attachment Rendering Data
-const TNEF_ATTR_MAPI_PROPS			= 0x9003; //  MAPI Properties
-const TNEF_ATTR_RECIPTABLE			= 0x9004; //  Recipients
-const TNEF_ATTR_ATTACHMENT			= 0x9005; //  Attachment
-const TNEF_ATTR_TNEF_VERSION			= 0x9006; //  TNEF Version
-const TNEF_ATTR_OEM_CODEPAGE			= 0x9007; //  OEM Codepage
-const TNEF_ATTR_ORIGNINAL_MESSAGE_CLASS		= 0x9008; //  Original Message Class
+var TNEF_ATTR_OWNER				= 0x0000; //  Owner
+var TNEF_ATTR_SENTFOR				= 0x0001; //  Sent For
+var TNEF_ATTR_DELEGATE			= 0x0002; //  Delegate
+var TNEF_ATTR_DATE_START			= 0x0006; //  Date Start
+var TNEF_ATTR_DATE_END			= 0x0007; //  Date End
+var TNEF_ATTR_APPT_ID_OWNER			= 0x0008; //  Owner Appointment ID
+var TNEF_ATTR_REQUEST_RESP			= 0x0009; //  Response Requested.
+var TNEF_ATTR_FROM				= 0x8000; //  From
+var TNEF_ATTR_SUBJECT				= 0x8004; //  Subject
+var TNEF_ATTR_DATE_SENT			= 0x8005; //  Date Sent
+var TNEF_ATTR_DATE_RECD			= 0x8006; //  Date Received
+var TNEF_ATTR_MESSAGE_STATUS			= 0x8007; //  Message Status
+var TNEF_ATTR_MESSAGE_CLASS			= 0x8008; //  Message Class
+var TNEF_ATTR_MESSAGE_ID			= 0x8009; //  Message ID
+var TNEF_ATTR_PARENT_ID			= 0x800a; //  Parent ID
+var TNEF_ATTR_CONVERSATION_ID			= 0x800b; //  Conversation ID
+var TNEF_ATTR_BODY				= 0x800c; //  Body
+var TNEF_ATTR_PRIORITY			= 0x800d; //  Priority
+var TNEF_ATTR_ATTACH_DATA			= 0x800f; //  Attachment Data
+var TNEF_ATTR_ATTACH_TITLE			= 0x8010; //  Attachment File Name
+var TNEF_ATTR_ATTACH_METAFILE			= 0x8011; //  Attachment Meta File
+var TNEF_ATTR_ATTACH_CREATE_DATE		= 0x8012; //  Attachment Creation Date
+var TNEF_ATTR_ATTACH_MODIFY_DATE		= 0x8013; //  Attachment Modification Date
+var TNEF_ATTR_DATE_MODIFY			= 0x8020; //  Date Modified
+var TNEF_ATTR_ATTACH_TRANSPORT_FILENAME	= 0x9001; //  Attachment Transport Filename
+var TNEF_ATTR_ATTACH_REND_DATA		= 0x9002; //  Attachment Rendering Data
+var TNEF_ATTR_MAPI_PROPS			= 0x9003; //  MAPI Properties
+var TNEF_ATTR_RECIPTABLE			= 0x9004; //  Recipients
+var TNEF_ATTR_ATTACHMENT			= 0x9005; //  Attachment
+var TNEF_ATTR_TNEF_VERSION			= 0x9006; //  TNEF Version
+var TNEF_ATTR_OEM_CODEPAGE			= 0x9007; //  OEM Codepage
+var TNEF_ATTR_ORIGNINAL_MESSAGE_CLASS		= 0x9008; //  Original Message Class
 
 function tnef_attr_name_to_string( attr_name ) {
   switch( attr_name ) {
@@ -139,7 +139,7 @@ function tnef_log_msg( msg, level ) {
   }
 }
 
-const TNEF_PREF_PREFIX = "extensions.lookout.";
+var TNEF_PREF_PREFIX = "extensions.lookout.";
 
 function tnef_get_pref( name, get_type_func, default_val ) {
   var pref_name = TNEF_PREF_PREFIX + name;
@@ -618,7 +618,7 @@ function tnef_date_parse( buf ) {
 
 // ---------- Tnef Attr ----------
 
-const MINIMUM_ATTR_LENGTH = 14; // 72
+var MINIMUM_ATTR_LENGTH = 14; // 72
 var tnef_byte_pos = 0;
 
 // Object types
@@ -845,8 +845,8 @@ function tnef_attr_read( instrm, prev_attr ) {
 
 // ---------- MAPI -----------
 
-const MULTI_VALUE_FLAG = 0x1000;
-const GUID_EXISTS_FLAG = 0x8000;
+var MULTI_VALUE_FLAG = 0x1000;
+var GUID_EXISTS_FLAG = 0x8000;
 
 function GUID() {
 }
@@ -1045,9 +1045,9 @@ function mapi_attr_find( mattrs, name_id ) {
 
 // ---------- RTF -----------
 
-const rtf_uncompressed_magic = 0x414c454d;
-const rtf_compressed_magic = 0x75465a4c;
-const rtf_prebuf = String( "{\\rtf1\\ansi\\mac\\deff0\\deftab720{\\fonttbl;}{\\f0\\fnil \\froman \\fswiss \\fmodern \\fscript \\fdecor MS Sans SerifSymbolArialTimes New RomanCourier{\\colortbl\\red0\\green0\\blue0\r\n\\par \\pard\\plain\\f0\\fs20\\b\\i\\u\\tab\\tx" );
+var rtf_uncompressed_magic = 0x414c454d;
+var rtf_compressed_magic = 0x75465a4c;
+var rtf_prebuf = String( "{\\rtf1\\ansi\\mac\\deff0\\deftab720{\\fonttbl;}{\\f0\\fnil \\froman \\fswiss \\fmodern \\fscript \\fdecor MS Sans SerifSymbolArialTimes New RomanCourier{\\colortbl\\red0\\green0\\blue0\r\n\\par \\pard\\plain\\f0\\fs20\\b\\i\\u\\tab\\tx" );
 
 
 function is_rtf_data( data ) {
@@ -1214,7 +1214,7 @@ function rtf_to_escaped_text( rtf_data ) {
 //static size_t filesize;
 
 /* TNEF signature.  Equivalent to the magic cookie for a TNEF file. */
-const TNEF_SIGNATURE = 0x223e9f78;
+var TNEF_SIGNATURE = 0x223e9f78;
 
 
 function TnefListenerInterface() {
@@ -1239,11 +1239,11 @@ TnefPackage.prototype = {
 }
 
 //MessageBodyTypes {
-const MSG_TEXT = 't';
-const MSG_HTML = 'h';
-const MSG_RTF  = 'r';
-const MSG_ICAL = 'i';
-const MSG_VCARD = 'v';
+var MSG_TEXT = 't';
+var MSG_HTML = 'h';
+var MSG_RTF  = 'r';
+var MSG_ICAL = 'i';
+var MSG_VCARD = 'v';
 //}
 
 function strtrim( str ) {
@@ -1276,8 +1276,6 @@ function decompose_rfc822_address( address ) {
   return( parts );
 }
 
-var ownHeaderParser = Components.classes["@mozilla.org/messenger/headerparser;1"].getService(Components.interfaces.nsIMsgHeaderParser);
-
 function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
   tnef_log_msg( "TNEF: Parsing original address line: " + orig_name_addr, 6);
   var orig_addr_parts = decompose_rfc822_address( orig_name_addr );
@@ -1298,15 +1296,23 @@ function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
 
     orig_addr_parts[1] = "";
 
-    num_addrs = ownHeaderParser.parseHeadersWithArray( pkg.msg_header.author, addrs, names, full_names );
-    all_addrs = addrs.value;
-    all_names = names.value;
-    num_addrs += ownHeaderParser.parseHeadersWithArray( pkg.msg_header.recipients, addrs, names, full_names );
-    all_addrs = all_addrs.concat( addrs.value );
-    all_names = all_names.concat( names.value );
-    num_addrs += ownHeaderParser.parseHeadersWithArray( pkg.msg_header.ccList, addrs, names, full_names );
-    all_addrs = all_addrs.concat( addrs.value );
-    all_names = all_names.concat( names.value );
+    let addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.author);
+    for (let addr of addresses) {
+      let all_addrs = all_addrs.concat(addr.email);
+      let all_names = all_names.concat(addr.name);
+    }
+
+    addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.recipients);
+    for (let addr of addresses) {
+      let all_addrs = all_addrs.concat(addr.email);
+      let all_names = all_names.concat(addr.name);
+    }
+
+    addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.ccList);
+    for (let addr of addresses) {
+      let all_addrs = all_addrs.concat(addr.email);
+      let all_names = all_names.concat(addr.name);
+    }
 
     all_names.forEach( rm_quotes );
 
