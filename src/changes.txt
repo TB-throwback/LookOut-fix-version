@@ -1,5 +1,5 @@
-2.0.4
-Set Max version to 6*.*
-2.0.3
-Japanese Translation added - fluoros-jp
-Charaater set conversion changes - fluoros-jp
+3.0.0
+Initial Thunderbird 78 support has been added via the Experiment wrapper API
+* Calendar integration has still not been fully tested.
+* Backwards Compatibility with version 68 has been briefly tested.
+Please report any issues to https://github.com/TB-throwback/LookOut-fix-version/issues

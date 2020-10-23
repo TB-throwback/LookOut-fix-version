@@ -49,15 +49,13 @@
 
 
 // How long we should wait for window initialization to finish
-const LOOKOUT_WAIT_MAX = 10;
-const LOOKOUT_WAIT_TIME = 100;
-
-const LOOKOUT_PREF_PREFIX = "extensions.lookout.";
+// top-level const will cause errors on reload
+var LOOKOUT_WAIT_MAX = 10;
+var LOOKOUT_WAIT_TIME = 100;
+var LOOKOUT_PREF_PREFIX = "extensions.lookout.";
 
 // Declare Debug level Globaly
 var debugLevel = 10;
-
-var uid
 
 try {
 	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
@@ -265,9 +263,9 @@ var lookout = {
 }
 
 
-const LOOKOUT_ACTION_SCAN = 0;
-const LOOKOUT_ACTION_OPEN = 1;
-const LOOKOUT_ACTION_SAVE = 2;
+var LOOKOUT_ACTION_SCAN = 0;
+var LOOKOUT_ACTION_OPEN = 1;
+var LOOKOUT_ACTION_SAVE = 2;
 
 function LookoutStreamListener() {
 }
@@ -556,7 +554,7 @@ LookoutStreamListener.prototype = {
 						var args = new Object();
 						args.onOk = function putItems(aCal) { lookout.cal_add_items( aCal, cal_items, this.cur_filename ); };
 						args.promptText = cal_strbundle.GetStringFromName( "importPrompt" );
-						openDialog( "chrome://calendar/content/chooseCalendarDialog.xul",
+						openDialog( "chrome://calendar/content/chooseCalendarDialog.xhtml",
 												"_blank", "chrome,titlebar,modal,resizable", args );
 					}
 				} else {
@@ -611,6 +609,14 @@ var lookout_lib = {
 	orig_onEndAllAttachments: null,
 	orig_processHeaders: null,
 
+	shutdown: function() {
+		if (lookout_lib.orig_onEndAllAttachments && messageHeaderSink) {
+			// return to default
+			console.log("shutdown");
+			messageHeaderSink.onEndAllAttachments = lookout_lib.orig_onEndAllAttachments;
+		}
+	},
+
 	startup: function() {
 		lookout.log_msg( "LookOut: Entering startup()", 6 ); //MKA
 
@@ -618,7 +624,7 @@ var lookout_lib = {
 		// For now monkey patch messageHeaderSink.onEndAllAttachments (and messageHeaderSink.processHeaders?)
 		// (see mail/base/content/msgHdrOverlay.js).
 
-		if( typeof messageHeaderSink != 'undefined' && messageHeaderSink ) {
+		if( typeof messageHeaderSink != 'undefined' && messageHeaderSink) {
 			lookout_lib.orig_onEndAllAttachments = messageHeaderSink.onEndAllAttachments;
 			messageHeaderSink.onEndAllAttachments = lookout_lib.on_end_all_attachments;
 			lookout.log_msg( "LookOut:    registering messageHeaderSink.onEndAllAttachments hook", 6 );  //MKA
@@ -626,10 +632,13 @@ var lookout_lib = {
 			lookout.log_msg( "LookOut:    failed to register messageHeaderSink.onEndAllAttachments hook", 2 );  //MKA
 		}
 
+		//seems not to be used
+		/*
 		var listener = {};
 		listener.onStartHeaders = lookout_lib.on_start_headers;
 		listener.onEndHeaders = lookout_lib.on_end_headers;
 		gMessageListeners.push( listener );
+		*/
 
 		//AR:  Monkey patch the openAttachment and saveAttachment functions
 		//MKA: It was a general solution for every attachments.
@@ -898,7 +907,11 @@ var lookout_lib = {
 	}
 }
 
-var  LookoutInitWait = 0;
+var LookoutInitWait = 0;
+
+function LookoutUnload () {
+	lookout_lib.shutdown();
+}
 
 function LookoutLoad () {
 		lookout.debug_check();
@@ -979,7 +992,4 @@ function LookoutLoad () {
 	}
 	//---------------------------------------------------------------------------------
 }
-
-//MKA  Adding callback to the mail window for starting addon.
-window.addEventListener( 'load', LookoutLoad, false );
 
