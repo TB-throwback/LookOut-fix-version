@@ -554,7 +554,7 @@ LookoutStreamListener.prototype = {
 						var args = new Object();
 						args.onOk = function putItems(aCal) { lookout.cal_add_items( aCal, cal_items, this.cur_filename ); };
 						args.promptText = cal_strbundle.GetStringFromName( "importPrompt" );
-						openDialog( "chrome://calendar/content/chooseCalendarDialog.xul",
+						openDialog( "chrome://calendar/content/chooseCalendarDialog.xhtml",
 												"_blank", "chrome,titlebar,modal,resizable", args );
 					}
 				} else {
@@ -616,7 +616,7 @@ var lookout_lib = {
 			messageHeaderSink.onEndAllAttachments = lookout_lib.orig_onEndAllAttachments;
 		}
 	},
-	
+
 	startup: function() {
 		lookout.log_msg( "LookOut: Entering startup()", 6 ); //MKA
 
@@ -639,7 +639,7 @@ var lookout_lib = {
 		listener.onEndHeaders = lookout_lib.on_end_headers;
 		gMessageListeners.push( listener );
 		*/
-		
+
 		//AR:  Monkey patch the openAttachment and saveAttachment functions
 		//MKA: It was a general solution for every attachments.
 		// Fixed in version 1.2.12: the hook is added only to TNEF attachments
