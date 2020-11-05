@@ -1296,22 +1296,24 @@ function tnef_pack_get_name_addr( pkg, orig_name_addr ) {
 
     orig_addr_parts[1] = "";
 
+    var all_addrs;
+
     let addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.author);
     for (let addr of addresses) {
-      let all_addrs = all_addrs.concat(addr.email);
-      let all_names = all_names.concat(addr.name);
+      all_addrs = all_addrs.concat(addr.email);
+      all_names = all_names.concat(addr.name);
     }
 
     addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.recipients);
     for (let addr of addresses) {
-      let all_addrs = all_addrs.concat(addr.email);
-      let all_names = all_names.concat(addr.name);
+      all_addrs = all_addrs.concat(addr.email);
+      all_names = all_names.concat(addr.name);
     }
 
     addresses = MailServices.headerParser.parseEncodedHeader(pkg.msg_header.ccList);
     for (let addr of addresses) {
-      let all_addrs = all_addrs.concat(addr.email);
-      let all_names = all_names.concat(addr.name);
+      all_addrs = all_addrs.concat(addr.email);
+      all_names = all_names.concat(addr.name);
     }
 
     all_names.forEach( rm_quotes );
