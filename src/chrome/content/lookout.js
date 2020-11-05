@@ -971,16 +971,10 @@ function LookoutLoad () {
 				fp.open(result => {
 					if (result == fp.returnOK) {
 						for (var i = 0; i < attachments.length; i++) {
-							try {
 								lookout.log_msg( "LookOut:    Handeling Multiple Attachments: " + attachments[i].contentType, 6 );
 								if ( (action == 'detach') && (/^application\/ms-tnef/i).test( attachments[i].contentType ) )
 									continue;
 								attachments[i].save(fp.file);  // for Thunderbird
-							} catch(e) {
-								if ( (action == 'detach') && (/^application\/ms-tnef/i).test( attachments[i].contentType ) )
-									continue;
-								attachments[i].saveAttachment(fp.file); // for SeaMonkey
-							}
 						}
 						if ( (action == 'detach') ) {
 							attachments[0].detach(true);

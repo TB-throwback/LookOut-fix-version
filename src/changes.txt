@@ -1,3 +1,5 @@
+3.0.2
+* Calendar integration fixes
 3.0.0
 Initial Thunderbird 78 support has been added via the Experiment wrapper API
 * Calendar integration has still not been fully tested.
