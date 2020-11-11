@@ -610,6 +610,10 @@ var lookout_lib = {
 	orig_processHeaders: null,
 
 	shutdown: function() {
+		if( lookout_lib.HandleMultipleAttachments ) {
+			console.log("Restoring HandleMultipleAttachments function to original");
+			HandleMultipleAttachments = lookout_lib.HandleMultipleAttachments;
+		}
 		if (lookout_lib.orig_onEndAllAttachments && messageHeaderSink) {
 			// return to default
 			console.log("shutdown");
