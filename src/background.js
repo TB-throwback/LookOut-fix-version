@@ -14,6 +14,9 @@ messenger.WindowListener.registerOptionsPage("chrome://lookout/content/options.x
 messenger.WindowListener.registerWindow(
     "chrome://messenger/content/messenger.xhtml",
     "chrome://lookout/content/scripts/messenger.js");
+messenger.WindowListener.registerWindow(
+    "chrome://messenger/content/messageWindow.xhtml",
+    "chrome://lookout/content/scripts/messenger.js");
 messenger.WindowListener.startListening();
 
 })();
