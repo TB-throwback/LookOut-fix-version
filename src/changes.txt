@@ -1,3 +1,5 @@
+3.0.4
+* Add decoding when "Open message in" is set to "A new message window"
 3.0.2
 * Calendar integration fixes
 3.0.0
