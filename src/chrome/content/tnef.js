@@ -496,7 +496,7 @@ function tnef_file_munge_fname( fname, files, code_page ) {
       		fname = fname2;
       	}
       } catch( e ) {
-        tnef_log_msg( "Lookout: failed to convert file name from charset: " + charset, 4 );
+        tnef_log_msg( "Lookout: failed to convert file name from charset: " + charset + e, 4 );
       }
     }
     file = fname;
@@ -506,7 +506,7 @@ function tnef_file_munge_fname( fname, files, code_page ) {
     }
   }
 
-  return( file );
+  return( file.split("\0")[0] );
 }
 
 
