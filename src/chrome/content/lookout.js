@@ -387,6 +387,12 @@ LookoutStreamListener.prototype = {
 		if( !content_type )
 			content_type = "application/binary";
 
+		if( lightning &&
+			content_type == "text/calendar" ) {
+				//let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
+				//             .createInstance(Components.interfaces.calIItipItem);
+				document.getElementById("imip-bar").setAttribute("collapsed", "false");
+			}
 
 		if( this.action_type == LOOKOUT_ACTION_SCAN ) {
 			lookout.log_msg( "LookOut:    adding attachment: " + mimeurl, 7 );
@@ -406,13 +412,6 @@ LookoutStreamListener.prototype = {
 					this.cur_length = length;
 					this.cur_date = date;
 					this.cur_url = mimeurl;
-
-					if( lightning &&
-						content_type == "text/calendar" ) {
-							//let itipItem = Components.classes["@mozilla.org/calendar/itip-item;1"]
-							//             .createInstance(Components.interfaces.calIItipItem);
-							document.getElementById("imip-bar").setAttribute("collapsed", "false");
-						}
 
 						if( lookout.get_bool_pref( "direct_to_calendar" ) &&
 						content_type == "text/calendar" ) {
@@ -444,8 +443,8 @@ LookoutStreamListener.prototype = {
 				+ "\n            mMsgUri: " + this.mMsgUri
 				+ "\n            requested Part_ID: " + this.req_part_id
 				+ "\n            Part_ID: " + this.mPartId
-				+ "\n            Displayname: " + filename.split("\0")[0]
-				+ "\n            Content-Type: " + content_type.split("\0")[0]
+				+ "\n            Displayname: " + filename
+				+ "\n            Content-Type: " + content_type
 				+ "\n            Length: " + length
 				+ "\n            URL: " + (this.cur_url ? this.cur_url.spec : "")
 				+ "\n            mimeurl: " + (mimeurl ? mimeurl : ""), 7 );
@@ -730,8 +729,6 @@ var lookout_lib = {
 									null, null );
 				} else if(scanfile && gMessageNotificationBar.isShowingJunkNotification()) {
 					lookout.log_msg( "LookOut:    Message is marked as Junk. Will not process until it is marked Not Junk", 7 );
-					msgNotificationBar = document.querySelector('[label="Thunderbird thinks this message is Junk mail."]');
-					msgNotificationBar.setAttribute("label", "Thunderbird thinks this message is Junk mail. To protect your system winmail.dat was not decoded");
 				} else {
 					lookout.log_msg( "LookOut:    Strict Content check failed", 7 );
 				}
