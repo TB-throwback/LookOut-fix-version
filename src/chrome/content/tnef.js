@@ -506,7 +506,7 @@ function tnef_file_munge_fname( fname, files, code_page ) {
     }
   }
 
-  return( file.split("\0")[0] );
+  return( file.split("\0").join('') );
 }
 
 
