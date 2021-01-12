@@ -4,7 +4,7 @@ messenger.WindowListener.registerDefaultPrefs("defaults/preferences/lookout.js")
 messenger.WindowListener.registerChromeUrl([
   ["content", "lookout",            "chrome/content/"],
   ["locale",  "lookout", "en-US",   "chrome/locale/en-US/"],
-  ["locale",  "lookout", "hu",      "chrome/locale/ca/"],
+  ["locale",  "lookout", "hu",      "chrome/locale/hu/"],
   ["locale",  "lookout", "de",      "chrome/locale/de/"],
   ["locale",  "lookout", "ja",      "chrome/locale/ja/"],
   ["locale",  "lookout", "nl",      "chrome/locale/nl/"]

@@ -11,7 +11,7 @@ function onLoad(activatedWhileWindowOpen) {
   WL.injectCSS("resource://lookout/skin/lookout.css");
   WL.injectElements(`
     <menupopup id="taskPopup">
-      <menuitem id="lookout-settings" label="&lookout.label;" oncommand="lookout.openSettings();" insertbefore="prefSep" class="menu-iconic lookout-icon menuitem-iconic" />
+      <menuitem id="lookout-settings" label="lookout" oncommand="lookout.openSettings();" insertbefore="prefSep" class="menu-iconic lookout-icon menuitem-iconic" />
     </menupopup>`);
 
   window.LookoutLoad();
