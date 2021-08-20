@@ -1,5 +1,3 @@
-
-
 // ---------- MAPI Types -----------
 
 // all types found in MAPI TNEF attachment
@@ -14,7 +12,7 @@ var MAPI_APPTIME        = 0x0007; // MAPI application time
 var MAPI_ERROR          = 0x000a; // MAPI error (32 bits)
 var MAPI_BOOLEAN        = 0x000b; // MAPI boolean (16 bits)
 var MAPI_OBJECT         = 0x000d; // MAPI embedded object
-var MAPI_INT64	  = 0x0014; // MAPI 8 byte signed int
+var MAPI_INT64	        = 0x0014; // MAPI 8 byte signed int
 var MAPI_STRING         = 0x001e; // MAPI string
 var MAPI_UNICODE_STRING = 0x001f; // MAPI unicode-string (null terminated)
 var MAPI_SYSTIME        = 0x0040; // MAPI time (64 bits)
