@@ -56,13 +56,7 @@ var LOOKOUT_PREF_PREFIX = "extensions.lookout.";
 
 // Declare Debug level Globaly
 var debugLevel = 10;
-
-try {
-	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-	lightning = prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" );
-} catch (e) {
-	lightning = false;
-}
+var lightning = true;
 
 var lookout = {
 	log_msg: function lo_log_msg( msg, level ) {
