@@ -6,12 +6,13 @@ Services.scriptloader.loadSubScript("chrome://lookout/content/mapi_props.js", wi
 Services.scriptloader.loadSubScript("chrome://lookout/content/tnef.js", window, "UTF-8");
 Services.scriptloader.loadSubScript("chrome://lookout/content/lookout.js", window, "UTF-8");
 
-function onLoad(activatedWhileWindowOpen) {
-
+function onLoad(isAddonActivation) {
   WL.injectCSS("resource://lookout/skin/lookout.css");
   window.LookoutLoad();
 }
 
-function onUnload(deactivatedWhileWindowOpen) {
-  window.LookoutUnload();
+function onUnload(isAddonDeactivation) {
+  if (isAddonDeactivation) {
+    window.LookoutUnload();
+  }
 }
