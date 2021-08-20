@@ -47,6 +47,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+var { DownloadIntegration } = ChromeUtils.import("resource://gre/modules/DownloadIntegration.jsm");
+
 
 // How long we should wait for window initialization to finish
 // top-level const will cause errors on reload
@@ -551,8 +553,14 @@ LookoutStreamListener.prototype = {
 												"_blank", "chrome,titlebar,modal,resizable", args );
 					}
 				} else {
-					messenger.openAttachment( this.cur_content_type, this.cur_url.spec,
-																		this.cur_filename, this.mMsgUri, true );
+					let download = {
+						contentType: this.cur_content_type,
+						target: {
+							path: this.cur_url.QueryInterface(Ci.nsIFileURL).file.path
+						}
+					};
+					let options = {};
+					DownloadIntegration.launchDownload(download, options);
 				}
 				break;
 
@@ -822,13 +830,14 @@ var lookout_lib = {
 							.QueryInterface( Components.interfaces.nsIMsgMessageService );
 		attname = attachment.parent.name ? attachment.parent.name : attachment.parent.displayName;
 		// https://searchfox.org/comm-central/rev/c61ff1df6a3e6b85a966868ded856591dd4a3ad5/mailnews/base/public/nsIMsgMessageService.idl#103
-		mms.openAttachment( attachment.parent.contentType  // in string aContentType
-											, attname                        // in string aFileName
-											, attachment.parent.url          // in string aUrl
-											, stream_listener.mMsgUri        // in string aMessageUri
-											, stream_listener                // in nsISupports aDisplayConsumer
-											, null                           // in nsIMsgWindow aMsgWindow
-											, null );                        // in nsIUrlListener aUrlListener
+		mms.openAttachment(
+			attachment.parent.contentType,  // in string aContentType
+			attname,                        // in string aFileName
+			attachment.parent.url,          // in string aUrl
+			stream_listener.mMsgUri,        // in string aMessageUri
+			stream_listener,                // in nsISupports aDisplayConsumer
+			null,                           // in nsIMsgWindow aMsgWindow
+			null);                          // in nsIUrlListener aUrlListener
 	},
 
 	save_attachment: function ( attachment, save_dir ) {
@@ -877,9 +886,14 @@ var lookout_lib = {
 //    See onTnefEnd() in LookoutStreamListener.prototype!
 		// Using the same function as for OPEN and hoping that the user has not set default action
 		// for this file type...
-		mms.openAttachment( attachment.parent.contentType, attname,
-			attachment.parent.url, stream_listener.mMsgUri, stream_listener,
-			null, null );
+		mms.openAttachment(
+			attachment.parent.contentType,  // in string aContentType
+			attname,                        // in string aFileName
+			attachment.parent.url,          // in string aUrl
+			stream_listener.mMsgUri,        // in string aMessageUri
+			stream_listener,                // in nsISupports aDisplayConsumer
+			null,                           // in nsIMsgWindow aMsgWindow
+			null);                          // in nsIUrlListener aUrlListener			
 	},
 
 	on_end_all_attachments: function () {
