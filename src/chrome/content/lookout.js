@@ -752,8 +752,11 @@ var lookout_lib = {
 		lookout.log_msg( "LookOut:    registered own function for attachment.open", 6 );  //MKA
 
 		attachment.lo_orig_save = attachment.save;
-		attachment.save = function (save_dir) {
-			lookout_lib.save_attachment( this, save_dir );
+		// attachment.save must return a Promise now. Either by being an async function or actively
+		// returning a Promise. We declare the function async, which will ensure a returned Promise
+		// and we forward the return value of save_attachment, which could be a Promise itself.
+		attachment.save = async function (save_dir) {
+			return lookout_lib.save_attachment( this, save_dir );
 		};
 		lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
 
@@ -818,7 +821,7 @@ var lookout_lib = {
 		var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
 							.QueryInterface( Components.interfaces.nsIMsgMessageService );
 		attname = attachment.parent.name ? attachment.parent.name : attachment.parent.displayName;
-		// http://mxr.mozilla.org/comm-central/source/mailnews/base/public/nsIMsgMessageService.idl#131
+		// https://searchfox.org/comm-central/rev/c61ff1df6a3e6b85a966868ded856591dd4a3ad5/mailnews/base/public/nsIMsgMessageService.idl#103
 		mms.openAttachment( attachment.parent.contentType  // in string aContentType
 											, attname                        // in string aFileName
 											, attachment.parent.url          // in string aUrl
