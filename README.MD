@@ -1,9 +1,3 @@
-# NOTICE: Currently unmaintained
-
-[New maintainers wanted](https://github.com/TB-throwback/LookOut-fix-version/issues/65)
-
-[This Project will become archived in 3 months from today (2021.08.17) if no new maintainers are found](https://github.com/TB-throwback/LookOut-fix-version/issues/65#issuecomment-899929117)
-
 # LookOut (Fix Version)<img src="src/chrome/skin/LOicon-64.png" width="80" align="left">
 
 **[Please Read the F.A.Q.](https://github.com/TB-throwback/LookOut-fix-version/wiki/F.A.Q.)**
