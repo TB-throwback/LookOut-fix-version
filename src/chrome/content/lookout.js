@@ -47,6 +47,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+var { DownloadIntegration } = ChromeUtils.import("resource://gre/modules/DownloadIntegration.jsm");
+
 
 // How long we should wait for window initialization to finish
 // top-level const will cause errors on reload
@@ -56,13 +58,7 @@ var LOOKOUT_PREF_PREFIX = "extensions.lookout.";
 
 // Declare Debug level Globaly
 var debugLevel = 10;
-
-try {
-	var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-	lightning = prefs.getBoolPref( "extensions.installedDistroAddon.{e2fda1a4-762b-4020-b5ad-a41df1933103}" );
-} catch (e) {
-	lightning = false;
-}
+var lightning = true;
 
 var lookout = {
 	log_msg: function lo_log_msg( msg, level ) {
@@ -557,8 +553,14 @@ LookoutStreamListener.prototype = {
 												"_blank", "chrome,titlebar,modal,resizable", args );
 					}
 				} else {
-					messenger.openAttachment( this.cur_content_type, this.cur_url.spec,
-																		this.cur_filename, this.mMsgUri, true );
+					let download = {
+						contentType: this.cur_content_type,
+						target: {
+							path: this.cur_url.QueryInterface(Ci.nsIFileURL).file.path
+						}
+					};
+					let options = {};
+					DownloadIntegration.launchDownload(download, options);
 				}
 				break;
 
@@ -758,8 +760,11 @@ var lookout_lib = {
 		lookout.log_msg( "LookOut:    registered own function for attachment.open", 6 );  //MKA
 
 		attachment.lo_orig_save = attachment.save;
-		attachment.save = function (save_dir) {
-			lookout_lib.save_attachment( this, save_dir );
+		// attachment.save must return a Promise now. Either by being an async function or actively
+		// returning a Promise. We declare the function async, which will ensure a returned Promise
+		// and we forward the return value of save_attachment, which could be a Promise itself.
+		attachment.save = async function (save_dir) {
+			return lookout_lib.save_attachment( this, save_dir );
 		};
 		lookout.log_msg( "LookOut:    registered own function for attachment.save", 6 );  //MKA
 
@@ -824,14 +829,15 @@ var lookout_lib = {
 		var mms = messenger2.messageServiceFromURI( stream_listener.mMsgUri )
 							.QueryInterface( Components.interfaces.nsIMsgMessageService );
 		attname = attachment.parent.name ? attachment.parent.name : attachment.parent.displayName;
-		// http://mxr.mozilla.org/comm-central/source/mailnews/base/public/nsIMsgMessageService.idl#131
-		mms.openAttachment( attachment.parent.contentType  // in string aContentType
-											, attname                        // in string aFileName
-											, attachment.parent.url          // in string aUrl
-											, stream_listener.mMsgUri        // in string aMessageUri
-											, stream_listener                // in nsISupports aDisplayConsumer
-											, null                           // in nsIMsgWindow aMsgWindow
-											, null );                        // in nsIUrlListener aUrlListener
+		// https://searchfox.org/comm-central/rev/c61ff1df6a3e6b85a966868ded856591dd4a3ad5/mailnews/base/public/nsIMsgMessageService.idl#103
+		mms.openAttachment(
+			attachment.parent.contentType,  // in string aContentType
+			attname,                        // in string aFileName
+			attachment.parent.url,          // in string aUrl
+			stream_listener.mMsgUri,        // in string aMessageUri
+			stream_listener,                // in nsISupports aDisplayConsumer
+			null,                           // in nsIMsgWindow aMsgWindow
+			null);                          // in nsIUrlListener aUrlListener
 	},
 
 	save_attachment: function ( attachment, save_dir ) {
@@ -880,9 +886,14 @@ var lookout_lib = {
 //    See onTnefEnd() in LookoutStreamListener.prototype!
 		// Using the same function as for OPEN and hoping that the user has not set default action
 		// for this file type...
-		mms.openAttachment( attachment.parent.contentType, attname,
-			attachment.parent.url, stream_listener.mMsgUri, stream_listener,
-			null, null );
+		mms.openAttachment(
+			attachment.parent.contentType,  // in string aContentType
+			attname,                        // in string aFileName
+			attachment.parent.url,          // in string aUrl
+			stream_listener.mMsgUri,        // in string aMessageUri
+			stream_listener,                // in nsISupports aDisplayConsumer
+			null,                           // in nsIMsgWindow aMsgWindow
+			null);                          // in nsIUrlListener aUrlListener			
 	},
 
 	on_end_all_attachments: function () {
