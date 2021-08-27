@@ -567,9 +567,6 @@ LookoutStreamListener.prototype = {
 			}
 		}
 
-		// redraw attachment pane one last time to get correct size
-		lookout_lib.redraw_attachment_view( );
-
 		this.cur_outstrm_listener = null;
 		this.cur_outstrm = null;
 		this.cur_content_type = null;
