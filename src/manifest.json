@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extensionName__",
-	"description": "__MSG_extensionDescription__",
+  "description": "__MSG_extensionDescription__",
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
       "strict_min_version": "91.0",
-      "strict_max_version": "91.*"
+      "strict_max_version": "95.*"
     }
   },
   "version": "4.2",
@@ -22,9 +22,32 @@
     "WindowListener": {
       "schema": "api/WindowListener/schema.json",
       "parent": {
-        "scopes": ["addon_parent"],
-        "paths": [["WindowListener"]],
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "WindowListener"
+          ]
+        ],
         "script": "api/WindowListener/implementation.js"
+      }
+    },
+    "SessionRestore": {
+      "schema": "api/SessionRestore/schema.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "SessionRestore"
+          ]
+        ],
+        "script": "api/SessionRestore/implementation.js",
+        "events": [
+          "startup"
+        ]
       }
     }
   },
