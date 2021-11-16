@@ -6,7 +6,7 @@
     "gecko": {
       "id": "lookout@s3_fix_version",
       "strict_min_version": "91.0",
-      "strict_max_version": "95.*"
+      "strict_max_version": "95.0"
     }
   },
   "version": "4.3",
