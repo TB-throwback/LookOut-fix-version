@@ -1,14 +1,14 @@
-﻿<!ENTITY prefwindow.title "LookOut Einstellungen">
-<!ENTITY pane1.title "LookOut preferences">
-<!ENTITY attach_raw_mapi_check.label "MAPI Eigenschaften speichern">
+﻿<!ENTITY prefwindow.title "LookOut-Einstellungen">
+<!ENTITY pane1.title "LookOut-Einstellungen">
+<!ENTITY attach_raw_mapi_check.label "MAPI-Eigenschaften speichern">
 <!ENTITY attach_raw_mapi_check.accesskey "M">
 <!ENTITY direct_to_calendar_check.label "Kalenderdaten direkt öffnen">
 <!ENTITY direct_to_calendar_check.accesskey "K">
-<!ENTITY disable_filename_character_set_check.label "Konversion der Karaktertabelle für Dateiname verbieten">
-<!ENTITY disable_filename_character_set_check.accesskey "D">
-<!ENTITY remove_winmail_dat_check.label "Entfernen Sie Winmail.dat">
-<!ENTITY remove_winmail_dat_check.accesskey "E">
-<!ENTITY strict_contenttype_check.label "Strict Content-Typ-Übereinstimmung">
+<!ENTITY disable_filename_character_set_check.label "Zeichensatzkonvertierung für Dateinamen deaktivieren">
+<!ENTITY disable_filename_character_set_check.accesskey "Z">
+<!ENTITY remove_winmail_dat_check.label "Winmail.dat entfernen">
+<!ENTITY remove_winmail_dat_check.accesskey "W">
+<!ENTITY strict_contenttype_check.label "Strict-Content-Type-Übereinstimmung">
 <!ENTITY strict_contenttype_check.accesskey "S">
-<!ENTITY enable_debug_check.label "Aktivieren Sie das Debuggen">
-<!ENTITY enable_debug_check.accesskey "A">
+<!ENTITY enable_debug_check.label "Debugging aktivieren">
+<!ENTITY enable_debug_check.accesskey "D">
