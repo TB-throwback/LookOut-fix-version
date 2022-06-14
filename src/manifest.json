@@ -5,11 +5,11 @@
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
-      "strict_min_version": "91.0",
-      "strict_max_version": "95.0"
+      "strict_min_version": "99.a1",
+      "strict_max_version": "102.*"
     }
   },
-  "version": "4.3",
+  "version": "5.1",
   "default_locale": "en",
   "author": "Dugite-Code",
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
@@ -31,23 +31,6 @@
           ]
         ],
         "script": "api/WindowListener/implementation.js"
-      }
-    },
-    "SessionRestore": {
-      "schema": "api/SessionRestore/schema.json",
-      "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "SessionRestore"
-          ]
-        ],
-        "script": "api/SessionRestore/implementation.js",
-        "events": [
-          "startup"
-        ]
       }
     }
   },
