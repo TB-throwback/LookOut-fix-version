@@ -5,7 +5,7 @@
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
-      "strict_min_version": "99.a1",
+      "strict_min_version": "102.0",
       "strict_max_version": "102.*"
     }
   },
