@@ -1,8 +1,3 @@
-browser.SessionRestore.onStartupSessionRestore.addListener(main);
-
-function main() {
-  browser.SessionRestore.onStartupSessionRestore.removeListener(main);
-
   messenger.WindowListener.registerDefaultPrefs("defaults/preferences/lookout.js");
   messenger.WindowListener.registerChromeUrl([
     ["content", "lookout", "chrome/content/"],
@@ -21,4 +16,3 @@ function main() {
     "chrome://messenger/content/messageWindow.xhtml",
     "chrome://lookout/content/scripts/messenger.js");
   messenger.WindowListener.startListening();
-}
