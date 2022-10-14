@@ -374,7 +374,7 @@ LookoutStreamListener.prototype = {
 	onTnefStart: function ( filename, content_type, length, date ) {
 		lookout.log_msg( "LookOut: Entering onTnefStart()", 6 ); //MKA
 		lookout.log_msg( "LookOut: " + filename + " - " + length, 6 );
-		var mimeurl = this.mAttUrl + "." + this.mPartId;
+		var mimeurl = encodeURI(this.mAttUrl + "." + this.mPartId);
 		var basename = lookout.basename( filename );
 
 		if( basename )
@@ -890,7 +890,7 @@ var lookout_lib = {
 			stream_listener.mMsgUri,        // in string aMessageUri
 			stream_listener,                // in nsISupports aDisplayConsumer
 			null,                           // in nsIMsgWindow aMsgWindow
-			null);                          // in nsIUrlListener aUrlListener			
+			null);                          // in nsIUrlListener aUrlListener
 	},
 
 	on_end_all_attachments: function () {
@@ -995,4 +995,3 @@ function LookoutLoad () {
 	}
 	//---------------------------------------------------------------------------------
 }
-
