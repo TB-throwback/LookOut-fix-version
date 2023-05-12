@@ -929,7 +929,7 @@ function LookoutLoad () {
 		// e.g. messageHeaderSink has been defined
 		if( typeof messageHeaderSink == 'undefined' ) {
 			if ( LookoutInitWait < LOOKOUT_WAIT_MAX ) {
-				LookoutInitWaitt++;
+				LookoutInitWait++;
 				lookout.log_msg( "LookOut:    waiting for global init [" + LookoutInitWait + "]", 6 );
 				//MKA  Function referencing in setTimeout() is deprecated by Mozilla,
 				//     so the following function expression is used.
