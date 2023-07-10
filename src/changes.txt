@@ -1,11 +1,6 @@
+5.4
+* Services.jsm removal fixes
+* Update addon-developer-support
+* Fix typo in lookout.js
 4.1
 * Thunderbird 91 support
-3.0.4
-* Add decoding when "Open message in" is set to "A new message window"
-3.0.2
-* Calendar integration fixes
-3.0.0
-Initial Thunderbird 78 support has been added via the Experiment wrapper API
-* Calendar integration has still not been fully tested.
-* Backwards Compatibility with version 68 has been briefly tested.
-Please report any issues to https://github.com/TB-throwback/LookOut-fix-version/issues
