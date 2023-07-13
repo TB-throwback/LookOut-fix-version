@@ -298,8 +298,8 @@ var WindowListener_102 = class extends ExtensionCommon.ExtensionAPI {
 
   // async sleep function using Promise
   async sleep(delay) {
-    let timer = Components.classes["@mozilla.org/timer;1"].createInstance(
-      Components.interfaces.nsITimer
+    let timer = Cc["@mozilla.org/timer;1"].createInstance(
+      Ci.nsITimer
     );
     return new Promise(function (resolve, reject) {
       let event = {
@@ -310,7 +310,7 @@ var WindowListener_102 = class extends ExtensionCommon.ExtensionAPI {
       timer.initWithCallback(
         event,
         delay,
-        Components.interfaces.nsITimer.TYPE_ONE_SHOT
+        Ci.nsITimer.TYPE_ONE_SHOT
       );
     });
   }
@@ -1340,8 +1340,8 @@ var WindowListener_115 = class extends ExtensionCommon.ExtensionAPI {
 
   // async sleep function using Promise
   async sleep(delay) {
-    let timer = Components.classes["@mozilla.org/timer;1"].createInstance(
-      Components.interfaces.nsITimer
+    let timer = Cc["@mozilla.org/timer;1"].createInstance(
+      Ci.nsITimer
     );
     return new Promise(function (resolve, reject) {
       let event = {
@@ -1352,7 +1352,7 @@ var WindowListener_115 = class extends ExtensionCommon.ExtensionAPI {
       timer.initWithCallback(
         event,
         delay,
-        Components.interfaces.nsITimer.TYPE_ONE_SHOT
+        Ci.nsITimer.TYPE_ONE_SHOT
       );
     });
   }

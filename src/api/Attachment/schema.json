@@ -1,0 +1,51 @@
+[
+  {
+    "namespace": "Attachment",
+    "functions": [
+      {
+        "name": "removeParts",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "messageId",
+            "type": "integer"
+          },
+          {
+            "name": "parts",
+            "type": "array",
+            "items": {
+              "type": "any"
+            }
+          }
+        ]
+      },
+      {
+        "name": "addFiles",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "messageId",
+            "type": "integer"
+          },
+          {
+            "name": "files",
+            "type": "array",
+            "items": {
+              "type": "any"
+            }
+          }
+        ]
+      }      
+    ]
+  }
+]
