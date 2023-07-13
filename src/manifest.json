@@ -10,7 +10,7 @@
     }
   },
   "version": "6.0",
-  "default_locale": "en",
+  "default_locale": "en-US",
   "author": "Dugite-Code",
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
   "icons": {
@@ -46,20 +46,6 @@
         ],
         "script": "api/LegacyPrefs/implementation.js"
       }
-    },
-    "WindowListener": {
-      "schema": "api/WindowListener/schema.json",
-      "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "WindowListener"
-          ]
-        ],
-        "script": "api/WindowListener/implementation.js"
-      }
     }
   },
   "background": {
@@ -67,5 +53,8 @@
   },
   "permissions": [
     "messagesRead"
-  ]
+  ],
+  "options_ui": {
+    "page": "options/options.html"
+  }
 }

@@ -1,46 +1,28 @@
 import { TnefExtractor } from "/scripts/lookout.mjs"
 
+const PREF_PREFIX = "extensions.lookout.";
+const PREF_DEFAULTS = {
+  "attach_raw_mapi": false,
+  "direct_to_calendar": false,
+  "disable_filename_character_set": false,
+  "remove_winmail_dat": true,
+  "strict_contenttype": true,
+  "enable_debug": false,
+  "body_part_prefix": "body_part_",
+}
+
+let prefs = {};
+
+for (let [name, value] of Object.entries(PREF_DEFAULTS)) {
+  await browser.LegacyPrefs.setDefaultPref(`${PREF_PREFIX}${name}`, value);
+  prefs[name] = await browser.LegacyPrefs.getPref(`${PREF_PREFIX}${name}`);
+}
+
 async function handleMessage(tab, message) {
   // Skip if message is junk.
   if (message.junk) {
     return;
   }
-
-  // Get preferences.
-  let prefs = {
-    "debug_level": 7,
-    "disable_filename_character_set": true,
-    "attach_raw_mapi": true,
-    "body_part_prefix": "body_part_"
-  }
-
-/*
-    var TNEF_PREF_PREFIX = "extensions.lookout.";
-
-    function tnef_get_pref(name, get_type_func, default_val) {
-      var pref_name = TNEF_PREF_PREFIX + name;
-      var pref_val;
-      try {
-        var prefs = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-        pref_val = prefs[get_type_func](pref_name);
-      } catch (ex) {
-        tnef_log_msg("TNEF: warning: could not retrieve setting '" + pref_name + "': " + ex, 5);
-      }
-      if (pref_val === void (0))
-        pref_val = default_val;
-
-      return pref_val;
-    }
-    function tnef_get_bool_pref(name, default_val) {
-      return tnef_get_pref(name, "getBoolPref", default_val);
-    }
-    function tnef_get_string_pref(name, default_val) {
-      return tnef_get_pref(name, "getCharPref", default_val);
-    }
-    function tnef_get_int_pref(name, default_val) {
-      return tnef_get_pref(name, "getIntPref", default_val);
-    }
-*/
 
   // Read attachments of the message
   let attachments = await browser.messages.listAttachments(message.id);
@@ -77,20 +59,7 @@ for (let tab of tabs) {
 }
 browser.messageDisplay.onMessageDisplayed.addListener(handleMessage);
 
-/*
-messenger.WindowListener.registerDefaultPrefs("defaults/preferences/lookout.js");
-messenger.WindowListener.registerChromeUrl([
-  ["content", "lookout", "chrome/content/"],
-  ["locale", "lookout", "en-US", "chrome/locale/en-US/"],
-  ["locale", "lookout", "hu", "chrome/locale/hu/"],
-  ["locale", "lookout", "de", "chrome/locale/de/"],
-  ["locale", "lookout", "ja", "chrome/locale/ja/"],
-  ["locale", "lookout", "nl", "chrome/locale/nl/"]
-]);
-messenger.WindowListener.registerOptionsPage("chrome://lookout/content/options.xhtml");
-
-messenger.WindowListener.registerWindow(
-  "about:message",
-  "chrome://lookout/content/scripts/messenger.js");
-messenger.WindowListener.startListening();
-*/
+// Update prefs chache, if they are changed.
+browser.LegacyPrefs.onChanged.addListener((name, value) => {
+  prefs[name] = value
+}, PREF_PREFIX);

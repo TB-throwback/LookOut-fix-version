@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>__MSG_prefwindow.title__</title>
+</head>
+
+<body>
+  <div
+    id="pane1"
+    style="display:flex; flex-direction: column;"
+    label="&pane1.title;">
+    <div>
+      <input 
+        type="checkbox"
+        id="attach_raw_mapi_check"
+        preference="extensions.lookout.attach_raw_mapi"
+        accesskey="&attach_raw_mapi_check.accesskey;"/>
+      <label for="attach_raw_mapi_check">__MSG_attach_raw_mapi_check.label__</label>
+    </div>
+
+    <div>
+      <input type="checkbox"
+        id="direct_to_calendar_check"
+        preference="extensions.lookout.direct_to_calendar"
+        accesskey="&direct_to_calendar_check.accesskey;"/>
+      <label for="direct_to_calendar_check">__MSG_direct_to_calendar_check.label__</label>
+    </div>
+
+    <div>
+      <input type="checkbox"
+        id="disable_filename_character_set_check"
+        preference="extensions.lookout.disable_filename_character_set"
+        accesskey="&disable_filename_character_set_check.accesskey;"/>
+      <label for="disable_filename_character_set_check">__MSG_disable_filename_character_set_check.label__</label>
+    </div>
+
+    <div>
+      <input type="checkbox"
+        id="remove_winmail_dat_check"
+        preference="extensions.lookout.remove_winmail_dat"
+        accesskey="&remove_winmail_dat_check.accesskey;"/>
+      <label for="remove_winmail_dat_check">__MSG_remove_winmail_dat_check.label__</label>
+    </div>
+
+    <div>
+      <input type="checkbox"
+        id="strict_contenttype_check"
+        preference="extensions.lookout.strict_contenttype"
+        accesskey="&strict_contenttype_check.accesskey;"/>
+      <label for="strict_contenttype_check">__MSG_strict_contenttype_check.label__</label>
+    </div>
+
+    <div>
+      <input type="checkbox"
+        id="enable_debug_check"
+        preference="extensions.lookout.debug_enabled"
+        accesskey="&enable_debug_check.accesskey;"/>
+      <label for="enable_debug_check">__MSG_enable_debug_check.label__</label>
+    </div>
+
+  </div>
+
+  <script src="/scripts/i18n.js"></script>
+  <script src="/options/preferences.js"></script>
+</body>
+
+</html>
