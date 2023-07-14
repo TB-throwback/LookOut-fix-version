@@ -43,11 +43,17 @@ async function handleMessage(tab, message) {
     let tnefExtractor = new TnefExtractor();
     let tnefFiles = await tnefExtractor.parse(file, null, prefs);
     for (let i = 0; i < tnefFiles.length; i++) {
+      let partName = `${attachment.partName}.${i+1}`
+      // Skip if we have added that attachment already.
+      if (attachments.find(a => a.partName == partName)) {
+        continue;
+      }
+
       let tnefAttachment = {
         contentType: tnefFiles[i].type,
         name: tnefFiles[i].name,
         size: tnefFiles[i].size,
-        partName: `${attachment.partName}.${i+1}`,
+        partName,
         file: tnefFiles[i],
       }
       tnefAttachments.push(tnefAttachment);
