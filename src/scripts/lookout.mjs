@@ -45,8 +45,12 @@ class PseudoInputStream {
   }
 
   readBytes(bytes) {
+    let binaryString = "";
     let byteArray = this.readByteArray(bytes);
-    return String.fromCharCode(...byteArray);
+    for (let byte of byteArray) {
+      binaryString += `${String.fromCharCode(byte)}`;
+    }
+    return binaryString;
   }
 
   close() {
