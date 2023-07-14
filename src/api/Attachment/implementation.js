@@ -55,7 +55,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
       return null;
     }
 
-    async function getAttachmentFromUrl(url) {  
+    async function getAttachmentFromUrl(url) {
       let channel = Services.io.newChannelFromURI(
         Services.io.newURI(url),
         null,
@@ -64,7 +64,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
         Ci.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_SEC_CONTEXT_IS_NULL,
         Ci.nsIContentPolicy.TYPE_OTHER
       );
-    
+
       let raw = await new Promise((resolve, reject) => {
         let listener = Cc["@mozilla.org/network/stream-loader;1"].createInstance(
           Ci.nsIStreamLoader
@@ -84,13 +84,36 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
         });
         channel.asyncOpen(listener, null);
       });
-    
+
       return raw;
+    }
+
+    /**
+     * Returns the currently displayed message in the given tab.
+     *
+     * @param {integer} tabId
+     * @returns {nsIMsgHdr} nsIMsgHdr
+     */
+    function getDisplayedMessage(tabId) {
+      let { nativeTab } = context.extension.tabManager.get(tabId);
+      if (nativeTab instanceof Ci.nsIDOMWindow) {
+        if (nativeTab.messageBrowser) {
+          return nativeTab.messageBrowser.contentWindow.gMessage;
+        }
+      } else if (nativeTab.mode.name == "mail3PaneTab") {
+          let msgHdrs = nativeTab.chromeBrowser.contentWindow.gDBView.getSelectedMsgHdrs();
+          if (msgHdrs.length == 1) {
+            return msgHdrs[0];
+          }
+      } else if (nativeTab.mode.name == "mailMessageTab") {
+        return nativeTab.chromeBrowser.contentWindow.gMessage;
+      }
+      return null;
     }
 
     return {
       Attachment: {
-        listAttachments: async function(tabId) {
+        listAttachments: async function (tabId) {
           let window = getMessageWindow(tabId);
           if (!window) {
             return
@@ -107,7 +130,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           };
           return attachments;
         },
-        getAttachmentFile: async function(tabId, partName) {
+        getAttachmentFile: async function (tabId, partName) {
           let window = getMessageWindow(tabId);
           if (!window) {
             return
@@ -117,21 +140,33 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
             throw new ExtensionError(`Attachment with partName ${partName} not found`);
           }
           let bytes = await getAttachmentFromUrl(attachmentInfo.url);
-          return new File([bytes], attachmentInfo.name, {type: attachmentInfo.contentType});
+          return new File([bytes], attachmentInfo.name, { type: attachmentInfo.contentType });
         },
-        removeParts: async function (tabId, messageId, removedParts) {
+        addAttachments: async function (tabId, newAttachments) {
           let window = getMessageWindow(tabId);
           if (!window) {
             return
           }
 
           let modified = false;
-          for (let index = window.currentAttachments.length; index > 0; index--) {
-            let idx = index - 1;
-            if (removedParts.includes(window.currentAttachments[idx].partID)) {
-              window.currentAttachments.splice(idx);
-              modified = true;
+          for (let attachment of newAttachments) {
+            let msgHdr = getDisplayedMessage(tabId);
+            if (!msgHdr) {
+              continue;
             }
+            let realFile = await getRealFileForFile(attachment.file);
+            let url = `${Services.io.newFileURI(realFile).spec}?part=${attachment.partName}`;
+            let attachmentInfo = new AttachmentInfo({
+              contentType: attachment.contentType,
+              url,
+              name: attachment.name,
+              uri: msgHdr.folder.getUriForMsg(msgHdr),
+              isExternalAttachment: true,
+              message: msgHdr,
+              updateAttachmentsDisplayFn: window.updateAttachmentsDisplay,
+            });
+            window.currentAttachments.push(attachmentInfo);
+            modified = true;
           }
 
           if (!modified) {
@@ -143,29 +178,19 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           await window.displayAttachmentsForExpandedView();
           window.gBuildAttachmentsForCurrentMsg = true;
         },
-        addFiles: async function (tabId, messageId, addedFiles) {
+        removeAttachments: async function (tabId, partNames) {
           let window = getMessageWindow(tabId);
           if (!window) {
             return
           }
 
           let modified = false;
-          //let attachmentList = window.document.getElementById("attachmentList");
-          for (let file of addedFiles) {
-            let msgHdr = context.extension.messageManager.get(messageId);
-            let realFile = await getRealFileForFile(file);
-            let url = Services.io.newFileURI(realFile).spec;
-            let attachmentInfo = new AttachmentInfo({
-              contentType: file.type,
-              url,
-              name: file.name,
-              uri: msgHdr.folder.getUriForMsg(msgHdr),
-              isExternalAttachment: true,
-              message: msgHdr,
-              updateAttachmentsDisplayFn: window.updateAttachmentsDisplay,
-            });
-            window.currentAttachments.push(attachmentInfo);
-            modified = true;
+          for (let index = window.currentAttachments.length; index > 0; index--) {
+            let idx = index - 1;
+            if (partNames.includes(window.currentAttachments[idx].partID)) {
+              window.currentAttachments.splice(idx);
+              modified = true;
+            }
           }
 
           if (!modified) {

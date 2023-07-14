@@ -28,7 +28,7 @@ async function handleMessage(tab, message) {
   let attachments = await browser.Attachment.listAttachments(tab.id);
 
   let removedParts = [];
-  let addedFiles = [];
+  let tnefAttachments = [];
   for (let attachment of attachments) {
     if (
       attachment.name != "winmail.dat" &&
@@ -38,19 +38,29 @@ async function handleMessage(tab, message) {
       continue;
     }
 
-    let tnefExtractor = new TnefExtractor();
     let file = await browser.Attachment.getAttachmentFile(tab.id, attachment.partName);
-    let files = await tnefExtractor.parse(file, null, prefs);
-    addedFiles.push(...files);
+
+    let tnefExtractor = new TnefExtractor();
+    let tnefFiles = await tnefExtractor.parse(file, null, prefs);
+    for (let i = 0; i < tnefFiles.length; i++) {
+      let tnefAttachment = {
+        contentType: tnefFiles[i].type,
+        name: tnefFiles[i].name,
+        size: tnefFiles[i].size,
+        partName: `${attachment.partName}.${i+1}`,
+        file: tnefFiles[i],
+      }
+      tnefAttachments.push(tnefAttachment);
+    }
     if (prefs["remove_winmail_dat"]) {
       removedParts.push(attachment.partName);
     }
   }
   if (removedParts.length > 0) {
-    await browser.Attachment.removeParts(tab.id, message.id, removedParts);
+    await browser.Attachment.removeAttachments(tab.id, removedParts);
   }
-  if (addedFiles.length > 0) {
-    await browser.Attachment.addFiles(tab.id, message.id, addedFiles);
+  if (tnefAttachments.length > 0) {
+    await browser.Attachment.addAttachments(tab.id, tnefAttachments);
   }
 }
 

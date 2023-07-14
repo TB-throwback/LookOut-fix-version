@@ -29,16 +29,12 @@
         ]
       },
       {
-        "name": "removeParts",
+        "name": "removeAttachments",
         "type": "function",
         "async": true,
         "parameters": [
           {
             "name": "tabId",
-            "type": "integer"
-          },
-          {
-            "name": "messageId",
             "type": "integer"
           },
           {
@@ -51,16 +47,12 @@
         ]
       },
       {
-        "name": "addFiles",
+        "name": "addAttachments",
         "type": "function",
         "async": true,
         "parameters": [
           {
             "name": "tabId",
-            "type": "integer"
-          },
-          {
-            "name": "messageId",
             "type": "integer"
           },
           {
@@ -71,7 +63,7 @@
             }
           }
         ]
-      }      
+      }
     ]
   }
 ]
