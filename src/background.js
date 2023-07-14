@@ -25,18 +25,18 @@ async function handleMessage(tab, message) {
   }
 
   // Read attachments of the message
-  let attachments = await browser.messages.listAttachments(message.id);
+  let attachments = await browser.Attachment.listAttachments(tab.id);
+
   let removedParts = [];
   let addedFiles = [];
   for (let attachment of attachments) {
     if (attachment.name != "winmail.dat" && attachment.contentType != "application/ms-tnef") {
       continue;
     }
-    let file = await browser.messages.getAttachmentFile(message.id, attachment.partName)
     let tnefExtractor = new TnefExtractor();
+    let file = await browser.Attachment.getAttachmentFile(tab.id, attachment.partName);
     let files = await tnefExtractor.parse(file, null, prefs);
     addedFiles.push(...files);
-
     removedParts.push(attachment.partName);
   }
   if (removedParts.length > 0) {

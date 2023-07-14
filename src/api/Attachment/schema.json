@@ -3,6 +3,32 @@
     "namespace": "Attachment",
     "functions": [
       {
+        "name": "listAttachments",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          }
+        ]
+      },
+      {
+        "name": "getAttachmentFile",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "partName",
+            "type": "string"
+          }
+        ]
+      },
+      {
         "name": "removeParts",
         "type": "function",
         "async": true,

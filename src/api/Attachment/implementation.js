@@ -18,6 +18,8 @@ ChromeUtils.defineESModuleGetters(this, {
   AttachmentInfo: "resource:///modules/AttachmentInfo.sys.mjs",
 });
 
+Cu.importGlobalProperties(["File", "IOUtils", "PathUtils"]);
+
 async function getRealFileForFile(file) {
   let pathTempFile = await IOUtils.createUniqueFile(
     PathUtils.tempDir,
@@ -53,8 +55,70 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
       return null;
     }
 
+    async function getAttachmentFromUrl(url) {  
+      let channel = Services.io.newChannelFromURI(
+        Services.io.newURI(url),
+        null,
+        Services.scriptSecurityManager.getSystemPrincipal(),
+        null,
+        Ci.nsILoadInfo.SEC_ALLOW_CROSS_ORIGIN_SEC_CONTEXT_IS_NULL,
+        Ci.nsIContentPolicy.TYPE_OTHER
+      );
+    
+      let raw = await new Promise((resolve, reject) => {
+        let listener = Cc["@mozilla.org/network/stream-loader;1"].createInstance(
+          Ci.nsIStreamLoader
+        );
+        listener.init({
+          onStreamComplete(loader, context, status, resultLength, result) {
+            if (Components.isSuccessCode(status)) {
+              resolve(Uint8Array.from(result));
+            } else {
+              reject(
+                new ExtensionError(
+                  `Failed to read attachment ${attachment.url} content: ${status}`
+                )
+              );
+            }
+          },
+        });
+        channel.asyncOpen(listener, null);
+      });
+    
+      return raw;
+    }
+
     return {
       Attachment: {
+        listAttachments: async function(tabId) {
+          let window = getMessageWindow(tabId);
+          if (!window) {
+            return
+          }
+          let attachments = [];
+          for (let attachmentInfo of window.currentAttachments) {
+            let attachment = {
+              contentType: attachmentInfo.contentType,
+              name: attachmentInfo.name,
+              partName: attachmentInfo.partID,
+              size: attachmentInfo.size,
+            }
+            attachments.push(attachment);
+          };
+          return attachments;
+        },
+        getAttachmentFile: async function(tabId, partName) {
+          let window = getMessageWindow(tabId);
+          if (!window) {
+            return
+          }
+          let attachmentInfo = window.currentAttachments.find(a => a.partID == partName);
+          if (!attachmentInfo) {
+            throw new ExtensionError(`Attachment with partName ${partName} not found`);
+          }
+          let bytes = await getAttachmentFromUrl(attachmentInfo.url);
+          return new File([bytes], attachmentInfo.name, {type: attachmentInfo.contentType});
+        },
         removeParts: async function (tabId, messageId, removedParts) {
           let window = getMessageWindow(tabId);
           if (!window) {
