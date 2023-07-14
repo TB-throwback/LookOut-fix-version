@@ -67,6 +67,7 @@ for (let tab of tabs) {
 browser.messageDisplay.onMessageDisplayed.addListener(handleMessage);
 
 // Update prefs chache, if they are changed.
-browser.LegacyPrefs.onChanged.addListener((name, value) => {
-  prefs[name] = value
+browser.LegacyPrefs.onChanged.addListener(async (name, value) => {
+  // The value is null if it is the default, so we always pull the new value.
+  prefs[name] = await browser.LegacyPrefs.getPref(`${PREF_PREFIX}${name}`);
 }, PREF_PREFIX);
