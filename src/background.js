@@ -31,18 +31,20 @@ async function handleMessage(tab, message) {
   let addedFiles = [];
   for (let attachment of attachments) {
     if (
-      attachment.name != "winmail.dat" && 
+      attachment.name != "winmail.dat" &&
       attachment.contentType != "application/ms-tnef" &&
       prefs["strict_contenttype"]
     ) {
       continue;
     }
-    
+
     let tnefExtractor = new TnefExtractor();
     let file = await browser.Attachment.getAttachmentFile(tab.id, attachment.partName);
     let files = await tnefExtractor.parse(file, null, prefs);
     addedFiles.push(...files);
-    removedParts.push(attachment.partName);
+    if (prefs["remove_winmail_dat"]) {
+      removedParts.push(attachment.partName);
+    }
   }
   if (removedParts.length > 0) {
     await browser.Attachment.removeParts(tab.id, message.id, removedParts);
