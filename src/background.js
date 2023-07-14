@@ -7,7 +7,7 @@ const PREF_DEFAULTS = {
   "disable_filename_character_set": false,
   "remove_winmail_dat": true,
   "strict_contenttype": true,
-  "enable_debug": false,
+  "debug_enabled": false,
   "body_part_prefix": "body_part_",
 }
 

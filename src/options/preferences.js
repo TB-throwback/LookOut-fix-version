@@ -5,7 +5,7 @@ const PREF_NAMES = [
   "disable_filename_character_set",
   "remove_winmail_dat",
   "strict_contenttype",
-  "enable_debug",
+  "debug_enabled",
 ]
 
 async function update(event) {

@@ -64,6 +64,9 @@ export class TnefExtractor {
   async parse(file, msgHdr, prefs) {
     this.mMsgHdr = msgHdr; // TODO: Why does it need it?
     
+    // The TNEF parser uses debug_level.
+    prefs["debug_level"] = prefs["debug_enabled"] ? 10 : 5;
+
     await this.mStream.setFile(file);
     tnef_parse(
       this.mStream, 
