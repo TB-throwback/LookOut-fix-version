@@ -1355,7 +1355,7 @@ function tnef_pack_appt_attendees_ics(pkg, liststr, role) {
       continue;
     }
     var parts = tnef_pack_get_name_addr(pkg, attendees[atnd]);
-    parts_test = parts[0].replace(/[^\x20-\x7E]+/g, '');
+    let parts_test = parts[0].replace(/[^\x20-\x7E]+/g, '');
     if (parts_test) {
       vcal_str += "ATTENDEE;PARTSTAT=NEEDS-ACTION;ROLE=" + role + ";RSVP=TRUE";
       if (parts.length > 1 && parts[1] && parts[1] != "") {
