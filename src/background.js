@@ -30,9 +30,14 @@ async function handleMessage(tab, message) {
   let removedParts = [];
   let addedFiles = [];
   for (let attachment of attachments) {
-    if (attachment.name != "winmail.dat" && attachment.contentType != "application/ms-tnef") {
+    if (
+      attachment.name != "winmail.dat" && 
+      attachment.contentType != "application/ms-tnef" &&
+      prefs["strict_contenttype"]
+    ) {
       continue;
     }
+    
     let tnefExtractor = new TnefExtractor();
     let file = await browser.Attachment.getAttachmentFile(tab.id, attachment.partName);
     let files = await tnefExtractor.parse(file, null, prefs);
