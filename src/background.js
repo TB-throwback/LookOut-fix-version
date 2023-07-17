@@ -58,7 +58,8 @@ async function handleMessage(tab, message) {
       }
       tnefAttachments.push(tnefAttachment);
     }
-    if (prefs["remove_winmail_dat"]) {
+
+    if (tnefFiles.length > 0 && prefs["remove_winmail_dat"]) {
       removedParts.push(attachment.partName);
     }
   }
