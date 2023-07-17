@@ -29,9 +29,6 @@
     "extensionDescription": {
         "message": "LookOut reads and integrates TNEF encoded parts in emails."
     },
-    "extensionName": {
-        "message": "LookOut (fix version)"
-    },
     "extensions.lookout.attach_raw_mapi": {
         "message": "false"
     },
