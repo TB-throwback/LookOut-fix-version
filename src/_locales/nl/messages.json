@@ -1,8 +1,68 @@
 {
-  "extensionName": {
-    "message": "LookOut (fix version)"
-  },
-  "extensionDescription": {
-    "message": "LookOut zet TNEF-bijlagen (zoals die in winmail.dat) om in leesbare vorm en plaatst deze in het bijlagenvak."
-  }
+    "attach_raw_mapi_check.accesskey": {
+        "message": "M"
+    },
+    "attach_raw_mapi_check.label": {
+        "message": "MAPI-eigenschappen bijsluiten"
+    },
+    "direct_to_calendar_check.accesskey": {
+        "message": "A"
+    },
+    "direct_to_calendar_check.label": {
+        "message": "Agendagegevens direct openen"
+    },
+    "disable_filename_character_set_check.accesskey": {
+        "message": "T"
+    },
+    "disable_filename_character_set_check.label": {
+        "message": "Tekenset van de bestandsnamen niet omzetten"
+    },
+    "enable_debug_check.accesskey": {
+        "message": "D"
+    },
+    "enable_debug_check.label": {
+        "message": "Debugging inschakelen"
+    },
+    "extensionDescription": {
+        "message": "LookOut zet TNEF-bijlagen (zoals die in winmail.dat) om in leesbare vorm en plaatst deze in het bijlagenvak."
+    },
+    "extensionName": {
+        "message": "LookOut (fix version)"
+    },
+    "extensions.lookout.attach_raw_mapi": {
+        "message": "false"
+    },
+    "extensions.lookout.body_part_prefix": {
+        "message": "body_part_"
+    },
+    "extensions.lookout.description": {
+        "message": "LookOut zet TNEF-bijlagen (zoals die in winmail.dat) om in leesbare vorm en plaatst deze in het bijlagenvak."
+    },
+    "extensions.lookout.direct_to_calendar": {
+        "message": "false"
+    },
+    "extensions.lookout.disable_filename_character_set": {
+        "message": "false"
+    },
+    "lookout.label": {
+        "message": "Vertaald menu-item"
+    },
+    "pane1.title": {
+        "message": "Voorkeuren voor LookOut"
+    },
+    "prefwindow.title": {
+        "message": "Voorkeuren voor LookOut"
+    },
+    "remove_winmail_dat_check.accesskey": {
+        "message": "W"
+    },
+    "remove_winmail_dat_check.label": {
+        "message": "winmail.dat verwijderen"
+    },
+    "strict_contenttype_check.accesskey": {
+        "message": "B"
+    },
+    "strict_contenttype_check.label": {
+        "message": "Bestandstype strenger controleren"
+    }
 }

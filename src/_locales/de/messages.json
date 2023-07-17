@@ -1,10 +1,65 @@
 {
-
-  "extensionName": {
-    "message": "Zeig's Mir! (LookOut)"
-  },
-  "extensionDescription": {
-    "message": "LookOut öffnet die TNEF-codierten Mailanhänge (meistens winmail.dat) und lädt die decodierten Teile herunter."
-  }
-
+    "attach_raw_mapi_check.accesskey": {
+        "message": "M"
+    },
+    "attach_raw_mapi_check.label": {
+        "message": "MAPI-Eigenschaften speichern"
+    },
+    "direct_to_calendar_check.accesskey": {
+        "message": "K"
+    },
+    "direct_to_calendar_check.label": {
+        "message": "Kalenderdaten direkt öffnen"
+    },
+    "disable_filename_character_set_check.accesskey": {
+        "message": "Z"
+    },
+    "disable_filename_character_set_check.label": {
+        "message": "Zeichensatzkonvertierung für Dateinamen deaktivieren"
+    },
+    "enable_debug_check.accesskey": {
+        "message": "D"
+    },
+    "enable_debug_check.label": {
+        "message": "Debugging aktivieren"
+    },
+    "extensionDescription": {
+        "message": "LookOut öffnet die TNEF-codierten Mailanhänge (meistens winmail.dat) und lädt die decodierten Teile herunter."
+    },
+    "extensionName": {
+        "message": "Zeig's Mir! (LookOut)"
+    },
+    "extensions.lookout.attach_raw_mapi": {
+        "message": "false"
+    },
+    "extensions.lookout.body_part_prefix": {
+        "message": "Hauptteil_"
+    },
+    "extensions.lookout.description": {
+        "message": "LookOut öffnet die TNEF-codierten Mailanhänge und lädt sie herunter"
+    },
+    "extensions.lookout.direct_to_calendar": {
+        "message": "false"
+    },
+    "extensions.lookout.disable_filename_character_set": {
+        "message": "false"
+    },
+    "lookout.label": {
+        "message": "Übersetzter Menüpunkt"
+    },
+    "pane1.title": {
+        "message": "LookOut-Einstellungen"
+    },
+    "remove_winmail_dat_check.accesskey": {
+        "message": "W"
+    },
+    "remove_winmail_dat_check.label": {
+        "message": "Winmail.dat entfernen"
+    },
+    "strict_contenttype_check.accesskey": {
+        "message": "S"
+    },
+    "strict_contenttype_check.label": {
+        "message": "Strict-Content-Type-Übereinstimmung"
+    }
 }

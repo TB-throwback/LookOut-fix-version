@@ -5,55 +5,56 @@
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
-      "strict_min_version": "91.0",
-      "strict_max_version": "102.*"
+      "strict_min_version": "115.0",
+      "strict_max_version": "115.*"
     }
   },
-  "version": "5.4",
-  "default_locale": "en",
+  "version": "6.0",
+  "default_locale": "en-US",
   "author": "Dugite-Code",
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
   "icons": {
-    "32": "chrome/skin/LOicon-32.png",
-    "48": "chrome/skin/LOicon-48.png",
-    "64": "chrome/skin/LOicon-64.png"
+    "32": "icons/LOicon-32.png",
+    "48": "icons/LOicon-48.png",
+    "64": "icons/LOicon-64.png"
   },
   "experiment_apis": {
-    "WindowListener": {
-      "schema": "api/WindowListener/schema.json",
+    "Attachment": {
+      "schema": "api/Attachment/schema.json",
       "parent": {
         "scopes": [
           "addon_parent"
         ],
         "paths": [
           [
-            "WindowListener"
+            "Attachment"
           ]
         ],
-        "script": "api/WindowListener/implementation.js"
+        "script": "api/Attachment/implementation.js"
       }
     },
-    "SessionRestore": {
-      "schema": "api/SessionRestore/schema.json",
+    "LegacyPrefs": {
+      "schema": "api/LegacyPrefs/schema.json",
       "parent": {
         "scopes": [
           "addon_parent"
         ],
         "paths": [
           [
-            "SessionRestore"
+            "LegacyPrefs"
           ]
         ],
-        "script": "api/SessionRestore/implementation.js",
-        "events": [
-          "startup"
-        ]
+        "script": "api/LegacyPrefs/implementation.js"
       }
     }
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "page": "background.html"
+  },
+  "permissions": [
+    "messagesRead"
+  ],
+  "options_ui": {
+    "page": "options/options.html"
   }
 }
