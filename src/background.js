@@ -59,8 +59,7 @@ async function handleMessage(tab, message) {
       tnefAttachments.push(tnefAttachment);
     }
 
-    // Remove all parsed container files, except entire messages.
-    if (prefs["remove_winmail_dat"] && attachment.contentType != "message/rfc822") {
+    if (tnefFiles.length > 0 && prefs["remove_winmail_dat"]) {
       removedParts.push(attachment.partName);
     }
   }
