@@ -1,6 +1,13 @@
+6.0
+* Moved control logic into background
+* Use TNEF lib in background script using a PseudoInputStream, which partially implements nsIInputStream.
+* Using dedicated Experiment to minipulate attachments in the message window
+* Use ES6 modules
+
 5.4
 * Services.jsm removal fixes
 * Update addon-developer-support
 * Fix typo in lookout.js
+
 4.1
 * Thunderbird 91 support

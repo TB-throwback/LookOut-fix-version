@@ -1,0 +1,69 @@
+[
+  {
+    "namespace": "Attachment",
+    "functions": [
+      {
+        "name": "listAttachments",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          }
+        ]
+      },
+      {
+        "name": "getAttachmentFile",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "partName",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "removeAttachments",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "parts",
+            "type": "array",
+            "items": {
+              "type": "any"
+            }
+          }
+        ]
+      },
+      {
+        "name": "addAttachments",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "files",
+            "type": "array",
+            "items": {
+              "type": "any"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
