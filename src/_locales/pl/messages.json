@@ -1,0 +1,68 @@
+{
+    "extensionName": {
+        "message": "LookOut (fix version)"
+    },
+    "attach_raw_mapi_check.accesskey": {
+        "message": "M"
+    },
+    "attach_raw_mapi_check.label": {
+        "message": "Dołącz właściwości MAPI"
+    },
+    "direct_to_calendar_check.accesskey": {
+        "message": "C"
+    },
+    "direct_to_calendar_check.label": {
+        "message": "Otwórz dane Kalendarzy bezpośrednio"
+    },
+    "disable_filename_character_set_check.accesskey": {
+        "message": "F"
+    },
+    "disable_filename_character_set_check.label": {
+        "message": "Wyłącz konwersję zestawu znaków przy nazwie pliku"
+    },
+    "enable_debug_check.accesskey": {
+        "message": "E"
+    },
+    "enable_debug_check.label": {
+        "message": "Włącz Debugowanie"
+    },
+    "extensionDescription": {
+        "message": "LookOut odczytuje i dołącza części emaila kodowane w formacie TNEF"
+    },
+    "extensions.lookout.attach_raw_mapi": {
+        "message": "false"
+    },
+    "extensions.lookout.body_part_prefix": {
+        "message": "body_part_"
+    },
+    "extensions.lookout.description": {
+        "message": "LookOut odczytuje i dołącza części emaila kodowane w formacie TNEF"
+    },
+    "extensions.lookout.direct_to_calendar": {
+        "message": "false"
+    },
+    "extensions.lookout.disable_filename_character_set": {
+        "message": "false"
+    },
+    "lookout.label": {
+        "message": "Your localized menuitem"
+    },
+    "pane1.title": {
+        "message": "Ustawienia LookOut"
+    },
+    "prefwindow.title": {
+        "message": "Ustawienia LookOut"
+    },
+    "remove_winmail_dat_check.accesskey": {
+        "message": "R"
+    },
+    "remove_winmail_dat_check.label": {
+        "message": "Usuń Winmail.dat"
+    },
+    "strict_contenttype_check.accesskey": {
+        "message": "S"
+    },
+    "strict_contenttype_check.label": {
+        "message": "Dokładne dopasowanie typu zawartości"
+    }
+}
