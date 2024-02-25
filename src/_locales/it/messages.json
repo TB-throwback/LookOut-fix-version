@@ -1,0 +1,68 @@
+{
+    "extensionName": {
+        "message": "LookOut (fix version)"
+    },
+    "attach_raw_mapi_check.accesskey": {
+        "message": "M"
+    },
+    "attach_raw_mapi_check.label": {
+        "message": "Allega le proprietà MAPI (Messaging Application Programming Interface)"
+    },
+    "direct_to_calendar_check.accesskey": {
+        "message": "C"
+    },
+    "direct_to_calendar_check.label": {
+        "message": "Apre direttamente i dati del Calendario"
+    },
+    "disable_filename_character_set_check.accesskey": {
+        "message": "F"
+    },
+    "disable_filename_character_set_check.label": {
+        "message": "Disabilita la conversione del set di caratteri del nome del file"
+    },
+    "enable_debug_check.accesskey": {
+        "message": "D"
+    },
+    "enable_debug_check.label": {
+        "message": "Abilita il debugging"
+    },
+    "extensionDescription": {
+        "message": "LookOut è in grado di leggere e inserire nei messaggi di posta le parti codificate in TNEF (Transport Neutral Encapsulation Format)."
+    },
+    "extensions.lookout.attach_raw_mapi": {
+        "message": "falso"
+    },
+    "extensions.lookout.body_part_prefix": {
+        "message": "body_part_"
+    },
+    "extensions.lookout.description": {
+        "message": "LookOut è in grado di leggere e inserire nei messaggi di posta le parti codificate in TNEF (Transport Neutral Encapsulation Format)"
+    },
+    "extensions.lookout.direct_to_calendar": {
+        "message": "Falso"
+    },
+    "extensions.lookout.disable_filename_character_set": {
+        "message": "Falso"
+    },
+    "lookout.label": {
+        "message": "Voce di menu tradotta"
+    },
+    "pane1.title": {
+        "message": "Preferenze di LookOut"
+    },
+    "prefwindow.title": {
+        "message": "Preferenze di LookOut"
+    },
+    "remove_winmail_dat_check.accesskey": {
+        "message": "W"
+    },
+    "remove_winmail_dat_check.label": {
+        "message": "Rimuove Winmail.dat"
+    },
+    "strict_contenttype_check.accesskey": {
+        "message": "R"
+    },
+    "strict_contenttype_check.label": {
+        "message": "Richiede una rigida corrispondenza nel tipo di contenuto"
+    }
+}
