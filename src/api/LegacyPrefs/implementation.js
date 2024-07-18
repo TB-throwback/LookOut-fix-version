@@ -36,17 +36,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-var { ExtensionCommon } = ChromeUtils.import(
-  "resource://gre/modules/ExtensionCommon.jsm"
+var { ExtensionCommon } = ChromeUtils.importESModule(
+  "resource://gre/modules/ExtensionCommon.sys.mjs"
 );
-var { ExtensionUtils } = ChromeUtils.import(
-  "resource://gre/modules/ExtensionUtils.jsm"
+var { ExtensionUtils } = ChromeUtils.importESModule(
+  "resource://gre/modules/ExtensionUtils.sys.mjs"
 );
 var { ExtensionError } = ExtensionUtils;
-
-var Services = globalThis.Services || 
-  ChromeUtils.import("resource://gre/modules/Services.jsm").Services;
-
 
 var LegacyPrefs = class extends ExtensionCommon.ExtensionAPI {
   getAPI(context) {
