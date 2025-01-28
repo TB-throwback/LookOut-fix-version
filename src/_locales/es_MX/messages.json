@@ -1,0 +1,68 @@
+{
+    "extensionName": {
+        "message": "LookOut (fix version)"
+    },
+    "attach_raw_mapi_check.accesskey": {
+        "message": "M"
+    },
+    "attach_raw_mapi_check.label": {
+        "message": "Adjuntar propiedades MAPI"
+    },
+    "direct_to_calendar_check.accesskey": {
+        "message": "C"
+    },
+    "direct_to_calendar_check.label": {
+        "message": "Abrir directamente los datos del calendario"
+    },
+    "disable_filename_character_set_check.accesskey": {
+        "message": "F"
+    },
+    "disable_filename_character_set_check.label": {
+        "message": "Desactivar la conversión del juego de caracteres del nombre de archivo"
+    },
+    "enable_debug_check.accesskey": {
+        "message": "E"
+    },
+    "enable_debug_check.label": {
+        "message": "Activar la depuración"
+    },
+    "extensionDescription": {
+        "message": "LookOut lee e integra las partes codificadas TNEF en los emails"
+    },
+    "extensions.lookout.attach_raw_mapi": {
+        "message": "falso"
+    },
+    "extensions.lookout.body_part_prefix": {
+        "message": "body_part_"
+    },
+    "extensions.lookout.description": {
+        "message": "LookOut lee e integra las partes codificadas TNEF en los emails"
+    },
+    "extensions.lookout.direct_to_calendar": {
+        "message": "falso"
+    },
+    "extensions.lookout.disable_filename_character_set": {
+        "message": "falso"
+    },
+    "lookout.label": {
+        "message": "Tu elemento de menú traducido"
+    },
+    "pane1.title": {
+        "message": "Preferencias de LookOut"
+    },
+    "prefwindow.title": {
+        "message": "Preferencias de LookOut"
+    },
+    "remove_winmail_dat_check.accesskey": {
+        "message": "R"
+    },
+    "remove_winmail_dat_check.label": {
+        "message": "Eliminar Winmail.dat"
+    },
+    "strict_contenttype_check.accesskey": {
+        "message": "S"
+    },
+    "strict_contenttype_check.label": {
+        "message": "Coincidencia estricta de tipos de contenido"
+    }
+}
