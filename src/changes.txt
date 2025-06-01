@@ -1,11 +1,18 @@
-6.4
+6.6
+* Max Version bump to TB 139.*
+
+6.5
 * Max Version bump to TB 138.*
 
-6.3
+6.4
 
 * Bumped Max version to allow install on Thunderbird bete v135.8
 * Added Spanish MX Translation
 
+6.3
+
+* Update for Thunderbird 128
+* Update manifest.json
 
 6.2
 * Added Italian Translation
