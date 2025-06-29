@@ -1,3 +1,6 @@
+6.7
+* Max Version bump to TB 140.* Version < = 141 requires updates
+
 6.6
 * Max Version bump to TB 139.*
 
