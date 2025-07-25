@@ -5,11 +5,11 @@
   "applications": {
     "gecko": {
       "id": "lookout@s3_fix_version",
-      "strict_min_version": "115.0",
+      "strict_min_version": "140.0",
       "strict_max_version": "140.*"
     }
   },
-  "version": "6.7",
+  "version": "6.8",
   "default_locale": "en-US",
   "author": "Dugite-Code",
   "homepage_url": "https://github.com/TB-throwback/LookOut-fix-version/",
