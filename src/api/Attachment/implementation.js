@@ -39,6 +39,16 @@ async function getRealFileForFile(file) {
   return tempFile;
 }
 
+function ClearAttachmentList(window) {
+  // clear selection
+  var list = window.document.getElementById("attachmentList");
+  list.clearSelection();
+
+  while (list.hasChildNodes()) {
+    list.lastChild.remove();
+  }
+}
+
 var Attachment = class extends ExtensionCommon.ExtensionAPI {
   getAPI(context) {
 
@@ -101,10 +111,10 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           return nativeTab.messageBrowser.contentWindow.gMessage;
         }
       } else if (nativeTab.mode.name == "mail3PaneTab") {
-          let msgHdrs = nativeTab.chromeBrowser.contentWindow.gDBView.getSelectedMsgHdrs();
-          if (msgHdrs.length == 1) {
-            return msgHdrs[0];
-          }
+        let msgHdrs = nativeTab.chromeBrowser.contentWindow.gDBView.getSelectedMsgHdrs();
+        if (msgHdrs.length == 1) {
+          return msgHdrs[0];
+        }
       } else if (nativeTab.mode.name == "mailMessageTab") {
         return nativeTab.chromeBrowser.contentWindow.gMessage;
       }
@@ -173,7 +183,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
             return
           }
 
-          await window.ClearAttachmentList();
+          ClearAttachmentList(window);
           window.gBuildAttachmentsForCurrentMsg = false;
           await window.displayAttachmentsForExpandedView();
           window.gBuildAttachmentsForCurrentMsg = true;
@@ -197,7 +207,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
             return
           }
 
-          await window.ClearAttachmentList();
+          ClearAttachmentList(window);
           window.gBuildAttachmentsForCurrentMsg = false;
           await window.displayAttachmentsForExpandedView();
           window.gBuildAttachmentsForCurrentMsg = true;
