@@ -1,22 +1,8 @@
 import { TnefExtractor } from "/scripts/lookout.mjs"
+import * as storage from "./scripts/storage.mjs";
 
-const PREF_PREFIX = "extensions.lookout.";
-const PREF_DEFAULTS = {
-  "attach_raw_mapi": false,
-  "direct_to_calendar": false,
-  "disable_filename_character_set": false,
-  "remove_winmail_dat": true,
-  "strict_contenttype": true,
-  "debug_enabled": false,
-  "body_part_prefix": "body_part_",
-}
-
-let prefs = {};
-
-for (let [name, value] of Object.entries(PREF_DEFAULTS)) {
-  await browser.LegacyPrefs.setDefaultPref(`${PREF_PREFIX}${name}`, value);
-  prefs[name] = await browser.LegacyPrefs.getPref(`${PREF_PREFIX}${name}`);
-}
+// Migrate legacy prefs to local storage.
+await storage.migratePrefs();
 
 async function handleMessage(tab, message) {
   // Skip if message is junk.
@@ -26,6 +12,9 @@ async function handleMessage(tab, message) {
 
   // Read attachments of the message
   let attachments = await browser.Attachment.listAttachments(tab.id);
+
+  // Get the current prefs.
+  let prefs = await storage.getPrefs();
 
   let removedParts = [];
   let tnefAttachments = [];
@@ -82,9 +71,3 @@ for (let tab of tabs) {
   }
 }
 browser.messageDisplay.onMessageDisplayed.addListener(handleMessage);
-
-// Update prefs chache, if they are changed.
-browser.LegacyPrefs.onChanged.addListener(async (name, value) => {
-  // The value is null if it is the default, so we always pull the new value.
-  prefs[name] = await browser.LegacyPrefs.getPref(`${PREF_PREFIX}${name}`);
-}, PREF_PREFIX);
