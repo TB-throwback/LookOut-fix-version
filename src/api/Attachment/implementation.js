@@ -128,6 +128,9 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           if (!window) {
             return
           }
+
+          console.log(window.Enigmail.msg.allAttachmentsDone)
+
           let attachments = [];
           for (let attachmentInfo of window.currentAttachments) {
             let attachment = {
