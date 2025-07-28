@@ -1,5 +1,6 @@
-const PREF_PREFIX = "extensions.lookout.";
-const PREF_NAMES = [
+import * as storage from "../scripts/storage.mjs";
+
+const USER_OPTIONS = [
   "attach_raw_mapi",
   "direct_to_calendar",
   "disable_filename_character_set",
@@ -8,17 +9,19 @@ const PREF_NAMES = [
   "debug_enabled",
 ]
 
+
 async function update(event) {
   let name = event.target.dataset.preference;
   let value = event.target.checked;
-  browser.LegacyPrefs.setPref( `${PREF_PREFIX}${name}`, value);
+  await browser.storage.local.set({ [name]: value })
 }
 
 async function init() {
   i18n.updateDocument();
+  let prefs = await storage.getPrefs();
 
-  for (let name of PREF_NAMES) {
-    let value = await browser.LegacyPrefs.getPref( `${PREF_PREFIX}${name}`);
+  for (let name of USER_OPTIONS) {
+    let value = prefs[name]; 
     let element = document.getElementById(`${name}_check`);
     element.checked = value;
     element.dataset.preference = name;
