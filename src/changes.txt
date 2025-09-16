@@ -1,3 +1,6 @@
+7.1
+* Max Version bump to TB 142.*
+
 7.0
 Migrates preferences to local storage for future removal of the LegacyPrefs API. Re-implement ClearAttachmentList()
 
