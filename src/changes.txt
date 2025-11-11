@@ -1,3 +1,6 @@
+7.1
+V144.* compatibility bump
+
 7.0
 Migrates preferences to local storage for future removal of the LegacyPrefs API. Re-implement ClearAttachmentList()
 
