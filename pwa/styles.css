@@ -1,0 +1,251 @@
+:root {
+  --bg-1: #f8f3e6;
+  --bg-2: #e7efe9;
+  --ink: #1f2933;
+  --ink-muted: #4a5a68;
+  --brand: #0f4c5c;
+  --brand-2: #6b9a8f;
+  --surface: rgba(255, 255, 255, 0.78);
+  --border: rgba(15, 76, 92, 0.18);
+  --danger: #9f2d2d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 14% 10%, rgba(15, 76, 92, 0.18), transparent 30%),
+    radial-gradient(
+      circle at 88% 20%,
+      rgba(107, 154, 143, 0.22),
+      transparent 35%
+    ),
+    linear-gradient(155deg, var(--bg-1), var(--bg-2));
+}
+
+.app-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1rem 2.5rem;
+  display: grid;
+  gap: 1.2rem;
+}
+
+.hero {
+  background: linear-gradient(
+    120deg,
+    rgba(15, 76, 92, 0.9),
+    rgba(107, 154, 143, 0.86)
+  );
+  color: #f7fbfc;
+  border-radius: 20px;
+  padding: 1.4rem;
+  box-shadow: 0 12px 28px rgba(23, 37, 44, 0.2);
+  animation: hero-in 500ms ease-out;
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+.hero h1 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.4rem, 4.5vw, 2.3rem);
+}
+
+.hero p {
+  margin: 0.45rem 0 0;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.dropzone {
+  display: block;
+  border: 2px dashed rgba(15, 76, 92, 0.35);
+  border-radius: 14px;
+  padding: 1.1rem;
+  text-align: center;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.dropzone.dragover {
+  transform: translateY(-1px);
+  border-color: var(--brand);
+  background: rgba(15, 76, 92, 0.06);
+}
+
+.drop-title {
+  display: block;
+  font-weight: 700;
+}
+
+.drop-subtitle {
+  display: block;
+  color: var(--ink-muted);
+  margin-top: 0.2rem;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+}
+
+button {
+  border: 0;
+  border-radius: 11px;
+  background: var(--brand);
+  color: #f3f8f9;
+  padding: 0.6rem 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.status {
+  margin: 0.7rem 0 0;
+  color: var(--ink-muted);
+}
+
+.status.error {
+  color: var(--danger);
+}
+
+.prefs-panel h2,
+.results-panel h2 {
+  margin-top: 0;
+}
+
+.prefs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.55rem 0.9rem;
+}
+
+.pref-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.3;
+}
+
+.pref-item input[type="checkbox"] {
+  margin-top: 0.15rem;
+}
+
+.results {
+  list-style: none;
+  padding: 0;
+  margin: 0.8rem 0 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid rgba(15, 76, 92, 0.16);
+  border-radius: 12px;
+  padding: 0.65rem;
+  background: rgba(255, 255, 255, 0.78);
+  animation: row-in 260ms ease-out;
+}
+
+.result-meta {
+  overflow-wrap: anywhere;
+}
+
+.result-meta strong {
+  display: block;
+}
+
+.result-meta small {
+  color: var(--ink-muted);
+}
+
+.download-link {
+  text-decoration: none;
+  background: #1d6f58;
+  color: #f6fbf8;
+  border-radius: 9px;
+  padding: 0.45rem 0.62rem;
+  white-space: nowrap;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes row-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 1rem 0.75rem 1.3rem;
+  }
+
+  .prefs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .result-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .download-link {
+    text-align: center;
+  }
+}

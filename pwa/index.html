@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f4c5c" />
+    <title>LookOut Web</title>
+    <link rel="icon" href="./icons/LOicon-32.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div style="display: flex; gap: 1em">
+          <img
+            src="./icons/LOicon-64.png"
+            alt="LookOut Web Icon"
+            style="width: 64px; height: 64px; margin-bottom: 0.5em"
+          />
+          <div>
+            <p class="eyebrow">LookOut Web Version</p>
+            <h1>LookOut Web</h1>
+          </div>
+        </div>
+        <p>
+          Extract attachments from winmail.dat files using LookOut, right in
+          your browser.
+        </p>
+      </header>
+
+      <section class="panel">
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <input
+            id="fileInput"
+            type="file"
+            accept=".dat,application/ms-tnef,application/vnd.ms-tnef,application/octet-stream"
+          />
+          <span class="drop-title">Choose or drop winmail.dat</span>
+          <span class="drop-subtitle">Works offline after first load</span>
+        </label>
+
+        <div class="actions">
+          <button id="extractBtn" type="button" disabled>
+            Extract Attachments
+          </button>
+          <button id="downloadAllBtn" type="button" disabled>
+            Download All
+          </button>
+        </div>
+
+        <p id="status" class="status" role="status" aria-live="polite">
+          No file selected.
+        </p>
+      </section>
+
+      <section class="panel results-panel">
+        <h2>Extracted Files</h2>
+        <ul id="results" class="results" aria-live="polite"></ul>
+      </section>
+
+      <section class="panel prefs-panel">
+        <h2>Extraction Options</h2>
+        <div class="prefs-grid">
+          <label class="pref-item" for="attach_raw_mapi_check">
+            <input type="checkbox" id="attach_raw_mapi_check" />
+            Attach raw MAPI properties
+          </label>
+
+          <label class="pref-item" for="disable_filename_character_set_check">
+            <input type="checkbox" id="disable_filename_character_set_check" />
+            Disable filename character set conversion
+          </label>
+
+          <label class="pref-item" for="debug_enabled_check">
+            <input type="checkbox" id="debug_enabled_check" />
+            Enable debug logging
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <script src="./mapi_props.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

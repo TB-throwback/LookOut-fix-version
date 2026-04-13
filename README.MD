@@ -32,6 +32,19 @@ LookOut is a plugin which allows [Thunderbird](https://www.thunderbird.net/) (an
 The TNEF decoding engine was inspired (with permission) by the [TNEF project](https://github.com/verdammelt/tnef). LookOut has a full [MAPI](https://en.wikipedia.org/wiki/MAPI) decoder and the ability to transcode some of those properties to [iCalendar (ics)](https://en.wikipedia.org/wiki/ICalendar) and [vCard (vcf)](https://en.wikipedia.org/wiki/VCard) formats.
 As an option all MAPI properties within a email can be viewed so other types of information can be deciphered.
 
+
+## Winmail.dat PWA
+
+The `pwa/` folder contains a web app for extracting attachments from `winmail.dat` files using the same parser as the extension.
+
+### Usage
+
+```bash
+cd pwa
+npm dev
+xdg-open http://localhost:8080
+```
+
 # Debugging
 
 Debugging can be enabled in the Settings menu. Output will be presented in the Error Console.

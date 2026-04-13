@@ -1,0 +1,10 @@
+{
+  "name": "lookout-winmail-pwa",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "pnpm build && python3 -m http.server 8080 -d dist"
+  }
+}

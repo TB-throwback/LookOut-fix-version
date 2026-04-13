@@ -1,0 +1,40 @@
+{
+  "name": "LookOut Web",
+  "short_name": "LookOut Web",
+  "description": "Extract attachments from winmail.dat files using LookOut, right in your browser.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f3e6",
+  "theme_color": "#0f4c5c",
+  "icons": [
+    {
+      "src": "./icons/LOicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/LOicon-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/LOicon-64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "file_handlers": [
+    {
+      "action": "./index.html",
+      "accept": {
+        "application/ms-tnef": [".dat", ".tnef"],
+        "application/vnd.ms-tnef": [".dat", ".tnef"],
+        "application/octet-stream": [".dat"]
+      }
+    }
+  ]
+}
