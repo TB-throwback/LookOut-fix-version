@@ -5,11 +5,6 @@ on:
     branches:
       - main
       - master
-    paths:
-      - pwa/**
-      - src/scripts/**
-      - src/icons/**
-      - .github/workflows/deploy-pwa-pages.yml
   workflow_dispatch:
 
 permissions:
