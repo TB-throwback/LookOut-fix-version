@@ -22,6 +22,26 @@
       "src": "./icons/LOicon-64.png",
       "sizes": "64x64",
       "type": "image/png"
+    },
+    {
+      "src": "./icons/LOicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/desktop1.avif",
+      "sizes": "1280x800",
+      "type": "image/avif",
+      "form_factor": "wide",
+      "label": "LookOut Web on desktop"
+    },
+    {
+      "src": "./screenshots/mobile1.avif",
+      "sizes": "375x668",
+      "type": "image/avif",
+      "label": "LookOut Web on mobile"
     }
   ],
   "launch_handler": {
@@ -31,9 +51,17 @@
     {
       "action": "./index.html",
       "accept": {
-        "application/ms-tnef": [".dat", ".tnef"],
-        "application/vnd.ms-tnef": [".dat", ".tnef"],
-        "application/octet-stream": [".dat"]
+        "application/ms-tnef": [
+          ".dat",
+          ".tnef"
+        ],
+        "application/vnd.ms-tnef": [
+          ".dat",
+          ".tnef"
+        ],
+        "application/octet-stream": [
+          ".dat"
+        ]
       }
     }
   ]

@@ -1,4 +1,12 @@
-import { mkdir, copyFile, rm, readFile, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  copyFile,
+  rm,
+  readFile,
+  writeFile,
+  readdir,
+  stat,
+} from "node:fs/promises";
 import path from "node:path";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname));
@@ -11,10 +19,9 @@ const filesToCopy = [
   ["styles.css", "styles.css"],
   ["sw.js", "sw.js"],
   ["manifest.webmanifest", "manifest.webmanifest"],
+  ["screenshots/", "screenshots/"],
   ["../src/scripts/mapi_props.js", "mapi_props.js"],
-  ["../src/icons/LOicon-32.png", "icons/LOicon-32.png"],
-  ["../src/icons/LOicon-48.png", "icons/LOicon-48.png"],
-  ["../src/icons/LOicon-64.png", "icons/LOicon-64.png"],
+  ["../src/icons/", "icons/"],
   {
     src: "app.js",
     dest: "app.js",
@@ -28,6 +35,21 @@ const filesToCopy = [
   ["../src/scripts/tnef.mjs", "scripts/tnef.mjs"],
 ];
 
+async function copyRecursive(src, dest) {
+  const srcStat = await stat(src);
+  if (srcStat.isDirectory()) {
+    await mkdir(dest, { recursive: true });
+    const entries = await readdir(src);
+    for (const entry of entries) {
+      const srcEntry = path.join(src, entry);
+      const destEntry = path.join(dest, entry);
+      await copyRecursive(srcEntry, destEntry);
+    }
+  } else {
+    await copyFile(src, dest);
+  }
+}
+
 for (const file of filesToCopy) {
   const src = path.join(root, file.src || file[0]);
   const dest = path.join(dist, file.dest || file[1]);
@@ -37,6 +59,11 @@ for (const file of filesToCopy) {
     content = content.replaceAll(file.replace[0], file.replace[1]);
     await writeFile(dest, content, "utf8");
   } else {
-    await copyFile(src, dest);
+    const srcStat = await stat(src);
+    if (srcStat.isDirectory()) {
+      await copyRecursive(src, dest);
+    } else {
+      await copyFile(src, dest);
+    }
   }
 }
