@@ -82,5 +82,59 @@
 
     <script src="./mapi_props.js"></script>
     <script type="module" src="./app.js"></script>
+    <footer
+      class="footer"
+      style="
+        margin-top: 2em;
+        text-align: center;
+        color: #666;
+        font-size: 0.95em;
+      "
+    >
+      <p>
+        <a
+          href="https://github.com/TB-throwback/LookOut-fix-version/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="color: #0f4c5c; text-decoration: none"
+        >
+          View on GitHub
+        </a>
+      </p>
+    </footer>
+    <script>
+      const showError = (msg) => {
+        const status = document.getElementById("status");
+        if (!status) return;
+        status.textContent = `Error: ${msg}`;
+        status.classList.add("error");
+      };
+
+      window.addEventListener(
+        "error",
+        (event) => {
+          if (event.target && (event.target.src || event.target.href)) {
+            showError(
+              `Failed to load resource: ${event.target.src || event.target.href}`,
+            );
+          } else {
+            showError(event.message || "A script error occurred.");
+          }
+        },
+        true,
+      );
+
+      window.addEventListener("unhandledrejection", (event) => {
+        showError(
+          event.reason?.message || "An unexpected async error occurred.",
+        );
+      });
+
+      navigator.serviceWorker?.addEventListener("message", (event) => {
+        if (event.data?.type === "ERROR") {
+          showError(event.data.message || "Service worker error.");
+        }
+      });
+    </script>
   </body>
 </html>

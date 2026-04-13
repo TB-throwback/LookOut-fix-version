@@ -33,16 +33,20 @@ The TNEF decoding engine was inspired (with permission) by the [TNEF project](ht
 As an option all MAPI properties within a email can be viewed so other types of information can be deciphered.
 
 
-## Winmail.dat PWA
+## LookOut PWA
 
 The `pwa/` folder contains a web app for extracting attachments from `winmail.dat` files using the same parser as the extension.
 
-### Usage
+This app can be used as a standalone tool. You can install it as a Progressive Web App (PWA) on your device and register it as the default handler for `winmail.dat` files. When you open a `winmail.dat` file, the PWA will launch and allow you to extract the attachments. One usecase for this is the use together with Thunderbird for Android.
+
+The PWA is hosted on GitHub Pages at https://tb-throwback.github.io/LookOut-fix-version/ and can be installed from there.
+
+### Development
+
+Run the following command to start a development server:
 
 ```bash
-cd pwa
-npm dev
-xdg-open http://localhost:8080
+npm run dev
 ```
 
 # Debugging

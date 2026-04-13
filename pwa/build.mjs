@@ -12,24 +12,31 @@ const filesToCopy = [
   ["sw.js", "sw.js"],
   ["manifest.webmanifest", "manifest.webmanifest"],
   ["../src/scripts/mapi_props.js", "mapi_props.js"],
-  ["../src/scripts/lookout.mjs", "scripts/lookout.mjs"],
-  ["../src/scripts/tnef.mjs", "scripts/tnef.mjs"],
   ["../src/icons/LOicon-32.png", "icons/LOicon-32.png"],
   ["../src/icons/LOicon-48.png", "icons/LOicon-48.png"],
   ["../src/icons/LOicon-64.png", "icons/LOicon-64.png"],
+  {
+    src: "app.js",
+    dest: "app.js",
+    replace: ["../src/scripts/lookout.mjs", "./scripts/lookout.mjs"],
+  },
+  {
+    src: "../src/scripts/lookout.mjs",
+    dest: "scripts/lookout.mjs",
+    replace: ["/scripts/tnef.mjs", "./tnef.mjs"],
+  },
+  ["../src/scripts/tnef.mjs", "scripts/tnef.mjs"],
 ];
 
-const appSource = await readFile(path.join(root, "app.js"), "utf8");
-const appBuilt = appSource.replace(
-  "../src/scripts/lookout.mjs",
-  "./scripts/lookout.mjs",
-);
-await mkdir(path.join(dist), { recursive: true });
-await writeFile(path.join(dist, "app.js"), appBuilt, "utf8");
-
-for (const [srcRel, destRel] of filesToCopy) {
-  const src = path.join(root, srcRel);
-  const dest = path.join(dist, destRel);
+for (const file of filesToCopy) {
+  const src = path.join(root, file.src || file[0]);
+  const dest = path.join(dist, file.dest || file[1]);
   await mkdir(path.dirname(dest), { recursive: true });
-  await copyFile(src, dest);
+  if (file.replace) {
+    let content = await readFile(src, "utf8");
+    content = content.replaceAll(file.replace[0], file.replace[1]);
+    await writeFile(dest, content, "utf8");
+  } else {
+    await copyFile(src, dest);
+  }
 }
