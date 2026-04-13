@@ -22,7 +22,7 @@ const filesToCopy = [
 const appSource = await readFile(path.join(root, "app.js"), "utf8");
 const appBuilt = appSource.replace(
   "../src/scripts/lookout.mjs",
-  "/scripts/lookout.mjs",
+  "./scripts/lookout.mjs",
 );
 await mkdir(path.join(dist), { recursive: true });
 await writeFile(path.join(dist, "app.js"), appBuilt, "utf8");
