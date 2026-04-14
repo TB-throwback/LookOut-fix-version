@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Adaptive icons are 108x108dp, but the "safe zone" is the inner 72x72dp.
+         Your original logo was 64x64. We center it here (offset by 22dp). -->
+    <group
+        android:translateX="22"
+        android:translateY="22">
+        <path
+            android:pathData="m5.225,62.23 l-0,-34.23 25.052,-26.23l3.447,0l25.052,26.23l0,34.23z"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="1.7"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="m58.776,28 l-19.246,18.403l0,0l-15.058,0l-19.248,-18.403"
+            android:strokeAlpha="0.96"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="1.7"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:fillAlpha="0.96"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="M5.225,62.23 L24.472,46.403"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="1.7"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="M58.776,62.23 L39.53,46.403"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="1.7"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="m29.706,26.01 l-11.758,-11.757 -0,-7.216 7.617,-0l4.61,4.61"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="3"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="m34.294,15.764 l11.758,11.758 -0,7.216 -7.617,-0l-4.61,-4.61"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="3"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="m26.877,18.593 l11.758,-11.758 7.216,-0 -0,7.617l-4.61,4.61"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="3"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+        <path
+            android:pathData="m37.123,23.182 l-11.758,11.758 -7.216,-0 0,-7.617l4.61,-4.61"
+            android:strokeLineJoin="miter"
+            android:strokeWidth="3"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:fillType="evenOdd"
+            android:strokeLineCap="butt"/>
+    </group>
+</vector>
