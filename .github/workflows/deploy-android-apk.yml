@@ -1,0 +1,107 @@
+name: Build Android APK
+
+# Release signing setup:
+# 1. Generate a keystore:
+#    keytool -genkeypair -v -keystore lookout-release.jks -alias lookout -keyalg RSA -keysize 2048 -validity 10000
+# 2. Encode it for GitHub Secrets:
+#    base64 -w 0 lookout-release.jks > lookout-release.jks.b64
+# 3. Add these repository secrets:
+#    ANDROID_KEYSTORE_BASE64 - contents of lookout-release.jks.b64
+#    ANDROID_KEYSTORE_PASSWORD - keystore password
+#    ANDROID_KEY_ALIAS - alias used above ("lookout")
+#    ANDROID_KEY_PASSWORD - key password (can be same as keystore password)
+# 4. Create a release tag when you want to publish:
+#    git tag v1.0.0 && git push origin v1.0.0
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.3.1"
+
+      - name: Build release APK
+        id: build
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          # Regenerate wrapper JAR in CI when it is intentionally not tracked in git.
+          if [[ ! -f gradle/wrapper/gradle-wrapper.jar ]]; then
+            gradle --no-daemon wrapper --gradle-version 9.3.1 --distribution-type bin
+          fi
+
+          chmod +x ./gradlew
+
+          if [[ -z "${ANDROID_KEYSTORE_BASE64:-}" || -z "${ANDROID_KEYSTORE_PASSWORD:-}" || -z "${ANDROID_KEY_ALIAS:-}" ]]; then
+            echo "Missing Android signing secrets. Configure ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, and ANDROID_KEY_ALIAS." >&2
+            exit 1
+          fi
+
+          # Default key password to keystore password if not explicitly provided.
+          key_password="${ANDROID_KEY_PASSWORD:-$ANDROID_KEYSTORE_PASSWORD}"
+          if [[ -z "${key_password}" ]]; then
+            echo "Missing Android key password. Configure ANDROID_KEY_PASSWORD or ensure ANDROID_KEYSTORE_PASSWORD is set." >&2
+            exit 1
+          fi
+
+          keystore_file="$RUNNER_TEMP/android-release-keystore.jks"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$keystore_file"
+          signing_args=(
+            "-Pandroid.injected.signing.store.file=${keystore_file}"
+            "-Pandroid.injected.signing.store.password=${ANDROID_KEYSTORE_PASSWORD}"
+            "-Pandroid.injected.signing.key.alias=${ANDROID_KEY_ALIAS}"
+            "-Pandroid.injected.signing.key.password=${key_password}"
+          )
+
+          ./gradlew assembleRelease "${signing_args[@]}"
+
+          rm -f "$keystore_file"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lookout-android-release
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: android/app/build/outputs/apk/release/*.apk
+          generate_release_notes: true

@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
 		webView.settings.apply {
 			javaScriptEnabled = true
 			domStorageEnabled = true
-			databaseEnabled = true
 			cacheMode = WebSettings.LOAD_NO_CACHE
 			allowFileAccess = true
 			allowContentAccess = true

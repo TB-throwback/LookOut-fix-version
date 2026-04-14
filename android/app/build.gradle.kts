@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
 }
 
 val pwaDir = rootProject.projectDir.parentFile.resolve("pwa")
@@ -37,7 +37,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    sourceSets.getByName("main").assets.setSrcDirs(listOf(generatedPwaAssetsDir))
+    sourceSets.getByName("main").assets.directories.add(generatedPwaAssetsDir.absolutePath)
 }
 
 tasks.register<Exec>("buildPwaAssets") {
@@ -58,10 +58,10 @@ tasks.named("preBuild") {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.activity)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.activity:activity:1.8.0")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
