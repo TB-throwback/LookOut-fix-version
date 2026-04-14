@@ -37,9 +37,25 @@ As an option all MAPI properties within a email can be viewed so other types of 
 
 The `pwa/` folder contains a web app for extracting attachments from `winmail.dat` files using the same parser as the extension.
 
-This app can be used as a standalone tool. You can install it as a Progressive Web App (PWA) on your device and register it as the default handler for `winmail.dat` files. When you open a `winmail.dat` file, the PWA will launch and allow you to extract the attachments. One usecase for this is the use together with Thunderbird for Android.
+This app can be used as a standalone tool. You can install it as a Progressive Web App (PWA) on your device and register it as the default handler for `winmail.dat` files. When you open a `winmail.dat` file, the PWA will launch and allow you to extract the attachments. This only works on desktop Chrome currently see [here](https://web-platform-dx.github.io/web-features-explorer/features/app-file-handlers/)
 
 The PWA is hosted on GitHub Pages at https://tb-throwback.github.io/LookOut-fix-version/ and can be installed from there.
+
+## LookOut Android
+
+The `android/` folder contains an Android app version of LookOut for extracting attachments from `winmail.dat` files on mobile devices.
+
+This app can be used as a standalone tool, or together with Thunderbird for Android. In Thunderbird for Android, when you open or share a `winmail.dat` attachment, choose LookOut from the Android app chooser to decode the file and extract embedded attachments.
+
+The Android app uses the same core parsing logic and is intended to provide a direct mobile workflow when handling TNEF messages away from desktop clients.
+
+### Android Development
+
+From the `android/` folder, run the following command to build a debug APK:
+
+```bash
+./gradlew assembleDebug
+```
 
 ### Development
 
