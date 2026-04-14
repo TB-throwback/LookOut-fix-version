@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.content.IntentCompat
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -154,7 +155,18 @@ class MainActivity : AppCompatActivity() {
 	}
 
 	private fun Intent.toLaunchFile(): LaunchFile? {
-		val uri = data ?: return null
+		val uri = when (action) {
+			Intent.ACTION_SEND -> {
+				IntentCompat.getParcelableExtra(this, Intent.EXTRA_STREAM, Uri::class.java)
+					?: clipData?.let { data -> if (data.itemCount > 0) data.getItemAt(0).uri else null }
+			}
+			Intent.ACTION_SEND_MULTIPLE -> {
+				IntentCompat.getParcelableArrayListExtra(this, Intent.EXTRA_STREAM, Uri::class.java)?.firstOrNull()
+					?: clipData?.let { data -> if (data.itemCount > 0) data.getItemAt(0).uri else null }
+			}
+			else -> data
+		} ?: return null
+
 		val name = uri.displayName() ?: uri.lastPathSegment?.substringAfterLast('/') ?: "winmail.dat"
 		val mimeType = contentResolver.getType(uri) ?: type ?: "application/octet-stream"
 		return LaunchFile(uri, name, mimeType)
