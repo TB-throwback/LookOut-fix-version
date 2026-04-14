@@ -111,6 +111,7 @@ function renderResults(files) {
     meta.className = "result-meta";
     const name = document.createElement("strong");
     if (file.name === "NaN.html") {
+      // TODO update also file struct
       name.textContent = "message.html";
     } else {
       name.textContent = file.name || "attachment.bin";
@@ -124,6 +125,17 @@ function renderResults(files) {
     link.href = url;
     link.download = file.name || "attachment.bin";
     link.textContent = "Download";
+    link.addEventListener("click", async (event) => {
+      if (!isAndroidApp) {
+        return;
+      }
+      event.preventDefault();
+      try {
+        await saveFileViaAndroid(file);
+      } catch (error) {
+        setStatus(`Download failed: ${error.message || error}`, true);
+      }
+    });
 
     li.append(meta, link);
     frag.append(li);
@@ -193,7 +205,50 @@ async function openFromAndroid(fileName, mimeType) {
   }
 }
 
-function downloadAll() {
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const comma = result.indexOf(",");
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => {
+      reject(reader.error || new Error("Unable to encode file."));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function saveFileViaAndroid(file) {
+  if (
+    !window.AndroidBridge ||
+    typeof window.AndroidBridge.downloadFile !== "function"
+  ) {
+    throw new Error("Android download bridge is unavailable.");
+  }
+
+  const base64Data = await fileToBase64(file);
+  window.AndroidBridge.downloadFile(
+    file.name || "attachment.bin",
+    file.type || "application/octet-stream",
+    base64Data,
+  );
+}
+
+async function downloadAll() {
+  if (isAndroidApp) {
+    try {
+      for (const item of extractedFiles) {
+        await saveFileViaAndroid(item.file);
+      }
+      return;
+    } catch (error) {
+      setStatus(`Download failed: ${error.message || error}`, true);
+      return;
+    }
+  }
+
   extractedFiles.forEach((item, idx) => {
     const a = document.createElement("a");
     a.href = item.url;
