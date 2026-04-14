@@ -41,6 +41,10 @@ body.android-app .app-shell {
   padding-top: calc(2rem + env(safe-area-inset-top) + 0.75rem);
 }
 
+body.android-app footer {
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom) + 0.75rem);
+}
+
 .hero {
   background: linear-gradient(
     120deg,
