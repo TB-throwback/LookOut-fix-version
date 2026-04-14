@@ -6,6 +6,12 @@ const downloadAllBtn = document.getElementById("downloadAllBtn");
 const statusEl = document.getElementById("status");
 const resultsEl = document.getElementById("results");
 const dropzone = document.getElementById("dropzone");
+const isAndroidApp =
+  new URLSearchParams(window.location.search).get("android") === "1";
+
+if (isAndroidApp) {
+  document.body.classList.add("android-app");
+}
 
 let selectedFile = null;
 let extractedFiles = [];
@@ -165,6 +171,28 @@ async function extractFromSelectedFile() {
   }
 }
 
+async function openFromAndroid(fileName, mimeType) {
+  try {
+    const response = await fetch("./input", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Unable to read the source file (${response.status}).`);
+    }
+
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    const file = new File([bytes], fileName || "winmail.dat", {
+      type:
+        mimeType ||
+        response.headers.get("content-type") ||
+        "application/octet-stream",
+    });
+
+    setSelectedFile(file);
+    await extractFromSelectedFile();
+  } catch (error) {
+    setStatus(`Extraction failed: ${error.message || error}`, true);
+  }
+}
+
 function downloadAll() {
   extractedFiles.forEach((item, idx) => {
     const a = document.createElement("a");
@@ -200,7 +228,7 @@ function setupDropzone() {
 }
 
 async function setupPwaIntegrations() {
-  if ("serviceWorker" in navigator) {
+  if (!isAndroidApp && "serviceWorker" in navigator) {
     try {
       await navigator.serviceWorker.register("./sw.js", { scope: "./" });
     } catch (error) {
@@ -238,3 +266,7 @@ downloadAllBtn.addEventListener("click", downloadAll);
 setupDropzone();
 setupPreferences();
 setupPwaIntegrations();
+
+window.Lookout = {
+  openFromAndroid,
+};

@@ -1,4 +1,4 @@
-import { tnef_parse } from "/scripts/tnef.mjs"
+import { tnef_parse } from "/scripts/tnef.mjs";
 
 // Partially implements nsIInputStream.
 // https://udn.realityripple.com/docs/Mozilla/Tech/XPCOM/Reference/Interface/nsIInputStream
@@ -22,7 +22,7 @@ class PseudoInputStream {
   }
 
   test(bytes) {
-    if (this.available < bytes) {
+    if (this.available() < bytes) {
       throw new Error("Trying to read beyond the end of the arrayBuffer");
     }
   }
@@ -41,7 +41,7 @@ class PseudoInputStream {
     this.test(1);
     let rv = this.view[this.offset];
     this.offset += 1;
-    return rv
+    return rv;
   }
 
   readBytes(bytes) {
@@ -67,35 +67,37 @@ export class TnefExtractor {
 
   async parse(file, msgHdr, prefs) {
     this.mMsgHdr = msgHdr; // TODO: Why does it need it?
-    
+
     // The TNEF parser uses debug_level.
     prefs["debug_level"] = prefs["debug_enabled"] ? 10 : 5;
 
     await this.mStream.setFile(file);
     tnef_parse(
-      this.mStream, 
+      this.mStream,
       this.mMsgHdr, // TODO: Why does it need it?
       this,
-      prefs
+      prefs,
     );
     return this.files;
   }
 
   onTnefFile(data, filename, content_type, length, date) {
     // Strip away path.
-    filename = filename.split('\\').pop().split('/').pop();
+    filename = filename.split("\\").pop().split("/").pop();
 
     if (!content_type) {
       content_type = "application/binary";
     }
-  
+
     // The data is a binary string, but we need an Uint8Array to not trigger utf8
     // interpretation.
     let bytes = new Array(data.length);
     for (let i = 0; i < bytes.length; i++) {
-      bytes[i] = data.charCodeAt(i) & 0xFF;
+      bytes[i] = data.charCodeAt(i) & 0xff;
     }
-    this.files.push(new File([new Uint8Array(bytes)], filename, {type: content_type}));
+    this.files.push(
+      new File([new Uint8Array(bytes)], filename, { type: content_type }),
+    );
     this.mPartId++;
   }
 }

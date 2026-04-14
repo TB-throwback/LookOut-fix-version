@@ -37,6 +37,10 @@ body {
   gap: 1.2rem;
 }
 
+body.android-app .app-shell {
+  padding-top: calc(2rem + env(safe-area-inset-top) + 0.75rem);
+}
+
 .hero {
   background: linear-gradient(
     120deg,
