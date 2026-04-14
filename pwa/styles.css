@@ -45,6 +45,10 @@ body.android-app footer {
   padding-bottom: calc(2rem + env(safe-area-inset-bottom) + 0.75rem);
 }
 
+body.android-app .non-android-only {
+  display: none;
+}
+
 .hero {
   background: linear-gradient(
     120deg,
@@ -217,6 +221,19 @@ button:disabled {
   white-space: nowrap;
 }
 
+.result-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.open-btn {
+  background: #0f4c5c;
+  color: #f6fbf8;
+  border-radius: 9px;
+  padding: 0.45rem 0.62rem;
+  white-space: nowrap;
+}
+
 @keyframes hero-in {
   from {
     opacity: 0;
@@ -254,6 +271,16 @@ button:disabled {
   }
 
   .download-link {
+    text-align: center;
+  }
+
+  .result-actions {
+    width: 100%;
+  }
+
+  .result-actions .download-link,
+  .result-actions .open-btn {
+    flex: 1;
     text-align: center;
   }
 }

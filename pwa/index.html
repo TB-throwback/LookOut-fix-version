@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0f4c5c" />
-    <title>LookOut Web</title>
+    <title>LookOut</title>
     <link rel="icon" href="./icons/LOicon-32.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
@@ -15,17 +15,17 @@
         <div style="display: flex; gap: 1em">
           <img
             src="./icons/LOicon-64.png"
-            alt="LookOut Web Icon"
+            alt="LookOut Icon"
             style="width: 64px; height: 64px; margin-bottom: 0.5em"
           />
           <div>
-            <p class="eyebrow">LookOut Web Version</p>
-            <h1>LookOut Web</h1>
+            <p class="eyebrow">LookOut</p>
+            <h1>LookOut</h1>
           </div>
         </div>
-        <p>
-          Extract attachments from winmail.dat files using LookOut, right in
-          your browser.
+        <p>Extract attachments from winmail.dat files using LookOut.</p>
+        <p class="drop-subtitle non-android-only">
+          Works offline after first load
         </p>
       </header>
 
@@ -37,13 +37,9 @@
             accept=".dat,application/ms-tnef,application/vnd.ms-tnef,application/octet-stream"
           />
           <span class="drop-title">Choose or drop winmail.dat</span>
-          <span class="drop-subtitle">Works offline after first load</span>
         </label>
 
         <div class="actions">
-          <button id="extractBtn" type="button" disabled>
-            Extract Attachments
-          </button>
           <button id="downloadAllBtn" type="button" disabled>
             Download All
           </button>

@@ -1,7 +1,6 @@
 import { TnefExtractor } from "../src/scripts/lookout.mjs";
 
 const fileInput = document.getElementById("fileInput");
-const extractBtn = document.getElementById("extractBtn");
 const downloadAllBtn = document.getElementById("downloadAllBtn");
 const statusEl = document.getElementById("status");
 const resultsEl = document.getElementById("results");
@@ -137,7 +136,27 @@ function renderResults(files) {
       }
     });
 
-    li.append(meta, link);
+    if (isAndroidApp) {
+      const actions = document.createElement("div");
+      actions.className = "result-actions";
+
+      const openBtn = document.createElement("button");
+      openBtn.className = "open-btn";
+      openBtn.type = "button";
+      openBtn.textContent = "Open";
+      openBtn.addEventListener("click", async () => {
+        try {
+          await openFileViaAndroid(file);
+        } catch (error) {
+          setStatus(`Open failed: ${error.message || error}`, true);
+        }
+      });
+
+      actions.append(link, openBtn);
+      li.append(meta, actions);
+    } else {
+      li.append(meta, link);
+    }
     frag.append(li);
 
     return { file, url };
@@ -152,13 +171,13 @@ function renderResults(files) {
 
 function setSelectedFile(file) {
   selectedFile = file || null;
-  extractBtn.disabled = !selectedFile;
   resetResults();
 
   if (selectedFile) {
     setStatus(
       `Selected: ${selectedFile.name} (${formatBytes(selectedFile.size)})`,
     );
+    void extractFromSelectedFile();
   } else {
     setStatus("No file selected.");
   }
@@ -170,7 +189,6 @@ async function extractFromSelectedFile() {
   }
 
   setStatus("Extracting attachments...");
-  extractBtn.disabled = true;
 
   try {
     const extractor = new TnefExtractor();
@@ -178,8 +196,6 @@ async function extractFromSelectedFile() {
     renderResults(files || []);
   } catch (error) {
     setStatus(`Extraction failed: ${error.message || error}`, true);
-  } finally {
-    extractBtn.disabled = !selectedFile;
   }
 }
 
@@ -199,7 +215,6 @@ async function openFromAndroid(fileName, mimeType) {
     });
 
     setSelectedFile(file);
-    await extractFromSelectedFile();
   } catch (error) {
     setStatus(`Extraction failed: ${error.message || error}`, true);
   }
@@ -230,6 +245,22 @@ async function saveFileViaAndroid(file) {
 
   const base64Data = await fileToBase64(file);
   window.AndroidBridge.downloadFile(
+    file.name || "attachment.bin",
+    file.type || "application/octet-stream",
+    base64Data,
+  );
+}
+
+async function openFileViaAndroid(file) {
+  if (
+    !window.AndroidBridge ||
+    typeof window.AndroidBridge.openFile !== "function"
+  ) {
+    throw new Error("Android open bridge is unavailable.");
+  }
+
+  const base64Data = await fileToBase64(file);
+  window.AndroidBridge.openFile(
     file.name || "attachment.bin",
     file.type || "application/octet-stream",
     base64Data,
@@ -306,7 +337,6 @@ async function setupPwaIntegrations() {
       }
       const file = await handle.getFile();
       setSelectedFile(file);
-      await extractFromSelectedFile();
     });
   }
 }
@@ -315,7 +345,6 @@ fileInput.addEventListener("change", (event) => {
   setSelectedFile(event.target.files?.[0] || null);
 });
 
-extractBtn.addEventListener("click", extractFromSelectedFile);
 downloadAllBtn.addEventListener("click", downloadAll);
 
 setupDropzone();
