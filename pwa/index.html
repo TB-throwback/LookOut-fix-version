@@ -24,9 +24,7 @@
           </div>
         </div>
         <p>Extract attachments from winmail.dat files using LookOut.</p>
-        <p class="drop-subtitle non-android-only">
-          Works offline after first load
-        </p>
+        <p class="non-android-only">Works offline after first load</p>
       </header>
 
       <section class="panel">
@@ -36,12 +34,18 @@
             type="file"
             accept=".dat,application/ms-tnef,application/vnd.ms-tnef,application/octet-stream"
           />
-          <span class="drop-title">Choose or drop winmail.dat</span>
+          <span class="drop-title"
+            >Choose
+            <span class="non-android-only">or drop</span> winmail.dat</span
+          >
         </label>
 
         <div class="actions">
           <button id="downloadAllBtn" type="button" disabled>
             Download All
+          </button>
+          <button id="shareAllBtn" type="button" hidden disabled>
+            Share All
           </button>
         </div>
 

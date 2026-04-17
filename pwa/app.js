@@ -2,11 +2,15 @@ import { TnefExtractor } from "../src/scripts/lookout.mjs";
 
 const fileInput = document.getElementById("fileInput");
 const downloadAllBtn = document.getElementById("downloadAllBtn");
+const shareAllBtn = document.getElementById("shareAllBtn");
 const statusEl = document.getElementById("status");
 const resultsEl = document.getElementById("results");
 const dropzone = document.getElementById("dropzone");
 const isAndroidApp =
   new URLSearchParams(window.location.search).get("android") === "1";
+const isDevServer = ["127.0.0.1", "localhost"].includes(
+  window.location.hostname,
+);
 
 if (isAndroidApp) {
   document.body.classList.add("android-app");
@@ -84,11 +88,34 @@ function setStatus(message, isError = false) {
   statusEl.classList.toggle("error", isError);
 }
 
+function hasAndroidShareSupport() {
+  const bridge = window.AndroidBridge;
+  return isAndroidApp && bridge && typeof bridge.shareFiles === "function";
+}
+
+function updateShareAllButtonState() {
+  if (!shareAllBtn) {
+    return;
+  }
+
+  const canUseShareAll = hasAndroidShareSupport();
+  shareAllBtn.hidden = !canUseShareAll;
+
+  if (!canUseShareAll) {
+    shareAllBtn.disabled = true;
+    return;
+  }
+
+  const files = extractedFiles.map((item) => item.file);
+  shareAllBtn.disabled = files.length === 0 || !hasAndroidShareSupport();
+}
+
 function resetResults() {
   extractedFiles.forEach((item) => URL.revokeObjectURL(item.url));
   extractedFiles = [];
   resultsEl.innerHTML = "";
   downloadAllBtn.disabled = true;
+  updateShareAllButtonState();
 }
 
 function renderResults(files) {
@@ -136,10 +163,11 @@ function renderResults(files) {
       }
     });
 
-    if (isAndroidApp) {
-      const actions = document.createElement("div");
-      actions.className = "result-actions";
+    const actions = document.createElement("div");
+    actions.className = "result-actions";
+    actions.append(link);
 
+    if (isAndroidApp) {
       const openBtn = document.createElement("button");
       openBtn.className = "open-btn";
       openBtn.type = "button";
@@ -152,11 +180,29 @@ function renderResults(files) {
         }
       });
 
-      actions.append(link, openBtn);
-      li.append(meta, actions);
-    } else {
-      li.append(meta, link);
+      actions.append(openBtn);
     }
+
+    if (hasAndroidShareSupport()) {
+      const shareBtn = document.createElement("button");
+      shareBtn.className = "share-btn";
+      shareBtn.type = "button";
+      shareBtn.textContent = "Share";
+      shareBtn.addEventListener("click", async () => {
+        try {
+          await shareFiles([file]);
+        } catch (error) {
+          if (error && error.name === "AbortError") {
+            return;
+          }
+          setStatus(`Share failed: ${error.message || error}`, true);
+        }
+      });
+
+      actions.append(shareBtn);
+    }
+
+    li.append(meta, actions);
     frag.append(li);
 
     return { file, url };
@@ -164,6 +210,7 @@ function renderResults(files) {
 
   resultsEl.append(frag);
   downloadAllBtn.disabled = false;
+  updateShareAllButtonState();
   setStatus(
     `Extracted ${files.length} attachment${files.length === 1 ? "" : "s"}.`,
   );
@@ -267,6 +314,33 @@ async function openFileViaAndroid(file) {
   );
 }
 
+async function shareFiles(files) {
+  if (!files.length) {
+    return;
+  }
+
+  if (hasAndroidShareSupport()) {
+    const names = [];
+    const mimeTypes = [];
+    const base64DataList = [];
+
+    for (const file of files) {
+      names.push(file.name || "attachment.bin");
+      mimeTypes.push(file.type || "application/octet-stream");
+      base64DataList.push(await fileToBase64(file));
+    }
+
+    window.AndroidBridge.shareFiles(
+      JSON.stringify(names),
+      JSON.stringify(mimeTypes),
+      JSON.stringify(base64DataList),
+    );
+    return;
+  }
+
+  throw new Error("Sharing is not supported on this device.");
+}
+
 async function downloadAll() {
   if (isAndroidApp) {
     try {
@@ -306,7 +380,8 @@ function setupDropzone() {
   });
 
   dropzone.addEventListener("drop", (event) => {
-    const file = event.dataTransfer?.files?.[0];
+    const droppedFiles = event.dataTransfer && event.dataTransfer.files;
+    const file = droppedFiles && droppedFiles[0];
     if (file) {
       setSelectedFile(file);
     }
@@ -314,7 +389,7 @@ function setupDropzone() {
 }
 
 async function setupPwaIntegrations() {
-  if (!isAndroidApp && "serviceWorker" in navigator) {
+  if (!isAndroidApp && !isDevServer && "serviceWorker" in navigator) {
     try {
       await navigator.serviceWorker.register("./sw.js", { scope: "./" });
     } catch (error) {
@@ -331,7 +406,8 @@ async function setupPwaIntegrations() {
     "files" in LaunchParams.prototype
   ) {
     launchQueue.setConsumer(async (launchParams) => {
-      const handle = launchParams.files?.[0];
+      const launchFiles = launchParams.files;
+      const handle = launchFiles && launchFiles[0];
       if (!handle) {
         return;
       }
@@ -342,14 +418,29 @@ async function setupPwaIntegrations() {
 }
 
 fileInput.addEventListener("change", (event) => {
-  setSelectedFile(event.target.files?.[0] || null);
+  const files = event.target && event.target.files;
+  setSelectedFile((files && files[0]) || null);
 });
 
 downloadAllBtn.addEventListener("click", downloadAll);
 
+if (shareAllBtn) {
+  shareAllBtn.addEventListener("click", async () => {
+    try {
+      await shareFiles(extractedFiles.map((item) => item.file));
+    } catch (error) {
+      if (error && error.name === "AbortError") {
+        return;
+      }
+      setStatus(`Share failed: ${error.message || error}`, true);
+    }
+  });
+}
+
 setupDropzone();
 setupPreferences();
 setupPwaIntegrations();
+updateShareAllButtonState();
 
 window.Lookout = {
   openFromAndroid,

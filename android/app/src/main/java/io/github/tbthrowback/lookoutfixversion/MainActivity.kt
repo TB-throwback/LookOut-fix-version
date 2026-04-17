@@ -1,6 +1,7 @@
 package io.github.tbthrowback.lookoutfixversion
 
 import android.app.Activity
+import android.content.ClipData
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
@@ -23,7 +24,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import java.io.File
 import java.io.IOException
+import java.util.ArrayList
 import java.net.URLConnection
+import org.json.JSONArray
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
@@ -348,7 +351,7 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
 
-            val tempUri = saveToTempOpenFolder(safeName, decoded)
+            val tempUri = saveToTempCacheFolder(safeName, decoded)
             if (tempUri != null) {
                 runOnUiThread { openDownloadedFile(tempUri, safeMimeType) }
                 return
@@ -357,6 +360,62 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 Toast.makeText(this@MainActivity, "Unable to open $safeName", Toast.LENGTH_LONG)
                         .show()
+            }
+        }
+
+        @JavascriptInterface
+        fun shareFiles(fileNamesJson: String?, mimeTypesJson: String?, base64DataJson: String?) {
+            val fileNames = parseJsonStringList(fileNamesJson)
+            val mimeTypes = parseJsonStringList(mimeTypesJson)
+            val base64DataList = parseJsonStringList(base64DataJson)
+
+            if (base64DataList.isEmpty()) {
+                return
+            }
+
+            val uris = ArrayList<Uri>()
+            val resolvedMimeTypes = mutableListOf<String>()
+
+            base64DataList.forEachIndexed { index, base64Data ->
+                if (base64Data.isBlank()) {
+                    return@forEachIndexed
+                }
+
+                val safeName =
+                        sanitizeFileName(
+                                fileNames.getOrNull(index)?.ifBlank { null }
+                                        ?: "attachment-${index + 1}.bin"
+                        )
+                val mimeType =
+                        mimeTypes.getOrNull(index)?.ifBlank { null }
+                                ?: guessMimeType(safeName)
+                val decoded =
+                        try {
+                            Base64.decode(base64Data, Base64.DEFAULT)
+                        } catch (_: IllegalArgumentException) {
+                            null
+                        }
+                                ?: return@forEachIndexed
+
+                val uri = saveToTempCacheFolder(safeName, decoded) ?: return@forEachIndexed
+                uris.add(uri)
+                resolvedMimeTypes.add(mimeType)
+            }
+
+            if (uris.isEmpty()) {
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Unable to share files.", Toast.LENGTH_LONG)
+                            .show()
+                }
+                return
+            }
+
+            runOnUiThread {
+                launchShareChooser(
+                        uris = uris,
+                        mimeType = combinedMimeType(resolvedMimeTypes),
+                        chooserTitle = "Share attachments",
+                )
             }
         }
     }
@@ -410,14 +469,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveToTempOpenFolder(fileName: String, bytes: ByteArray): Uri? {
+    private fun saveToTempCacheFolder(
+            fileName: String,
+            bytes: ByteArray,
+    ): Uri? {
         return try {
-            val tempDir = File(cacheDir, TEMP_OPEN_SUBDIR)
+            val tempDir = File(cacheDir, TEMP_SUBDIR)
             if (!tempDir.exists() && !tempDir.mkdirs()) {
                 return null
             }
 
-            val outputFile = File(tempDir, fileName)
+            val outputFile = File(tempDir, "${System.currentTimeMillis()}_$fileName")
             outputFile.outputStream().use { output -> output.write(bytes) }
 
             FileProvider.getUriForFile(this, "$packageName.fileprovider", outputFile)
@@ -428,11 +490,62 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun parseJsonStringList(value: String?): List<String> {
+        if (value.isNullOrBlank()) {
+            return emptyList()
+        }
+
+        return try {
+            val json = JSONArray(value)
+            List(json.length()) { index -> json.optString(index, "") }
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun combinedMimeType(mimeTypes: List<String>): String {
+        val nonBlank = mimeTypes.filter { it.isNotBlank() }
+        if (nonBlank.isEmpty()) {
+            return "*/*"
+        }
+        val first = nonBlank.first()
+        return if (nonBlank.all { it == first }) first else "*/*"
+    }
+
+    private fun launchShareChooser(uris: ArrayList<Uri>, mimeType: String, chooserTitle: String) {
+        val shareIntent =
+                if (uris.size == 1) {
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = mimeType
+                        putExtra(Intent.EXTRA_STREAM, uris.first())
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                } else {
+                    Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                        type = mimeType
+                        putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                }
+
+        var clipData = ClipData.newUri(contentResolver, "lookout-share", uris.first())
+        uris.drop(1).forEach { uri ->
+            clipData.addItem(ClipData.Item(uri))
+        }
+        shareIntent.clipData = clipData
+
+        try {
+            startActivity(Intent.createChooser(shareIntent, chooserTitle))
+        } catch (_: Exception) {
+            Toast.makeText(this, "No app found to share these files.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private companion object {
         private const val HOST = "localhost"
         private const val BASE_URL = "https://$HOST/index.html?android=1"
         private val DOWNLOADS_DIR = Environment.DIRECTORY_DOWNLOADS
         private const val LOOKOUT_SUBDIR = "LookOut"
-        private const val TEMP_OPEN_SUBDIR = "LookOutTemp"
+        private const val TEMP_SUBDIR = "LookOutTemp"
     }
 }

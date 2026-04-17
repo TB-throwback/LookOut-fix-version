@@ -234,6 +234,14 @@ button:disabled {
   white-space: nowrap;
 }
 
+.share-btn {
+  background: #7b4f24;
+  color: #fff8ef;
+  border-radius: 9px;
+  padding: 0.45rem 0.62rem;
+  white-space: nowrap;
+}
+
 @keyframes hero-in {
   from {
     opacity: 0;
@@ -279,7 +287,8 @@ button:disabled {
   }
 
   .result-actions .download-link,
-  .result-actions .open-btn {
+  .result-actions .open-btn,
+  .result-actions .share-btn {
     flex: 1;
     text-align: center;
   }
