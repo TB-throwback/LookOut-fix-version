@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "dev": "pnpm build && python3 -m http.server 8080 -d dist"
+    "build:watch": "node build.mjs --watch",
+    "dev": "node dev.mjs"
+  },
+  "dependencies": {
+    "live-server": "^1.2.2"
   }
 }
