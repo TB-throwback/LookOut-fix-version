@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 FILE="lookout_fix_version-beta-tb.xpi"
 
@@ -31,7 +31,7 @@ build() {
 
   "$ZIP_CMD" a -tzip "$FILE" \
     _locales api icons options scripts \
-    background.html background.js changes.txt LICENSE manifest.json
+    background.html background.js message-content-script.js changes.txt LICENSE manifest.json
 }
 
 exit_script() {
