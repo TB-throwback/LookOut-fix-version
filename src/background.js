@@ -81,8 +81,6 @@ async function handleMessage(tab, message) {
         continue;
       }
 
-      let tnefFile = tnefFiles[i];
-
       /*
        * TNEF can contain an iCalendar meeting request.  At this point
        * Thunderbird's normal MIME parser has already finished, so the
@@ -92,7 +90,7 @@ async function handleMessage(tab, message) {
        * Thunderbird iMIP/calendar integration.
        */
       let contentType = (
-        tnefFile.type || ""
+        tnefFiles[i].type || ""
       ).toLowerCase().split(";")[0].trim();
 
       if (contentType == "text/calendar") {
@@ -108,9 +106,9 @@ async function handleMessage(tab, message) {
        * the user even if the calendar integration cannot process it.
        */
       let tnefAttachment = {
-        contentType: tnefFile.type,
-        name: tnefFile.name,
-        size: tnefFile.size,
+        contentType: tnefFiles[i].type,
+        name: tnefFiles[i].name,
+        size: tnefFiles[i].size,
         partName,
         file: tnefFile,
       };
@@ -127,20 +125,14 @@ async function handleMessage(tab, message) {
    * Remove winmail.dat before adding the decoded attachments, as before.
    */
   if (removedParts.length > 0) {
-    await browser.Attachment.removeAttachments(
-      tab.id,
-      removedParts
-    );
+    await browser.Attachment.removeAttachments(tab.id, removedParts);
   }
 
   /*
    * Add the decoded TNEF attachments.
    */
   if (tnefAttachments.length > 0) {
-    await browser.Attachment.addAttachments(
-      tab.id,
-      tnefAttachments
-    );
+    await browser.Attachment.addAttachments(tab.id, tnefAttachments);
   }
 
   /*
@@ -167,18 +159,15 @@ async function handleMessage(tab, message) {
   }
 }
 
-// Handle all currently displayed messages.
-let tabs = (await browser.tabs.query({}))
-  .filter(t => ["messageDisplay", "mail"].includes(t.type));
+// Handle all displayed messages
+let tabs = (await browser.tabs.query({})).filter(t => ["messageDisplay", "mail"].includes(t.type));
 
 for (let tab of tabs) {
   let message = await browser.messageDisplay.getDisplayedMessage(tab.id);
-
-  // Do not await this. Fire all requests in parallel and let them finish
-  // on their own.
+  // Do not await this but just fire all requests in parallel and let them finish
+  // on its own.
   if (message) {
     handleMessage(tab, message);
   }
 }
-
 browser.messageDisplay.onMessageDisplayed.addListener(handleMessage);
