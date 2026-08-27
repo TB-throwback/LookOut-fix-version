@@ -8,12 +8,6 @@
     "attach_raw_mapi_check.label": {
         "message": "Adjuntar propiedades MAPI"
     },
-    "direct_to_calendar_check.accesskey": {
-        "message": "C"
-    },
-    "direct_to_calendar_check.label": {
-        "message": "Abrir directamente los datos del calendario"
-    },
     "disable_filename_character_set_check.accesskey": {
         "message": "F"
     },
@@ -59,10 +53,19 @@
     "remove_winmail_dat_check.label": {
         "message": "Eliminar Winmail.dat"
     },
+    "replace_body_check.accesskey": {
+        "message": "R"
+    },
+    "replace_body_check.label": {
+        "message": "Reemplazar el cuerpo del mensaje con el HTML adjunto si existe"
+    },
     "strict_contenttype_check.accesskey": {
         "message": "S"
     },
     "strict_contenttype_check.label": {
         "message": "Coincidencia estricta de tipos de contenido"
+    },
+    "junk_tnef_warning": {
+        "message": "LookOut no procesó winmail.dat porque este mensaje está en la carpeta de correo no deseado."
     }
 }

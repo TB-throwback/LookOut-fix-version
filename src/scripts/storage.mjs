@@ -1,9 +1,9 @@
 const PREF_PREFIX = "extensions.lookout.";
 const PREF_DEFAULTS = {
   "attach_raw_mapi": false,
-  "direct_to_calendar": false,
   "disable_filename_character_set": false,
   "remove_winmail_dat": true,
+  "replace_body": true,
   "strict_contenttype": true,
   "debug_enabled": false,
   "body_part_prefix": "body_part_",

@@ -5,12 +5,6 @@
     "attach_raw_mapi_check.label": {
         "message": "MAPI tulajdonságok tárolása"
     },
-    "direct_to_calendar_check.accesskey": {
-        "message": "N"
-    },
-    "direct_to_calendar_check.label": {
-        "message": "Naptáradatok közvetlen megnyitása"
-    },
     "disable_filename_character_set_check.accesskey": {
         "message": "F"
     },
@@ -56,10 +50,19 @@
     "remove_winmail_dat_check.label": {
         "message": "Winmail.dat eltávolítása"
     },
+    "replace_body_check.accesskey": {
+        "message": "H"
+    },
+    "replace_body_check.label": {
+        "message": "Az üzenet törzsének cseréje a csatolt HTML-re, ha van"
+    },
     "strict_contenttype_check.accesskey": {
         "message": "t"
     },
     "strict_contenttype_check.label": {
         "message": "Szigorú tartalomtípus-egyezés"
+    },
+    "junk_tnef_warning": {
+        "message": "A LookOut nem dolgozta fel a winmail.dat fájlt, mert ez az üzenet a Levélszemét mappában található."
     }
 }

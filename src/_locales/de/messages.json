@@ -5,12 +5,6 @@
     "attach_raw_mapi_check.label": {
         "message": "MAPI-Eigenschaften speichern"
     },
-    "direct_to_calendar_check.accesskey": {
-        "message": "K"
-    },
-    "direct_to_calendar_check.label": {
-        "message": "Kalenderdaten direkt öffnen"
-    },
     "disable_filename_character_set_check.accesskey": {
         "message": "Z"
     },
@@ -56,10 +50,19 @@
     "remove_winmail_dat_check.label": {
         "message": "Winmail.dat entfernen"
     },
+    "replace_body_check.accesskey": {
+        "message": "B"
+    },
+    "replace_body_check.label": {
+        "message": "Nachrichteninhalt durch angehängtes HTML ersetzen, falls vorhanden"
+    },
     "strict_contenttype_check.accesskey": {
         "message": "S"
     },
     "strict_contenttype_check.label": {
         "message": "Strict-Content-Type-Übereinstimmung"
+    },
+    "junk_tnef_warning": {
+        "message": "LookOut hat winmail.dat nicht verarbeitet, da sich diese Nachricht im Junk-Ordner befindet."
     }
 }

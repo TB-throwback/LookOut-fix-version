@@ -5,12 +5,6 @@
     "attach_raw_mapi_check.label": {
         "message": "MAPI-eigenschappen bijsluiten"
     },
-    "direct_to_calendar_check.accesskey": {
-        "message": "A"
-    },
-    "direct_to_calendar_check.label": {
-        "message": "Agendagegevens direct openen"
-    },
     "disable_filename_character_set_check.accesskey": {
         "message": "T"
     },
@@ -59,10 +53,19 @@
     "remove_winmail_dat_check.label": {
         "message": "winmail.dat verwijderen"
     },
+    "replace_body_check.accesskey": {
+        "message": "V"
+    },
+    "replace_body_check.label": {
+        "message": "Berichttekst vervangen door bijgevoegde HTML als die aanwezig is"
+    },
     "strict_contenttype_check.accesskey": {
         "message": "B"
     },
     "strict_contenttype_check.label": {
         "message": "Bestandstype strenger controleren"
+    },
+    "junk_tnef_warning": {
+        "message": "LookOut heeft winmail.dat niet verwerkt omdat dit bericht zich in de map Ongewenste berichten bevindt."
     }
 }
