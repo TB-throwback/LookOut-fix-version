@@ -13,7 +13,7 @@ del lookout_fix_version-beta-tb.xpi
 :build
 for /f "tokens=2,*" %%a in ('REG QUERY "HKCU\SOFTWARE\7-Zip" /v "Path"') DO (SET zipdir=%%b)
 
-"%zipdir%\7zG.exe" a -tzip lookout_fix_version-beta-tb.xpi _locales api icons options scripts background.html background.js changes.txt LICENSE manifest.json
+"%zipdir%\7zG.exe" a -tzip lookout_fix_version-beta-tb.xpi _locales api icons options scripts background.html background.js message-content-script.js changes.txt LICENSE manifest.json
 
 :exit
 
