@@ -143,13 +143,22 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
      * Extract the iTIP METHOD from the ICS data.
      */
     function getCalendarMethod(data) {
-      let unfolded = data.replace(/\r?\n[ \t]/g, "");
+      let methods = ["REQUEST","REPLY","CANCEL","PUBLISH","ADD","REFRESH","COUNTER","DECLINECOUNTER"];
 
-      let match = unfolded.match(
-        /(?:^|\r?\n)METHOD\s*:\s*([A-Za-z-]+)\s*(?:\r?\n|$)/i
-      );
+      for (let line of data.split(/\r?\n/).slice(0, 10)) {
+        line = line.trim().toUpperCase();
 
-      return match ? match[1].trim().toUpperCase() : "";
+        if (!line.startsWith("METHOD:")) {
+          continue;
+        }
+
+        let method = line.slice(7);
+
+        if (methods.includes(method)) {
+          return method;
+        }
+      }
+      return "";
     }
 
     /*
