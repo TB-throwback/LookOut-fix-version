@@ -16,11 +16,8 @@ var { ExtensionError } = ExtensionUtils;
 
 ChromeUtils.defineESModuleGetters(this, {
   AttachmentInfo: "resource:///modules/AttachmentInfo.sys.mjs",
-
   cal: "resource:///modules/calendar/calUtils.sys.mjs",
-
-  invitation:
-    "resource:///modules/calendar/utils/calInvitationUtils.sys.mjs",
+  invitation: "resource:///modules/calendar/utils/calInvitationUtils.sys.mjs",
 });
 
 Cu.importGlobalProperties([
