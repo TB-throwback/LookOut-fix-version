@@ -4,10 +4,46 @@ import * as storage from "./scripts/storage.mjs";
 // Migrate legacy prefs to local storage.
 await storage.migratePrefs();
 
+// Load Junk message warning
+await browser.scripting.messageDisplay.registerScripts([
+  {
+    id: "lookout-junk-tnef-warning",
+    js: ["message-content-script.js"],
+  },
+]);
+
+
+async function showJunkWarning(tab) {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      await browser.tabs.sendMessage(tab.id, {
+        command: "showJunkTnefWarning",
+      });
+      return;
+    } catch (error) {
+      if (attempt == 9) {
+        console.error(
+          "LookOut: unable to show Junk TNEF warning",
+          error
+        );
+        return;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+  }
+}
+
+
 async function handleMessage(tab, message) {
-  // Skip if message is junk.
-  if (message.junk) {
-    return;
+  if (message.junk || message.folder?.specialUse?.includes("junk")) {
+      console.log(
+        "LookOut: TNEF processing cancelled for junk message"
+      );
+
+      await showJunkWarning(tab);
+
+      return;
   }
 
   // Read attachments of the message.
