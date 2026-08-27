@@ -129,17 +129,6 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
     }
 
     /*
-     * Decode the calendar attachment.
-     */
-    async function getCalendarData(file) {
-      let buffer = await file.arrayBuffer();
-
-      return new TextDecoder("utf-8", {
-        fatal: false,
-      }).decode(buffer);
-    }
-
-    /*
      * Extract the iTIP METHOD from the ICS data.
      */
     function getCalendarMethod(data) {
@@ -359,8 +348,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
         return false;
       }
 
-      let data =
-        await getCalendarData(file);
+      let data = await file.text();
 
       if (!/BEGIN:VCALENDAR/i.test(data)) {
         return false;
@@ -433,7 +421,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
         },
 
         /*
-         * NEW: expose TNEF calendar invitation handling.
+         * Expose TNEF calendar invitation handling.
          */
         handleCalendarInvitation: async function (
           tabId,
