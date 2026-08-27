@@ -16,9 +16,16 @@ var { ExtensionError } = ExtensionUtils;
 
 ChromeUtils.defineESModuleGetters(this, {
   AttachmentInfo: "resource:///modules/AttachmentInfo.sys.mjs",
+  cal: "resource:///modules/calendar/calUtils.sys.mjs",
+  invitation: "resource:///modules/calendar/utils/calInvitationUtils.sys.mjs",
 });
 
-Cu.importGlobalProperties(["File", "IOUtils", "PathUtils"]);
+Cu.importGlobalProperties([
+  "File",
+  "IOUtils",
+  "PathUtils",
+  "TextDecoder",
+]);
 
 async function getRealFileForFile(file) {
   let pathTempFile = await IOUtils.createUniqueFile(
@@ -121,6 +128,265 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
       return null;
     }
 
+    /*
+     * Extract the iTIP METHOD from the ICS data.
+     */
+    function getCalendarMethod(data) {
+      let methods = ["REQUEST","REPLY","CANCEL","PUBLISH","ADD","REFRESH","COUNTER","DECLINECOUNTER"];
+
+      for (let line of data.split(/\r?\n/).slice(0, 10)) {
+        line = line.trim().toUpperCase();
+
+        if (!line.startsWith("METHOD:")) {
+          continue;
+        }
+
+        let method = line.slice(7);
+
+        if (methods.includes(method)) {
+          return method;
+        }
+      }
+      return "";
+    }
+
+    /*
+     * Create Thunderbird's native calIItipItem.
+     */
+    function createItipItem(data) {
+      let itipItem = Cc[
+        "@mozilla.org/calendar/itip-item;1"
+      ].createInstance(Ci.calIItipItem);
+
+      itipItem.init(data);
+
+      return itipItem;
+    }
+
+    /*
+     * Initialise the iTIP item with the same message information
+     * Thunderbird normally supplies when processing a MIME invitation.
+     */
+    function initialiseItipItem(itipItem, method, msgHdr) {
+      if (msgHdr) {
+        try {
+          if (msgHdr.author) {
+            itipItem.sender = msgHdr.author;
+          }
+        } catch (ex) {
+          console.debug(
+            "LookOut: unable to set iTIP sender",
+            ex
+          );
+        }
+      }
+
+      if (
+        typeof cal?.itip?.initItemFromMsgData ==
+        "function"
+      ) {
+        cal.itip.initItemFromMsgData(
+          itipItem,
+          method,
+          msgHdr
+        );
+      }
+    }
+
+    /*
+     * Recreate the HTML that CalMimeConverter normally generates for
+     * a legacy iMIP invitation.
+     *
+     * calImipBar.showImipBar() expects #imipHTMLDetails to already exist.
+     */
+    function createInvitationOverlay(
+      window,
+      itipItem
+    ) {
+      let messagePane =
+        window.document.getElementById(
+          "messagepane"
+        );
+
+      if (!messagePane || !messagePane.contentDocument) {
+        throw new ExtensionError(
+          "Thunderbird messagepane contentDocument not available"
+        );
+      }
+
+      let contentDocument =
+        messagePane.contentDocument;
+
+      let item = itipItem.getItemList()[0];
+
+      if (!item) {
+        throw new ExtensionError(
+          "iTIP item contains no calendar item"
+        );
+      }
+
+      let overlayDocument =
+        invitation.createInvitationOverlay(
+          item,
+          itipItem
+        );
+
+      let details =
+        overlayDocument.getElementById(
+          "imipHTMLDetails"
+        );
+
+      if (!details) {
+        throw new ExtensionError(
+          "Thunderbird invitation overlay does not contain imipHTMLDetails"
+        );
+      }
+
+      let existing =
+        contentDocument.getElementById(
+          "imipHTMLDetails"
+        );
+
+      if (existing) {
+        existing.remove();
+      }
+
+      let importedDetails =
+        contentDocument.importNode(
+          details,
+          true
+        );
+
+      if (!contentDocument.body) {
+        throw new ExtensionError(
+          "Thunderbird message body is unavailable"
+        );
+      }
+
+      contentDocument.body.prepend(
+        importedDetails
+      );
+
+      return contentDocument.getElementById(
+        "imipHTMLDetails"
+      );
+    }
+
+    /*
+     * Display the invitation using Thunderbird's native legacy iMIP bar.
+     */
+    async function showCalendarInvitation(
+      window,
+      itipItem,
+      method
+    ) {
+      let calImipBar =
+        window.calImipBar;
+
+      if (!calImipBar) {
+        throw new ExtensionError(
+          "Thunderbird calImipBar is not available"
+        );
+      }
+
+      /*
+       * This is the important part for TNEF invitations:
+       *
+       * CalMimeConverter normally creates this HTML before the iMIP bar
+       * is displayed. Since LookOut bypasses CalMimeConverter, create it
+       * ourselves using Thunderbird's own invitation generator.
+       */
+      createInvitationOverlay(
+        window,
+        itipItem
+      );
+
+      calImipBar.showImipBar(
+        itipItem,
+        method
+      );
+
+      /*
+       * Allow Thunderbird's asynchronous calendar lookup to update
+       * the native invitation controls.
+       */
+      await new Promise(resolve =>
+        window.setTimeout(resolve, 100)
+      );
+    }
+
+    /*
+     * Handle a decoded TNEF calendar invitation.
+     */
+    async function handleCalendarInvitation(
+      tabId,
+      file,
+      partName
+    ) {
+      let window =
+        getMessageWindow(tabId);
+
+      if (!window) {
+        throw new ExtensionError(
+          "Unable to obtain Thunderbird message window"
+        );
+      }
+
+      if (!file) {
+        throw new ExtensionError(
+          `No calendar file supplied for ${partName}`
+        );
+      }
+
+      let contentType =
+        String(file.type || "")
+          .toLowerCase()
+          .split(";")[0]
+          .trim();
+
+      if (contentType != "text/calendar") {
+        return false;
+      }
+
+      let data = await file.text();
+
+      if (!/BEGIN:VCALENDAR/i.test(data)) {
+        return false;
+      }
+
+      let itipItem =
+        createItipItem(data);
+
+      let method =
+        String(
+          itipItem.receivedMethod ||
+            getCalendarMethod(data)
+        )
+          .trim()
+          .toUpperCase();
+
+      if (!method) {
+        return false;
+      }
+
+      let msgHdr =
+        getDisplayedMessage(tabId);
+
+      initialiseItipItem(
+        itipItem,
+        method,
+        msgHdr
+      );
+
+      await showCalendarInvitation(
+        window,
+        itipItem,
+        method
+      );
+
+      return true;
+    }
+
     return {
       Attachment: {
         listAttachments: async function (tabId) {
@@ -140,6 +406,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           };
           return attachments;
         },
+
         getAttachmentFile: async function (tabId, partName) {
           let window = getMessageWindow(tabId);
           if (!window) {
@@ -152,6 +419,22 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           let bytes = await getAttachmentFromUrl(attachmentInfo.url);
           return new File([bytes], attachmentInfo.name, { type: attachmentInfo.contentType });
         },
+
+        /*
+         * Expose TNEF calendar invitation handling.
+         */
+        handleCalendarInvitation: async function (
+          tabId,
+          file,
+          partName
+        ) {
+          return await handleCalendarInvitation(
+            tabId,
+            file,
+            partName
+          );
+        },
+
         addAttachments: async function (tabId, newAttachments) {
           let window = getMessageWindow(tabId);
           if (!window) {
@@ -188,6 +471,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
           await window.displayAttachmentsForExpandedView();
           window.gBuildAttachmentsForCurrentMsg = true;
         },
+
         removeAttachments: async function (tabId, partNames) {
           let window = getMessageWindow(tabId);
           if (!window) {
