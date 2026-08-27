@@ -5,12 +5,6 @@
     "attach_raw_mapi_check.label": {
         "message": "MAPI プロパティを添付する"
     },
-    "direct_to_calendar_check.accesskey": {
-        "message": "C"
-    },
-    "direct_to_calendar_check.label": {
-        "message": "カレンダーデータを直接開く"
-    },
     "disable_filename_character_set_check.accesskey": {
         "message": "F"
     },
@@ -59,10 +53,20 @@
     "remove_winmail_dat_check.label": {
         "message": "Winmail.datを取り除く"
     },
+    "replace_body_check.accesskey": {
+        "message": "H"
+    },
+    "replace_body_check.label": {
+        "message": "存在する場合は添付されたHTMLでメッセージ本文を置き換える"
+    },
     "strict_contenttype_check.accesskey": {
         "message": "S"
     },
     "strict_contenttype_check.label": {
         "message": "厳密なメディアタイプ判定を実施する"
+    },
+    "junk_tnef_warning": {
+        "message": "このメッセージは迷惑メールフォルダーにあるため、LookOut は winmail.dat を処理しませんでした。"
     }
+
 }

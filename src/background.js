@@ -14,10 +14,12 @@ await browser.scripting.messageDisplay.registerScripts([
 
 
 async function showJunkWarning(tab) {
+  let message = browser.i18n.getMessage("junk_tnef_warning");
   for (let attempt = 0; attempt < 10; attempt++) {
     try {
       await browser.tabs.sendMessage(tab.id, {
         command: "showJunkTnefWarning",
+        message,
       });
       return;
     } catch (error) {
@@ -34,6 +36,27 @@ async function showJunkWarning(tab) {
   }
 }
 
+async function showMessageBody(tab, html) {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      await browser.tabs.sendMessage(tab.id, {
+        command: "replaceMessageBody",
+        html,
+      });
+      return;
+    } catch (error) {
+      if (attempt == 9) {
+        console.error(
+          "LookOut: unable to replace message body",
+          error
+        );
+        return;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+  }
+}
 
 async function handleMessage(tab, message) {
   if (message.junk || message.folder?.specialUse?.includes("junk")) {
@@ -55,6 +78,7 @@ async function handleMessage(tab, message) {
   let removedParts = [];
   let tnefAttachments = [];
   let calendarInvitations = [];
+  let messageBody = null;
 
   for (let attachment of attachments) {
     if (
@@ -82,7 +106,26 @@ async function handleMessage(tab, message) {
       }
 
       /*
-       * TNEF can contain an iCalendar meeting request.  At this point
+       * TNEF can contain the original HTML message body.
+       *
+       * Keep the decoded body separate so it can replace the body
+       * Thunderbird displayed from the MIME message.
+       */
+      if (tnefFiles[i].name == "body_part_0.html" && prefs["replace_body"]) {
+        try {
+          messageBody = await tnefFiles[i].text();
+        } catch (error) {
+          console.error(
+            "LookOut: unable to read TNEF message body",
+            error
+          );
+        }
+
+        continue;
+      }
+
+      /*
+       * TNEF can contain an iCalendar meeting request. At this point
        * Thunderbird's normal MIME parser has already finished, so the
        * decoded calendar part will otherwise only become an attachment.
        *
@@ -95,7 +138,7 @@ async function handleMessage(tab, message) {
 
       if (contentType == "text/calendar") {
         calendarInvitations.push({
-          file: tnefFile,
+          file: tnefFiles[i],
           partName,
         });
       }
@@ -110,7 +153,7 @@ async function handleMessage(tab, message) {
         name: tnefFiles[i].name,
         size: tnefFiles[i].size,
         partName,
-        file: tnefFile,
+        file: tnefFiles[i],
       };
 
       tnefAttachments.push(tnefAttachment);
@@ -132,7 +175,18 @@ async function handleMessage(tab, message) {
    * Add the decoded TNEF attachments.
    */
   if (tnefAttachments.length > 0) {
-    await browser.Attachment.addAttachments(tab.id, tnefAttachments);
+    await browser.Attachment.addAttachments(
+      tab.id,
+      tnefAttachments
+    );
+  }
+
+  /*
+   * Replace the displayed message body if TNEF contained
+   * body_part0.html.
+   */
+   if (messageBody !== null) {
+    await showMessageBody(tab, messageBody);
   }
 
   /*
@@ -159,15 +213,18 @@ async function handleMessage(tab, message) {
   }
 }
 
-// Handle all displayed messages
-let tabs = (await browser.tabs.query({})).filter(t => ["messageDisplay", "mail"].includes(t.type));
+// Handle all displayed messages.
+let tabs = (await browser.tabs.query({}))
+  .filter(t => ["messageDisplay", "mail"].includes(t.type));
 
 for (let tab of tabs) {
   let message = await browser.messageDisplay.getDisplayedMessage(tab.id);
-  // Do not await this but just fire all requests in parallel and let them finish
-  // on its own.
+
+  // Do not await this but just fire all requests in parallel
+  // and let them finish on their own.
   if (message) {
     handleMessage(tab, message);
   }
 }
+
 browser.messageDisplay.onMessageDisplayed.addListener(handleMessage);
