@@ -63,6 +63,25 @@
             }
           }
         ]
+      },
+      {
+        "name": "handleCalendarInvitation",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "tabId",
+            "type": "integer"
+          },
+          {
+            "name": "file",
+            "type": "any"
+          },
+          {
+            "name": "partName",
+            "type": "string"
+          }
+        ]
       }
     ]
   }
