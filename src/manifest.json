@@ -53,6 +53,8 @@
   },
   "permissions": [
     "messagesRead",
+    "accountsRead",
+    "scripting",
     "storage"
   ],
   "options_ui": {
