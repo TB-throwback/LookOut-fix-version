@@ -96,7 +96,7 @@ var Attachment = class extends ExtensionCommon.ExtensionAPI {
             } else {
               reject(
                 new ExtensionError(
-                  `Failed to read attachment content: ${status}`
+                  `Failed to read attachment ${attachment.url} content: ${status}`
                 )
               );
             }
