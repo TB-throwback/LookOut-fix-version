@@ -29,7 +29,11 @@ browser.runtime.onMessage.addListener(message => {
       return;
     }
 
-    document.body.innerHTML = message.html;
+    if (typeof document.body.setHTML == "function") {
+      document.body.setHTML(message.html);
+    } else {
+      console.info("LookOut: Element.setHTML() is unavailable");
+    }
     return;
   }
 
