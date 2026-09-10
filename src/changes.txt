@@ -1,8 +1,8 @@
-7.4
+7.4.1
 Note: This version has been developed using LLM's.
-* Re-impliment Calendar event actions (Note: using legacy iMIP bar).
-* New feature replace message body with body_part_0.html if it exists (modern TNEF emails only).
-* New Preference to toggle message body replacment behaviour.
+* Re-implement Calendar event actions (Note: using legacy iMIP bar).
+* New feature replace message body with body_part_0.html if it exists (modern TNEF emails only and only on TB 148+).
+* New Preference to toggle message body replacement behavior.
 * Introduce an alert that the email is not being processed when in the Junk folder or flagged as Junk
 
 7.3
