@@ -21,7 +21,7 @@
         "message": "Abilita il debugging"
     },
     "extensionDescription": {
-        "message": "LookOut è in grado di leggere e integrare nei messaggi di posta elettronicale parti codificate in TNEF (Transport Neutral Encapsulation Format)."
+        "message": "LookOut è in grado di leggere e integrare nei messaggi di posta elettronica le parti codificate in TNEF (Transport Neutral Encapsulation Format)."
     },
     "extensions.lookout.attach_raw_mapi": {
         "message": "falso"
@@ -30,7 +30,7 @@
         "message": "body_part_"
     },
     "extensions.lookout.description": {
-        "message": "LookOut è in grado di leggere e integrare nei messaggi di posta elettronicale parti codificate in TNEF (Transport Neutral Encapsulation Format)"
+        "message": "LookOut è in grado di leggere e integrare nei messaggi di posta elettronica le parti codificate in TNEF (Transport Neutral Encapsulation Format)"
     },
     "extensions.lookout.direct_to_calendar": {
         "message": "Falso"
