@@ -21,7 +21,7 @@
         "message": "Abilita il debugging"
     },
     "extensionDescription": {
-        "message": "LookOut è in grado di leggere e inserire nei messaggi di posta le parti codificate in TNEF (Transport Neutral Encapsulation Format)."
+        "message": "LookOut è in grado di leggere e integrare nei messaggi di posta elettronica le parti codificate in TNEF (Transport Neutral Encapsulation Format)."
     },
     "extensions.lookout.attach_raw_mapi": {
         "message": "falso"
@@ -30,7 +30,7 @@
         "message": "body_part_"
     },
     "extensions.lookout.description": {
-        "message": "LookOut è in grado di leggere e inserire nei messaggi di posta le parti codificate in TNEF (Transport Neutral Encapsulation Format)"
+        "message": "LookOut è in grado di leggere e integrare nei messaggi di posta elettronica le parti codificate in TNEF (Transport Neutral Encapsulation Format)"
     },
     "extensions.lookout.direct_to_calendar": {
         "message": "Falso"
@@ -57,7 +57,7 @@
         "message": "S"
     },
     "replace_body_check.label": {
-        "message": "Sostituisci il corpo del messaggio con l'HTML allegato, se presente"
+        "message": "Sostituisce il corpo del messaggio con l'HTML allegato, se esiste"
     },
     "strict_contenttype_check.accesskey": {
         "message": "R"
@@ -66,6 +66,6 @@
         "message": "Richiede una rigida corrispondenza nel tipo di contenuto"
     },
     "junk_tnef_warning": {
-        "message": "LookOut non ha elaborato winmail.dat perché questo messaggio si trova nella cartella Posta indesiderata."
+        "message": "LookOut non ha potuto processare winmail.dat perché questo messaggio si trova nella cartella di Spam."
     }
 }
