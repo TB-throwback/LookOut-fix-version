@@ -36,6 +36,31 @@ async function showJunkWarning(tab) {
   }
 }
 
+/*
+ * TNEF bodies are often in a legacy codepage (e.g. windows-1252), so
+ * File.text() (always UTF-8) would produce replacement characters.
+ * Prefer strict UTF-8, then a charset declared in the HTML, then
+ * windows-1252.
+ */
+async function decodeTnefBody(file) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch (e) {
+    // Not valid UTF-8, try the declared charset.
+  }
+  const head = new TextDecoder("windows-1252").decode(bytes.subarray(0, 4096));
+  const match = head.match(/charset\s*=\s*["']?([\w:.-]+)/i);
+  if (match && !/^utf-?8$/i.test(match[1])) {
+    try {
+      return new TextDecoder(match[1]).decode(bytes);
+    } catch (e) {
+      // Unknown label, fall through.
+    }
+  }
+  return new TextDecoder("windows-1252").decode(bytes);
+}
+
 async function showMessageBody(tab, html) {
   for (let attempt = 0; attempt < 10; attempt++) {
     try {
@@ -113,7 +138,7 @@ async function handleMessage(tab, message) {
        */
       if (tnefFiles[i].name == "body_part_0.html" && prefs["replace_body"]) {
         try {
-          messageBody = await tnefFiles[i].text();
+          messageBody = await decodeTnefBody(tnefFiles[i]);
         } catch (error) {
           console.error(
             "LookOut: unable to read TNEF message body",
