@@ -1,3 +1,6 @@
+7.4.3
+* Max Version bump to TB 160.*
+
 7.4.2
 * Max Version bump to TB 158.*
 
