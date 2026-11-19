@@ -407,6 +407,236 @@ function tnef_file_munge_fname(fname, files, code_page) {
   return (file.split("\0").join(''));
 }
 
+// ===== OLE2 unwrap (LookOut-ole-fix) =====
+// Some Outlook messages carry attachments as OLE embeddings (MAPI
+// ATTACH_METHOD 6): the TNEF ATTACH_DATA holds a small prefix followed
+// by an OLE2 compound document whose CONTENTS stream is the real file
+// (often a BMP). Thunderbird cannot use the raw OLE blob, so unwrap it
+// here: swap data for the CONTENTS stream and assign a proper name and
+// image MIME type when the contents are a known image. Anything else
+// (embedded documents, unknown payloads) is left untouched.
+var OLE2_MAGIC = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1];
+var OLE2_ENDOFCHAIN = 0xFFFFFFFE;
+
+function ole2_u16(bytes, off) {
+  return bytes[off] | (bytes[off + 1] << 8);
+}
+
+function ole2_u32(bytes, off) {
+  return (bytes[off] | (bytes[off + 1] << 8) | (bytes[off + 2] << 16) | (bytes[off + 3] << 24)) >>> 0;
+}
+
+function ole2_i32(bytes, off) {
+  return (bytes[off] | (bytes[off + 1] << 8) | (bytes[off + 2] << 16) | (bytes[off + 3] << 24)) | 0;
+}
+
+function ole2_binstr_to_bytes(str) {
+  var bytes = new Uint8Array(str.length);
+  for (var i = 0; i < str.length; i++)
+    bytes[i] = str.charCodeAt(i) & 0xFF;
+  return bytes;
+}
+
+function ole2_bytes_to_binstr(bytes) {
+  var parts = [];
+  for (var i = 0; i < bytes.length; i += 8192)
+    parts.push(String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + 8192, bytes.length))));
+  return parts.join("");
+}
+
+function ole2_find_header(bytes) {
+  var max = Math.min(64, bytes.length - 8);
+  for (var off = 0; off <= max; off++) {
+    var ok = true;
+    for (var i = 0; i < 8; i++) {
+      if (bytes[off + i] !== OLE2_MAGIC[i]) { ok = false; break; }
+    }
+    if (ok) return off;
+  }
+  return -1;
+}
+
+function ole2_read_chain(bytes, oleStart, sectorSize, fat, start, wantSize) {
+  var out = [];
+  var total = 0;
+  var sector = start;
+  var guard = fat.length + 2;
+  while (sector !== OLE2_ENDOFCHAIN && guard-- > 0) {
+    if (sector < 0 || sector >= fat.length) return null;
+    var pos = oleStart + 512 + sector * sectorSize;
+    if (pos >= bytes.length) return null;
+    // Tolerate a truncated tail: the sender's TNEF sometimes drops the
+    // last bytes. Read what exists; callers validate the payload.
+    var end = Math.min(pos + sectorSize, bytes.length);
+    out.push(bytes.subarray(pos, end));
+    total += end - pos;
+    if (wantSize && total >= wantSize) break;
+    sector = fat[sector];
+  }
+  if (guard <= 0) return null;
+  var flat = new Uint8Array(total);
+  var p = 0;
+  for (var i = 0; i < out.length; i++) { flat.set(out[i], p); p += out[i].length; }
+  return (wantSize && flat.length > wantSize) ? flat.subarray(0, wantSize) : flat;
+}
+
+function ole2_extract_contents(bytes, oleStart) {
+  if (bytes.length < oleStart + 512) return null;
+  var shift = ole2_u16(bytes, oleStart + 30);
+  if (shift !== 9 && shift !== 12) return null; // 512 or 4096 byte sectors only
+  var sectorSize = 1 << shift;
+  var numFat = ole2_u32(bytes, oleStart + 44);
+  if (!numFat) return null;
+  var firstDir = ole2_i32(bytes, oleStart + 48);
+  if (firstDir < 0) return null;
+  var miniCutoff = ole2_u32(bytes, oleStart + 56) || 4096;
+  var firstMiniFat = ole2_i32(bytes, oleStart + 60);
+
+  // DIFAT: 109 entries inline, remainder via DIFAT chain.
+  var difat = [];
+  for (var i = 0; i < 109; i++)
+    difat.push(ole2_i32(bytes, oleStart + 76 + i * 4));
+  var firstDiFat = ole2_i32(bytes, oleStart + 68);
+  if (firstDiFat !== -2 && firstDiFat !== -1) {
+    var s = firstDiFat, g = 64;
+    while (s !== OLE2_ENDOFCHAIN && s !== -1 && g-- > 0) {
+      var dpos = oleStart + 512 + s * sectorSize;
+      if (dpos + sectorSize > bytes.length) return null;
+      for (var k = 0; k < sectorSize / 4 - 1; k++)
+        difat.push(ole2_i32(bytes, dpos + k * 4));
+      s = ole2_i32(bytes, dpos + sectorSize - 4);
+    }
+  }
+
+  var fat = [];
+  var fatNeeded = numFat * sectorSize / 4;
+  for (var d = 0; d < difat.length && fat.length < fatNeeded; d++) {
+    if (difat[d] < 0) continue;
+    var fpos = oleStart + 512 + difat[d] * sectorSize;
+    if (fpos + sectorSize > bytes.length) return null;
+    for (var e = 0; e < sectorSize / 4 && fat.length < fatNeeded; e++)
+      fat.push(ole2_u32(bytes, fpos + e * 4));
+  }
+  if (fat.length < fatNeeded) return null;
+
+  var dir = ole2_read_chain(bytes, oleStart, sectorSize, fat, firstDir, 0);
+  if (!dir || dir.length % 128 !== 0) return null;
+
+  var target = null, rootStart = -1, rootSize = 0;
+  for (var en = 0; en < dir.length; en += 128) {
+    var type = dir[en + 66];
+    var nm = "";
+    for (var c = 0; c < 32; c++) {
+      var ch = dir[en + c * 2];
+      if (ch === 0) break;
+      nm += String.fromCharCode(ch);
+    }
+    var start = ole2_i32(dir, en + 116);
+    var size = ole2_u32(dir, en + 120) + ole2_u32(dir, en + 124) * 4294967296;
+    if (type === 5) { rootStart = start; rootSize = size; }
+    if (type === 2 && nm === "CONTENTS")
+      target = { start: start, size: size };
+  }
+  if (!target || target.size <= 0 || target.size > bytes.length) return null;
+
+  if (target.size >= miniCutoff) {
+    return ole2_read_chain(bytes, oleStart, sectorSize, fat, target.start, target.size);
+  }
+  // Small stream: lives in the mini stream (64 byte mini-sectors).
+  if (rootStart < 0 || firstMiniFat < 0) return null;
+  var miniStream = ole2_read_chain(bytes, oleStart, sectorSize, fat, rootStart, rootSize || 0);
+  var miniFatRaw = ole2_read_chain(bytes, oleStart, sectorSize, fat, firstMiniFat, 0);
+  if (!miniStream || !miniFatRaw || miniFatRaw.length % 4 !== 0) return null;
+  var miniFat = [];
+  for (var m = 0; m < miniFatRaw.length; m += 4)
+    miniFat.push(ole2_u32(miniFatRaw, m));
+  var out = new Uint8Array(target.size);
+  var copied = 0, idx = target.start, mg = miniFat.length + 2;
+  while (idx !== OLE2_ENDOFCHAIN && copied < target.size && mg-- > 0) {
+    if (idx < 0 || idx * 64 >= miniStream.length) return null;
+    var take = Math.min(64, target.size - copied, miniStream.length - idx * 64);
+    out.set(miniStream.subarray(idx * 64, idx * 64 + take), copied);
+    copied += take;
+    idx = miniFat[idx];
+  }
+  if (copied < target.size) return null;
+  return out;
+}
+
+function ole2_detect_image(bytes) {
+  if (bytes.length > 2 && bytes[0] === 0x42 && bytes[1] === 0x4D)
+    return { ext: ".bmp", mime: "image/bmp" };
+  if (bytes.length > 8 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47)
+    return { ext: ".png", mime: "image/png" };
+  if (bytes.length > 2 && bytes[0] === 0xFF && bytes[1] === 0xD8)
+    return { ext: ".jpg", mime: "image/jpeg" };
+  if (bytes.length > 6 && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46)
+    return { ext: ".gif", mime: "image/gif" };
+  return null;
+}
+
+function ole2_name_used(candidate, files) {
+  if (!files) return false;
+  for (var i = 0; i < files.length; i++) {
+    var e = files[i];
+    if (e === candidate || (e && e.name === candidate)) return true;
+  }
+  return false;
+}
+
+function tnef_file_unwrap_ole(file) {
+  if (!file || !file.data || file.data.length < 600) return;
+  // Never second-guess explicitly typed non-binary parts (e.g. body parts).
+  if (file.mime_type && file.mime_type !== "application/binary" && file.mime_type !== "application/octet-stream") return;
+  var bytes = ole2_binstr_to_bytes(file.data);
+  var oleStart = ole2_find_header(bytes);
+  if (oleStart < 0 || oleStart > 64) return;
+  var contents = ole2_extract_contents(bytes, oleStart);
+  if (!contents || contents.length < 12) return;
+  var img = ole2_detect_image(contents);
+  if (!img) return; // embedded document or unknown payload: leave untouched
+  var base = null;
+  if (file.name) {
+    var b = String(file.name).split("\\").pop().split("/").pop().split("\0").join("");
+    var dot = b.lastIndexOf(".");
+    if (dot > 0) b = b.substring(0, dot);
+    // The message itself may carry a placeholder instead of a real name
+    // (this very email titles every attachment "Untitled Attachment").
+    // Only keep the existing name when it looks like a real one.
+    if (b.length > 0 && !/^(untitled( attachment)?(-\d+)?|tnef-part-.*|body_part.*|image\d{1,4}(-\d+)?)$/i.test(b))
+      base = b;
+  }
+  if (!base) {
+    base = "imagem";
+    if (img.ext === ".bmp" && contents.length >= 26) {
+      // BMP dimensions live at fixed header offsets: use them so the
+      // user can tell images apart (e.g. the drawing is the biggest one).
+      var bw = ole2_i32(contents, 18);
+      var bh = ole2_i32(contents, 22);
+      if (bw < 0) bw = -bw;
+      if (bh < 0) bh = -bh;
+      if (bw >= 1 && bw <= 20000 && bh >= 1 && bh <= 20000)
+        base = "imagem-" + bw + "x" + bh;
+    }
+  }
+  var candidate = base + img.ext;
+  var n = 0;
+  var files = file.pkg ? file.pkg.files : null;
+  while (candidate !== file.name && ole2_name_used(candidate, files)) {
+    n++;
+    candidate = base + "-" + n + img.ext;
+  }
+  file.data = ole2_bytes_to_binstr(contents);
+  file.len = contents.length;
+  file.mime_type = img.mime;
+  if (candidate !== file.name) {
+    file.name = candidate;
+    if (files) files.push(candidate);
+  }
+  tnef_log_msg("LookOut: OLE attachment unwrapped -> " + file.name + " (" + file.mime_type + ", " + file.len + " bytes)", 5);
+}
+// ===== end OLE2 unwrap (LookOut-ole-fix) =====
+
 function tnef_file_notify(file, listener, is_final) {
   tnef_log_msg("TNEF: Entering tnef_file_notify()", 6); //MKA
   tnef_log_msg("TNEF: Notifying onTnefFile listener of"
@@ -422,6 +652,12 @@ function tnef_file_notify(file, listener, is_final) {
   
   if (!is_final) {
     throw new Error("tnef_file_notify() should now only be called once done, but is_final indicated otherwise. Something is wrong.")
+  }
+
+  try {
+    tnef_file_unwrap_ole(file);
+  } catch (e) {
+    tnef_log_msg("LookOut: OLE unwrap failed, keeping original attachment: " + e, 4);
   }
 
   if (file.data && listener.onTnefFile) {
