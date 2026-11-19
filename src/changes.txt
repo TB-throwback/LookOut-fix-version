@@ -1,3 +1,9 @@
+7.5
+Note: This version has been developed using LLM's.
+* Fix umlauts in replaced message body - Credit jhit
+* Update Itallian translation
+* Version bump for V160
+
 7.4
 Note: This version has been developed using LLM's.
 * Re-impliment Calendar event actions (Note: using legacy iMIP bar).
