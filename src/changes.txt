@@ -1,3 +1,6 @@
+7.5.1
+* Max Version bump to TB 161.*
+
 7.5
 Note: This version has been developed using LLM's.
 * Fix umlauts in replaced message body - Credit jhit
